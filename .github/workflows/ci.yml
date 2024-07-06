@@ -1,0 +1,37 @@
+# cicd pipeline
+# on main trunk commits
+# run tests on new main trunk commit and push artefact to docker registry
+name: ci
+run-name: ci run triggered by ${{ github.ref_name }} merge to main trunk
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  build-and-push-to-registry:
+    defaults:
+      run:
+        working-directory: ./aura-report-website
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{vars.AWS_REGION}}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{vars.ECR_REPOSITORY}}
+          IMAGE_TAG: ${{vars.IMAGE_TAG}}
+        run: |
+          docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
