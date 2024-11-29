@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Theme, ThemePanel } from "@radix-ui/themes";
+import AuthProvider from "@/components/providers/AuthProvider";
+import { Notifications } from "@/components/notifications/notifications";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,8 +27,9 @@ export default function RootLayout({
           radius="large"
           scaling="95%"
         >
-          {children}
-          <ThemePanel />
+          <AuthProvider>{children}</AuthProvider>
+          <Notifications duration={4}/>
+          {/* <ThemePanel /> */}
         </Theme>
       </body>
     </html>
