@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Theme, ThemePanel } from "@radix-ui/themes";
 import AuthProvider from "@/components/providers/AuthProvider";
-import { Notifications } from "@/components/notifications/notifications";
+import { Notifications } from "@/components/notifications/Notifications";
+import ReactQueryClientProvider from "@/components/providers/ReactQueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,17 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Theme
-          accentColor="orange"
-          grayColor="slate"
-          panelBackground="translucent"
-          radius="large"
-          scaling="95%"
-        >
+        <ReactQueryClientProvider>
           <AuthProvider>{children}</AuthProvider>
-          <Notifications duration={4}/>
+          <Notifications duration={4} />
           {/* <ThemePanel /> */}
-        </Theme>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

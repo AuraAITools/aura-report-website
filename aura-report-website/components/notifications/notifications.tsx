@@ -1,5 +1,5 @@
 "use client";
-import { Notification } from "./notification";
+import { Notification } from "./Notification";
 import { useNotifications } from "./notification-store";
 
 export type NotificationsProps = {

@@ -6,7 +6,6 @@ import {
   ExclamationTriangleIcon,
   InfoCircledIcon,
 } from "@radix-ui/react-icons";
-import { Box, Text } from "@radix-ui/themes";
 
 const icons = {
   info: <InfoCircledIcon className="size-6 text-blue-500" aria-hidden="true" />,
@@ -50,20 +49,20 @@ export const Notification = ({
   // Dynamically create the background class
 
   return (
-    <Box className="flex w-full flex-col items-center sm:items-end z-1 m-2">
-      <Box className="w-full max-w-sm overflow-hidden rounded-lg bg-white ring-1 ring-orange-200">
-        <Box className="p-4" role="alert" aria-label={title}>
-          <Box className="flex">
-            <Box className="flex items-center">{icons[type]}</Box>
-            <Box className="mx-auto">{title}</Box>
+    <div className="flex w-full flex-col items-center sm:items-end z-1 m-2">
+      <div className="w-full max-w-sm overflow-hidden rounded-lg bg-white ring-1 ring-orange-200">
+        <div className="p-4" role="alert" aria-label={title}>
+          <div className="flex">
+            <div className="flex items-center">{icons[type]}</div>
+            <div className="mx-auto">{title}</div>
             <CrossCircledIcon
               className="sm:size-4 text-orange-400 hover:text-orange-200 transition-colors duration-500"
               onClick={() => onDismiss(id)}
             />
-          </Box>
-          <Text className="max-w-full text-gray-500">{message}</Text>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+          <p className="max-w-full text-gray-500">{message}</p>
+        </div>
+      </div>
+    </div>
   );
 };
