@@ -8,4 +8,15 @@ const envSchema = z.object({
   NODE_ENV: z.string(),
 });
 
-export default envSchema.parse(envSchema);
+type EnvType = z.infer<typeof envSchema>;
+
+const env: EnvType = {
+  AUTH_SECRET: process.env.AUTH_SECRET!,
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
+  KEYCLOAK_ID: process.env.KEYCLOAK_ID!,
+  KEYCLOAK_SECRET: process.env.KEYCLOAK_SECRET!,
+  KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER!,
+  NODE_ENV: process.env.NODE_ENV,
+};
+
+export default envSchema.parse(env);
