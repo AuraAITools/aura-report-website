@@ -1,9 +1,9 @@
+import { Notifications } from "@/components/notifications/Notifications";
+import AuthProvider from "@/components/providers/AuthProvider";
+import ReactQueryClientProvider from "@/components/providers/ReactQueryClientProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "@/components/providers/AuthProvider";
-import { Notifications } from "@/components/notifications/Notifications";
-import ReactQueryClientProvider from "@/components/providers/ReactQueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={inter.className}>
         <ReactQueryClientProvider>
           <AuthProvider>{children}</AuthProvider>
           <Notifications duration={4} />
-          {/* <ThemePanel /> */}
         </ReactQueryClientProvider>
       </body>
     </html>
