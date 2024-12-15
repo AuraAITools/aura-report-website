@@ -140,17 +140,17 @@ export function SidebarFeature() {
         </Sidebar.Group>
         <Sidebar.Group groupName='MANAGE PEOPLE' showSeparator>
           <Sidebar.Item
-            title='students'
+            title='Students'
             href='/students'
             leftIcon={<HandIcon className='size-6' />}
           />
           <Sidebar.Item
-            title='parents'
+            title='Parents'
             href='/parents'
             leftIcon={<PersonIcon className='size-6' />}
           />
           <Sidebar.Item
-            title='educators'
+            title='Educators'
             href='/educators'
             leftIcon={<IdCardIcon className='size-6' />}
           />
