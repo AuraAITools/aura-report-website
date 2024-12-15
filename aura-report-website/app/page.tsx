@@ -1,19 +1,9 @@
 "use client";
-import { useNotifications } from "@/components/notifications/notification-store";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  // if a session exists in the browser, redirect authenticated user to homepage
-  // if (session && session.user) {
-  //   router.push('/home')
-  // }
-
   return (
     <main>
       <div className='flex items-center gap-2 bg-gray-100'>
