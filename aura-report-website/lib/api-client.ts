@@ -11,29 +11,25 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
 }
 
 export const apiClient = Axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: "/",
 });
 
 apiClient.interceptors.request.use(authRequestInterceptor);
+
 apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     const message = error.response.data.message || error.message;
+
+    // all error response will trigger toasts
     useNotifications.getState().addNotification({
       type: "error",
-      title: "Error",
-      message,
+      title: "Failed to sync data with server",
+      message: message,
     });
 
-    // if (error.response?.status === 401) {
-    //   const searchParams = new URLSearchParams();
-    //   const redirectTo =
-    //     searchParams.get("redirectTo") || window.location.pathname;
-    //   window.location.href = paths.auth.login.getHref(redirectTo);
-    // }
-
     return Promise.reject(error);
-  }
+  },
 );
