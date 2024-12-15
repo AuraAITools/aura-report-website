@@ -39,6 +39,6 @@ export default function SubjectsPage() {
   );
 }
 
-export function Filterbar(props: PropsWithChildren) {
+function Filterbar(props: PropsWithChildren) {
   return <div>{props.children}</div>;
 }

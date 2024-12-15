@@ -1,6 +1,6 @@
+import { subjects } from "@/constants/subjects";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { subjects } from "../route";
 const idParamsSchema = z.object({
   id: z.string(),
 });
