@@ -20,5 +20,5 @@ export function GET(req: NextRequest) {
       contactNumber: "96228693",
     },
   ];
-  return NextResponse.json(dummyData)
+  return NextResponse.json(dummyData);
 }
