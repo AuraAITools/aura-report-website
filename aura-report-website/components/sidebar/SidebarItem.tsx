@@ -13,7 +13,7 @@ export function SidebarItem({ title, href, leftIcon }: SidebarItemProps) {
     <NavigationMenu.Item>
       <Link
         href={href}
-        className='group flex flex-1 items-center align-middle my-2 gap-4 p-4 hover:bg-orange-300 hover:text-white hover:rounded-xl'
+        className='group flex flex-1 items-center align-middle my-2 gap-4 p-4 hover:bg-orange-300 hover:text-white focus:bg-orange-300 focus:text-white'
       >
         <div className='md:size-6'>{leftIcon}</div>
         <p>{title}</p>
