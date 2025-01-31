@@ -1,14 +1,14 @@
 import { logoutRequest, refreshTokenRequest } from "@/lib/auth/oidc";
 import env from "@/utils/env";
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { ProviderType } from "next-auth/providers/index";
 import KeycloakProvider from "next-auth/providers/keycloak";
-const handler = NextAuth({
+export const authOptions = NextAuth({
   providers: [
     KeycloakProvider({
-      clientId: env.KEYCLOAK_ID,
-      clientSecret: env.KEYCLOAK_SECRET!,
+      clientId: env.KEYCLOAK_CLIENT_ID,
+      clientSecret: env.KEYCLOAK_CLIENT_SECRET!,
       issuer: env.KEYCLOAK_ISSUER,
       profile: (profile) => {
         profile.id = profile.sub;
@@ -16,7 +16,6 @@ const handler = NextAuth({
       },
     }),
   ],
-
   useSecureCookies: env.NODE_ENV === "production",
   events: {
     // async signIn(message) {
@@ -48,7 +47,9 @@ const handler = NextAuth({
   // },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log(`over here: ${JSON.stringify(user)}`);
+      console.log(
+        `sign in callback with user: ${JSON.stringify(user, null, 2)}`,
+      );
       return true;
     },
     async redirect({ url, baseUrl }) {
@@ -59,70 +60,99 @@ const handler = NextAuth({
       return baseUrl;
     },
     async session({ session, token }) {
+      console.log("session callback!");
+      console.log(`session : ${JSON.stringify(session, null, 2)}`);
+      console.log(`session token ${JSON.stringify(token, null, 2)}`);
+      // session.error = token.error;
+      // session.access_token = token.access_token;
       session.user = token.user;
       session.error = token.error;
-      session.roles = token.roles;
-      session.access_token = token.access_token;
-      console.log(`session session: ${JSON.stringify(session)}`);
-      console.log(`session token ${JSON.stringify(token)}`);
+      console.log(`session after ${JSON.stringify(session, null, 2)}`);
+
       return session;
     },
-    // run before encrypting the session cookie
-    async jwt({ token, account, profile }) {
-      if (account) {
-        console.log(`JWT token ${JSON.stringify(token)}`);
+    async jwt({ token, user, account, profile }) {
+      // first time sign in
+      if (account && user) {
+        console.log(`JWT token ${JSON.stringify(token, null, 2)}`);
+        console.log(`User ${JSON.stringify(user, null, 2)}`);
+        console.log(`Account ${JSON.stringify(account, null, 2)}`);
+        console.log(`Profile ${JSON.stringify(profile, null, 2)}`);
         // Update token with account information
         token.access_token = account.access_token;
 
+        // TODO: define the decoded access token type
         let jsonPayload = JSON.parse(
           Buffer.from(token.access_token.split(".")[1], "base64").toString(),
         );
 
         // get roles
-        let roles = jsonPayload["resource_access"]["local-next-client"][
+        let roles = jsonPayload["resource_access"][env.KEYCLOAK_CLIENT_ID][
           "roles"
         ] as string[];
-        console.log(JSON.stringify(roles));
-        token.roles = roles;
-        token.refresh_token = account.refresh_token;
-        token.access_token_expired =
-          Date.now() + (account.expires_in - 15) * 1000;
-        token.refresh_token_expired =
-          Date.now() + (account.refresh_expires_in - 15) * 1000;
-        return token;
-      } else {
-        if (!token.refresh_token) {
-          console.error("No refresh token available");
-          return null as unknown as JWT;
-        }
-        try {
-          // Send a post request to refresh the token
-          console.log(`Attempting to refresh token: ${token.refresh_token}`);
-          const response = await refreshTokenRequest(token.refresh_token);
-          console.log(
-            `response refresh token: ${JSON.stringify(response.data)}`,
-          );
-          if (response.status !== 200) {
-            console.error(`refresh tokens failed`, response);
-            return null as unknown as JWT;
-          }
-          const tokens = response.data;
+        console.log(
+          `extracted roles from access token ${JSON.stringify(roles)}`,
+        );
 
-          // Update token with refreshed information
-          return {
-            ...token,
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token ?? token.refresh_token,
-            refresh_token_expired:
-              tokens.refresh_expires_in ?? token.refresh_token_expired,
-            expires_in: Math.floor(Date.now() / 1000 + tokens.expires_in),
-            error: null,
-          };
-        } catch (e) {
-          console.error(e);
-          return null as unknown as JWT;
-        }
+        // add roles to user details
+        user.roles = roles;
+        // add user details into token to pass to session later
+        token.user = user;
+
+        token.refresh_token = account.refresh_token;
+        token.refresh_token_expired =
+          Date.now() + account.refresh_expires_in * 1000;
+        token.access_token_expired = Date.now() + account.expires_in * 1000;
+
+        return token;
       }
+
+      // subsequent calls to session
+      console.log(
+        `Attempting to refresh token: ${JSON.stringify(token.refresh_token, null, 2)}`,
+      );
+
+      // if access token has yet to expire, return same token
+      if (Date.now() < token.expires_in) {
+        return token;
+      }
+
+      // if refresh token is 5 s from expiring, prompt user to sign in again
+      if (token.refresh_expires_in + 5 * 1000 >= Date.now()) {
+        return {
+          ...token,
+          error: "RefreshAccessTokenError",
+        };
+      }
+
+      // else attempt to refresh token
+      // Send a post request to refresh the token
+      let response;
+      try {
+        response = await refreshTokenRequest(token.refresh_token);
+        console.log(`error; ${JSON.stringify(response.data, null, 2)}`);
+      } catch (error) {
+        return {
+          ...token,
+          error: "RefreshAccessTokenError",
+        };
+      }
+
+      // refreshed successfully
+      const tokens = response.data;
+      console.log(
+        `successfully refreshed token with new access token: ${JSON.stringify(tokens.access_token, null, 2)}`,
+      );
+
+      // Update cookie token with refreshed information
+      return {
+        ...token,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        refresh_token_expired: Date.now() + tokens.refresh_expires_in * 1000,
+        expires_in: tokens.expires_in,
+        error: null,
+      };
     },
   },
 });
@@ -131,22 +161,8 @@ const handler = NextAuth({
 declare module "next-auth" {
   // Define custom session properties
   interface Session {
-    user: {
-      sub: string;
-      email_verified: boolean;
-      name: string;
-      preferred_username: string;
-      given_name: string;
-      family_name: string;
-      email: string;
-      id: string;
-      org_name?: string;
-      telephone?: string;
-      // roles: string[];
-    };
-    roles: string[];
+    user: User;
     error?: string | null;
-    access_token: string;
   }
 
   // Define custom user properties
@@ -161,6 +177,9 @@ declare module "next-auth" {
     family_name: string;
     email: string;
     id: string;
+    ext_attrs: {
+      tenant_ids: string[];
+    };
     roles: string[];
   }
 
@@ -203,21 +222,10 @@ declare module "next-auth/jwt" {
     refresh_token: string;
     refresh_expires_in: number;
     expires_in: number;
-    user: {
-      sub: string;
-      email_verified: boolean;
-      name: string;
-      telephone: string;
-      preferred_username: string;
-      org_name: string;
-      given_name: string;
-      family_name: string;
-      email: string;
-      id: string;
-    };
+    user: User;
     roles: string[];
     error?: string | null;
   }
 }
 
-export { handler as GET, handler as POST };
+export { authOptions as GET, authOptions as POST };

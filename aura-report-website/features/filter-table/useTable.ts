@@ -13,26 +13,21 @@ import { TableColumnDef, TableData } from "./types";
 type options = {
   data: TableData[];
   columns: TableColumnDef<TableData>[];
-  refreshData: () => Promise<TableData[]>;
+  refreshData: () => void;
 };
 export function useTable({ data, columns, refreshData }: options) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const [tableData, setTableData] = useState<TableData[]>(data);
   const tableColumns = useMemo<TableColumnDef<TableData>[]>(() => columns, []);
-  // const refreshData = () => setTableData((_old) => makeLevelData(1_000)); //stress test
 
-  async function refreshDataWithUpdate() {
-    let refreshedData = await refreshData();
-    setTableData((_old) => refreshedData);
-  }
   return {
     globalFilter,
     setGlobalFilter,
-    refreshData: refreshDataWithUpdate,
+    refreshData,
     table: useReactTable({
-      data: tableData,
+      data,
+      // data: tableData,
       columns: tableColumns,
       filterFns: {
         fuzzy: fuzzyFilter, //define as a filter function that can be used in column definitions

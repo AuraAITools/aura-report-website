@@ -1,4 +1,4 @@
-import { Subject } from "@/types/data/Subject";
+import { BaseSubject } from "@/types/data/Subject";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import {
@@ -8,14 +8,14 @@ import {
 } from "../requests/subjects";
 
 type CreateSubjectMutationContext = {
-  previousData: Subject[];
+  previousData: BaseSubject[];
 };
 export function useCreateSubject() {
   const queryClient = useQueryClient();
   return useMutation<
-    Subject, // data returned on success
+    BaseSubject, // data returned on success
     Error, // error emitted
-    Omit<Subject, "id">, // variable passed in to the mutate function
+    Omit<BaseSubject, "id">, // variable passed in to the mutate function
     CreateSubjectMutationContext // context to be passed
   >({
     mutationFn: createSubject,
@@ -29,13 +29,13 @@ export function useCreateSubject() {
       // take snapshot if old data
       const previousSubjects = queryClient.getQueryData([
         "subjects",
-      ]) as Subject[];
+      ]) as BaseSubject[];
       console.log(
         `taking snapshot of previous data ${JSON.stringify(previousSubjects)}`,
       );
       // optimistically remove the user from list
-      queryClient.setQueryData(["subjects"], (oldSubjects: Subject[]) => {
-        let optimisticSubjectObject: Subject = {
+      queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
+        let optimisticSubjectObject: BaseSubject = {
           id: nanoid(),
           name: subject.name,
         };
@@ -71,7 +71,7 @@ export function useGetAllSubjects() {
 }
 
 type DeleteSubjectMutationContext = {
-  previousData: Subject[];
+  previousData: BaseSubject[];
 };
 export function useDeleteSubject() {
   const queryClient = useQueryClient();
@@ -86,12 +86,12 @@ export function useDeleteSubject() {
       // take snapshot of old data
       const previousSubjects = queryClient.getQueryData([
         "subjects",
-      ]) as Subject[];
+      ]) as BaseSubject[];
       console.log(
         `taking snapshot of previous data ${JSON.stringify(previousSubjects)}`,
       );
       // optimistically remove the user from list
-      queryClient.setQueryData(["subjects"], (oldSubjects: Subject[]) => {
+      queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
         let optimisticData = oldSubjects.filter(
           (subject) => subject.id !== deletedId,
         );

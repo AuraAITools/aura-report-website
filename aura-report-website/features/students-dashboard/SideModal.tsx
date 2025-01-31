@@ -1,10 +1,10 @@
 import { BackDrop } from "@/components/ui/Backdrop";
-import { Student } from "@/types/data/Student";
+import { BaseStudent } from "@/types/data/Student";
 
 type SideModalProps = {
   show: boolean;
   onClick: () => void;
-} & Student;
+} & BaseStudent;
 
 export function SideModal(props: SideModalProps) {
   return (

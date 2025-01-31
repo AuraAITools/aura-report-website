@@ -1,14 +1,14 @@
-import { Subject } from "@/types/data/Subject";
+import { BaseSubject } from "@/types/data/Subject";
 import { apiClient } from "../api-client";
 
 export async function getAllSubjects() {
-  let response = await apiClient.get<Subject[]>("/api/subjects");
+  let response = await apiClient.get<BaseSubject[]>("/api/subjects");
   console.log(`fetched subjects ${JSON.stringify(response.data)}`);
   return response.data;
 }
 
-export async function createSubject(subject: Omit<Subject, "id">) {
-  let response = await apiClient.post<Subject>(
+export async function createSubject(subject: Omit<BaseSubject, "id">) {
+  let response = await apiClient.post<BaseSubject>(
     "/api/subjects",
     JSON.stringify(subject),
   );

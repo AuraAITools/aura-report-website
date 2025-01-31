@@ -1,4 +1,4 @@
 "use client";
-export default function ParentPage() {
-  return <div>parent page</div>;
+export default function AccountsPage() {
+  return <div>accounts page</div>;
 }

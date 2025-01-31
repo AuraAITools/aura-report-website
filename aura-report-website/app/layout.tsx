@@ -1,4 +1,4 @@
-import { Notifications } from "@/components/notifications/Notifications";
+import { Notifications } from "@/components/notifications/notifications";
 import AuthProvider from "@/components/providers/AuthProvider";
 import ReactQueryClientProvider from "@/components/providers/ReactQueryClientProvider";
 import type { Metadata } from "next";

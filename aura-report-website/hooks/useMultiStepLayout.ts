@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 export function useMultiStepLayout(steps: React.ReactNode[]) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 

@@ -5,13 +5,13 @@ import {
   useDeleteSubject,
   useGetAllSubjects,
 } from "@/lib/hooks/useSubjects";
-import { Subject } from "@/types/data/Subject";
+import { BaseSubject } from "@/types/data/Subject";
 import { generateKey } from "@/utils/id";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 type SubjectListContext = {
-  subjects: Subject[];
+  subjects: BaseSubject[];
 };
 
 const SubjectListContext = createContext<SubjectListContext | undefined>(
@@ -59,9 +59,7 @@ function SubjectsList(props: PropsWithChildren) {
 
 function Container({ children }: PropsWithChildren) {
   return (
-    <div className='flex flex-col p-4 bg-white rounded-lg h-screen'>
-      {children}
-    </div>
+    <div className='flex flex-col p-4 bg-white rounded-lg'>{children}</div>
   );
 }
 
@@ -85,7 +83,7 @@ function SubjectsListDisplay() {
     return <div>No Subjects created yet</div>;
   }
   return (
-    <li className='list-none flex flex-col gap-2'>
+    <li className='list-none flex flex-col gap-2 md:h-[1000px] overflow-scroll'>
       {subjects.map((subject, idx) => {
         return (
           <SubjectsListItem
@@ -99,7 +97,7 @@ function SubjectsListDisplay() {
 }
 
 type SubjectsListItemProps = {
-  subject: Subject;
+  subject: BaseSubject;
 };
 
 function SubjectsListItem(props: SubjectsListItemProps) {
@@ -116,7 +114,7 @@ function SubjectsListButton() {
   const { mutate } = useCreateSubject();
   const [subjectName, setSubjectName] = useState<string>("");
   function addSubject() {
-    let subject: Omit<Subject, "id"> = {
+    let subject: Omit<BaseSubject, "id"> = {
       name: subjectName,
     };
     mutate(subject);

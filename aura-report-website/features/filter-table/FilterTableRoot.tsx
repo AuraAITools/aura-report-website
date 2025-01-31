@@ -7,7 +7,7 @@ const FilterTableContext = createContext<
   | {
       globalFilter: string;
       setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
-      refreshData: () => Promise<void>;
+      refreshData: () => void;
       table: Table<TableData>;
     }
   | undefined
@@ -16,7 +16,7 @@ const FilterTableContext = createContext<
 export type FilterTableRootProps = {
   data: TableData[];
   columns: TableColumnDef<TableData>[];
-  refreshData: () => Promise<TableData[]>;
+  refreshData: () => void;
 } & PropsWithChildren;
 
 export function FilterTableRoot({

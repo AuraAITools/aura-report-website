@@ -1,16 +1,21 @@
 import { z } from "zod";
-import { courseSchema } from "./Course";
-import { educatorSchema } from "./Educator";
-import { studentSchema } from "./Student";
-import { subjectSchema } from "./Subject";
+import { BaseCourseSchema } from "./Course";
+import { BaseEducatorSchema } from "./Educator";
+import { BaseStudentSchema } from "./Student";
+import { BaseSubjectSchema } from "./Subject";
 
-const levelSchema = z.object({
+export const BaseLevelSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  subjects: z.array(subjectSchema),
-  courses: z.array(courseSchema),
-  students: z.array(studentSchema),
-  educators: z.array(educatorSchema),
 });
 
-export type Level = z.infer<typeof levelSchema>;
+export type BaseLevel = z.infer<typeof BaseLevelSchema>;
+
+export const LevelWithAssociationsSchema = BaseLevelSchema.extend({
+  subjects: z.lazy(() => z.array(BaseSubjectSchema)),
+  courses: z.lazy(() => z.array(BaseCourseSchema)),
+  students: z.lazy(() => z.array(BaseStudentSchema)),
+  educators: z.lazy(() => z.array(BaseEducatorSchema)),
+});
+
+export type LevelWithAssociations = z.infer<typeof LevelWithAssociationsSchema>;

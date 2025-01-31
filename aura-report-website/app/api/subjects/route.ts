@@ -1,5 +1,5 @@
 import { subjects } from "@/constants/subjects";
-import { Subject } from "@/types/data/Subject";
+import { BaseSubject } from "@/types/data/Subject";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,11 +8,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  let subject: Omit<Subject, "id">;
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  let subject: Omit<BaseSubject, "id">;
   try {
     subject = await req.json();
-    // let validation = subjectSchema.safeParse(subject);
+    // let validation = BaseSubjectSchema.safeParse(subject);
     // console.log(`validation: ${JSON.stringify(validation)}`);
   } catch (error) {
     return new NextResponse(null, {

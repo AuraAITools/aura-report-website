@@ -37,20 +37,27 @@ export default function Authorization({
     );
   }
 
-  if (status === "unauthenticated" || !session) {
+  if (
+    status === "unauthenticated" ||
+    !session ||
+    session.error === "RefreshAccessTokenError"
+  ) {
     return <UnauthenticatedScreen />;
   }
 
   if (!allowedRoles || allowedRoles.length == 0) {
     return <>{children}</>;
   }
+  let allowedTenantAwareRoles = allowedRoles.map(
+    (r) => `${session.user.ext_attrs.tenant_ids[0]}_${r}`,
+  );
 
   let canAccess = false;
-  if (allowedRoles) {
+  if (allowedTenantAwareRoles) {
     canAccess =
-      allowedRoles.filter((allowedRole) => session.roles.includes(allowedRole))
-        .length > 0;
-    console.log(`allowed access: ${canAccess}`);
+      allowedTenantAwareRoles.filter((allowedRole) =>
+        session.user.roles.includes(allowedRole),
+      ).length > 0;
   }
 
   // // do a role check
