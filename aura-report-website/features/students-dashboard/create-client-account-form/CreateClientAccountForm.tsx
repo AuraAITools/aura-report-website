@@ -1,126 +1,131 @@
+import SelectFormField from "@/components/forms/SelectFormField";
 import useCreateAccount from "@/lib/hooks/useAccounts";
-import { Account } from "@/types/data/Account";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { ACCOUNT_RELATIONSHIP } from "@/types/data/Account";
+import { BaseOutlet } from "@/types/data/Outlet";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
+import { BaseInstitution } from "@/types/data/Institution";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormField } from "../../../components/forms/FormField";
-import { FormCallbacks } from "../create-student-form/CreateStudentsForm";
 import { SubmitFormButton } from "./SubmitFormButton";
 
-const formDetailsSchema = z.object({
-  institution: z.string(),
-  outlet: z.string(),
-  email: z.string(),
-  contact: z.string(),
-  first_name: z.string(),
-  last_name: z.string(),
+const formFieldsSchema = z.object({
+  institution: z.string().nonempty({ message: "institution is required" }),
+  outlet: z.string().nonempty({ message: "outlet is required" }),
+  email: z.string().email(),
+  contact: z
+    .string()
+    .min(8, {
+      message: "contact must be a valid singapore phone number",
+    })
+    .max(8, {
+      message: "contact must be a valid singapore phone number",
+    }),
+  first_name: z.string().nonempty({ message: "first name is required" }),
+  last_name: z.string().nonempty({ message: "last name is required" }),
+  relationship: z.enum(ACCOUNT_RELATIONSHIP),
 });
 
-type FormDetails = z.infer<typeof formDetailsSchema>;
-
+type FormFields = z.infer<typeof formFieldsSchema>;
+type FormCallbacks = {
+  onSuccess?: () => void;
+  onFailure?: () => void;
+  onError?: () => void;
+};
 type CreateClientAccountFormProps = {
   disabled: boolean;
+  institution: BaseInstitution;
+  outlets: BaseOutlet[];
 } & FormCallbacks;
 
 export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
-  const [institution, setInstitution] = useState<string>("");
-  const [outlet, setOutlet] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [contact, setContact] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>({
+    resolver: zodResolver(formFieldsSchema),
+  });
   const { mutate, isPending } = useCreateAccount();
 
-  function submitForm(e: React.FormEvent) {
-    e.preventDefault();
-    let account: Omit<Account, "id"> = {
-      email: email,
-      first_name: firstName,
-      last_name: lastName,
-      contact: contact,
+  const { currentInstitution: institution, status: fetchInstitutionStatus } =
+    useInstitutionAndOutletsContext();
+
+  if (fetchInstitutionStatus === "pending") {
+    return <ProgressBar />;
+  }
+
+  if (fetchInstitutionStatus === "error") {
+    throw new Error("Failed to fetch institution of user");
+  }
+
+  const onSubmit: SubmitHandler<FormFields> = (data) => {
+    let account = {
+      ...data,
+      institution_id: institution.id!,
     };
     mutate(account, {
       onSuccess: () => {
         if (props.onSuccess) props.onSuccess();
       },
     });
-  }
+  };
 
   return (
-    <div>
-      <form className='grid grid-cols-2 gap-6 py-4' onSubmit={submitForm}>
-        <FormField
-          id={"institution"}
-          labelText={"Institution"}
-          placeholder={"Ministry of tuition"}
-          type={"text"}
-          onChange={(e) => setInstitution(e.target.value)}
-          disabled
-        />
-        <FormField
-          id={"outlet"}
-          labelText={"Outlet"}
-          placeholder={"Orchard Gateway"}
-          type={"text"}
-          onChange={(e) => setOutlet(e.target.value)}
-          disabled
-        />
-        <FormField
-          id={"email"}
-          labelText={"Email Address of Parent/Student"}
-          placeholder={"example@gmail.com"}
-          type={"text"}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={props.disabled}
-        />
-        <FormField
-          id={"contact"}
-          labelText={"Contact Number of Parent/Student"}
-          placeholder={"99999999"}
-          type={"tel"}
-          onChange={(e) => setContact(e.target.value)}
-          disabled={props.disabled}
-        />
-        <FormField
-          id={"first_name"}
-          labelText={"First Name"}
-          placeholder={"Hong Liang"}
-          type={"text"}
-          onChange={(e) => setFirstName(e.target.value)}
-          disabled={props.disabled}
-        />
-        <FormField
-          id={"last_name"}
-          labelText={"Last Name"}
-          placeholder={"Liu"}
-          type={"text"}
-          onChange={(e) => setLastName(e.target.value)}
-          disabled={props.disabled}
-        />
-
-        <SubmitFormButton
-          className='col-span-2'
-          loading={isPending}
-          disabled={props.disabled}
-        >
-          Create Account
-        </SubmitFormButton>
-      </form>
-    </div>
-  );
-}
-
-export function CloseDialogButton() {
-  return (
-    <Dialog.Close asChild>
-      <button
-        className='absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-black hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none'
-        aria-label='Close'
+    <form
+      className='grid grid-cols-2 gap-6 py-4'
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <SelectFormField
+        options={[props.institution.name]}
+        labelText='Institution'
+        errorMessage={errors.institution?.message}
+        disabled
+        {...register("institution")}
+      />
+      <SelectFormField
+        options={props.outlets.map((o) => o.name)}
+        labelText={"Outlet"}
+        errorMessage={errors.outlet?.message}
+        {...register("outlet")}
+      />
+      <FormField
+        labelText={"Email Address of Parent/Student"}
+        {...register("email")}
+        errorMessage={errors.email?.message}
+      />
+      <FormField
+        labelText={"Contact Number of Parent/Student"}
+        {...register("contact")}
+        type='tel'
+        errorMessage={errors.contact?.message}
+      />
+      <FormField
+        labelText={"First Name"}
+        errorMessage={errors.first_name?.message}
+        {...register("first_name")}
+      />
+      <FormField
+        labelText={"Last Name"}
+        errorMessage={errors.last_name?.message}
+        {...register("last_name")}
+      />
+      <SelectFormField
+        options={[...ACCOUNT_RELATIONSHIP]}
+        labelText='Relationship'
+        errorMessage={errors.relationship?.message}
+        {...register("relationship")}
+      />
+      <SubmitFormButton
+        className='col-span-2'
+        loading={isPending}
+        disabled={props.disabled}
       >
-        <Cross2Icon />
-      </button>
-    </Dialog.Close>
+        Create Account
+      </SubmitFormButton>
+    </form>
   );
 }

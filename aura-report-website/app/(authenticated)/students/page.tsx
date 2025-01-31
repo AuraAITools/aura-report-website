@@ -1,22 +1,18 @@
 "use client";
-import { useInstitutionContext } from "@/components/providers/InstitutionProvider";
-import { AvatarProfile } from "@/components/ui/AvatarProfile";
-import { CheckBox } from "@/components/ui/CheckBox";
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import LoadingComponent from "@/components/ui/loading/LoadingComponent";
-import { MultiStepFormDialog } from "@/features/students-dashboard/multistep-form/MultiStepFormDialog";
-import { SideModal } from "@/features/students-dashboard/SideModal";
+import StudentsFilterTable from "@/features/students-dashboard/student-filter-table/StudentsFilterTable";
 import { useGetAllStudents } from "@/lib/hooks/useStudents";
-import { Student } from "@/types/data/Student";
-import { Cross1Icon, DotsVerticalIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
 
 export default function StudentsPage() {
   const {
     status: fetchingStudents,
     error,
     data: students,
+    refetch,
   } = useGetAllStudents();
-  const { institution, status: fetchingInstitution } = useInstitutionContext();
+  const { currentInstitution, status: fetchingInstitution } =
+    useInstitutionAndOutletsContext();
 
   if (fetchingStudents == "pending" || fetchingInstitution == "pending") {
     return (
@@ -41,22 +37,21 @@ export default function StudentsPage() {
     );
   }
 
-  if (!students || students.length === 0) return <EmptyListDisplay />;
-
-  return (
-    <div className='flex flex-col'>
-      <MultiStepFormDialog />
-      {students.map((student) => (
-        <StudentListItem
-          key={`student_li_${student.id}`}
-          image={
-            "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
-          }
-          {...student}
-        />
-      ))}
-    </div>
-  );
+  // return (
+  //   <div className='flex flex-col'>
+  //     <MultiStepFormDialog />
+  //     {students.map((student) => (
+  //       <StudentListItem
+  //         key={`student_li_${student.id}`}
+  //         image={
+  //           "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
+  //         }
+  //         {...student}
+  //       />
+  //     ))}
+  //   </div>
+  // );
+  return <StudentsFilterTable students={students} refetch={refetch} />;
 }
 
 function EmptyListDisplay() {
@@ -67,37 +62,37 @@ function EmptyListDisplay() {
   );
 }
 
-type StudentListItemProp = {
-  image: string;
-} & Student;
+// type StudentListItemProp = {
+//   image: string;
+// } & Student;
 
-function StudentListItem(props: StudentListItemProp) {
-  const [show, setShown] = useState<boolean>(false);
+// function StudentListItem(props: StudentListItemProp) {
+//   const [show, setShown] = useState<boolean>(false);
 
-  let initials = props.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("");
-  return (
-    <>
-      <div className='flex gap-4 bg-white items-center justify-center border-gray-300 border-[1px] py-2 px-4 max-h-12 overflow-hidden'>
-        <CheckBox checked={false} />
-        <AvatarProfile src={props.image} alt={props.name} fallback={initials} />
-        <p className='w-32'>{props.name}</p>
-        <p className='w-8'>{props.currentLevel}</p>
-        <p className='w-64'>{props.currentSchool}</p>
-        <div className='ml-auto' />
-        <button>
-          <DotsVerticalIcon
-            onClick={() => setShown(true)}
-            className=' hover:text-orange-300'
-          />
-        </button>
-        <button>
-          <Cross1Icon className='text-red-400 size-4' />
-        </button>
-      </div>
-      <SideModal onClick={() => setShown(false)} show={show} {...props} />
-    </>
-  );
-}
+//   let initials = props.name
+//     .split(" ")
+//     .map((word) => word[0])
+//     .join("");
+//   return (
+//     <>
+//       <div className='flex gap-4 bg-white items-center justify-center border-gray-300 border-[1px] py-2 px-4 max-h-12 overflow-hidden'>
+//         <CheckBox checked={false} />
+//         <AvatarProfile src={props.image} alt={props.name} fallback={initials} />
+//         <p className='w-32'>{props.name}</p>
+//         <p className='w-8'>{props.currentLevel}</p>
+//         <p className='w-64'>{props.currentSchool}</p>
+//         <div className='ml-auto' />
+//         <button>
+//           <DotsVerticalIcon
+//             onClick={() => setShown(true)}
+//             className=' hover:text-orange-300'
+//           />
+//         </button>
+//         <button>
+//           <Cross1Icon className='text-red-400 size-4' />
+//         </button>
+//       </div>
+//       <SideModal onClick={() => setShown(false)} show={show} {...props} />
+//     </>
+//   );
+// }

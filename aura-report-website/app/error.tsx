@@ -10,14 +10,12 @@ export default function Error({
 }) {
   // Log the error to an error reporting service
   return (
-    <html>
-      <body className='flex justify-center items-center w-screen h-screen'>
-        <ErrorDisplay
-          onResetButtonClick={reset}
-          message={`Oops. Something went wrong. ${error.message}`}
-          reloadButtonMessage={"reload"}
-        />
-      </body>
-    </html>
+    <div className='flex justify-center items-center w-screen h-screen'>
+      <ErrorDisplay
+        onResetButtonClick={reset}
+        message={`Oops. Something went wrong. ${error.message}`}
+        reloadButtonMessage={"reload"}
+      />
+    </div>
   );
 }

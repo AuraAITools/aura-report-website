@@ -2,8 +2,8 @@ import env from "@/utils/env";
 import axios from "axios";
 
 const params = {
-  client_id: env.KEYCLOAK_ID,
-  client_secret: env.KEYCLOAK_SECRET,
+  client_id: env.KEYCLOAK_CLIENT_ID,
+  client_secret: env.KEYCLOAK_CLIENT_SECRET,
   grant_type: "refresh_token",
 };
 

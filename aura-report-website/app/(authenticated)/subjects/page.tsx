@@ -1,5 +1,5 @@
 "use client";
-import { useInstitutionContext } from "@/components/providers/InstitutionProvider";
+import { useInstitutionContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import LoadingComponent from "@/components/ui/loading/LoadingComponent";
 import SubjectsList from "@/features/subjects-dashboard/subjects-list/SubjectsList";
 import { PropsWithChildren } from "react";

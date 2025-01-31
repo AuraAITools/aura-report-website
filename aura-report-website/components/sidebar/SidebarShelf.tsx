@@ -6,7 +6,7 @@ import { useSidebarContext } from "./Sidebar.hooks";
 export type SidebarShelfProps = {} & PropsWithChildren;
 
 export function SidebarShelf({ children }: SidebarShelfProps) {
-  const { isExpanded, collapseSidebar } = useSidebarContext();
+  const { isExpanded } = useSidebarContext();
 
   return (
     <>

@@ -112,7 +112,7 @@ export function SidebarFeature() {
           />
           <Sidebar.Item
             title='Outlets'
-            href='/outletes'
+            href='/outlets'
             leftIcon={<SewingPinFilledIcon className='size-6' />}
           />
         </Sidebar.Group>
