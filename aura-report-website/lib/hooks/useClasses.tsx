@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllCourses } from "../requests/courses";
+import { getAllCoursesFromOutlet } from "../requests/courses";
 
-export default function useClasses() {
+export default function useClasses(institutionId: string, outletId: string) {
+  console.log(`${institutionId}, ${outletId}`);
   return useQuery({
-    queryFn: getAllCourses,
+    queryFn: () => getAllCoursesFromOutlet(institutionId, outletId),
     queryKey: ["courses"],
   });
 }

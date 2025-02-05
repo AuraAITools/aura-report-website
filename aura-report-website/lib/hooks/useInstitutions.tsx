@@ -11,6 +11,7 @@ export function useGetInstitutionById(id: string) {
   });
 }
 
+// TODO: use useQueries hook instead
 export function useGetInstitutionsByIds(ids: string[], enabled: boolean) {
   return useQuery({
     // TODO: investigate if this is the correct way to cache multiple keys

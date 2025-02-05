@@ -33,7 +33,7 @@ export function useCreateSubject() {
       console.log(
         `taking snapshot of previous data ${JSON.stringify(previousSubjects)}`,
       );
-      // optimistically remove the user from list
+      // optimistically add to list
       queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
         let optimisticSubjectObject: BaseSubject = {
           id: nanoid(),

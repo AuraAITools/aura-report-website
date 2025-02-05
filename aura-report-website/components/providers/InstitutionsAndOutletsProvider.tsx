@@ -1,9 +1,8 @@
 "use client";
-import { getInstitutionById } from "@/lib/requests/institutions";
-import { getAllOutletsInInstitution } from "@/lib/requests/outlet";
+import { InstitutionApi } from "@/lib/hooks/institution-queries";
+import { OutletApis } from "@/lib/hooks/outlet-queries";
 import { BaseInstitution } from "@/types/data/Institution";
 import { BaseOutlet } from "@/types/data/Outlet";
-import { useQueries } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
   createContext,
@@ -12,201 +11,37 @@ import {
   useEffect,
   useState,
 } from "react";
-import ProgressBar from "../ui/progress-bar/ProgressBar";
 import { UnauthenticatedScreen } from "./Authorization";
 type BaseOutletContext = BaseOutlet & { institution_id: string };
-// type InstitutionAndOutletContext = {
-//   institutions: BaseInstitution[];
-//   outlets: BaseOutletContext[];
-//   currentInstitution: BaseInstitution | undefined;
-//   currentOutlets: BaseOutletContext[];
-//   currentOutlet: BaseOutletContext | undefined;
-//   status: "error" | "success" | "pending";
-//   roles: string[];
-//   currentRoles: string[];
-//   changeCurrentInstitution: (institution: BaseInstitution) => void;
-//   setCurrentOutlet: (outlet: BaseOutletContext) => void;
-//   refetchContext: () => void;
-// };
+
+type StatusType = "pending" | "success" | "error";
 type InstitutionAndOutletContext = {
   institutions: BaseInstitution[];
-  outlets: BaseOutlet[];
+  outlets: BaseOutletContext[];
   currentInstitution: BaseInstitution | undefined;
-  currentOutlets: BaseOutlet[];
-  currentOutlet: BaseOutlet | undefined;
-  status: "error" | "success" | "pending";
+  currentOutlets: BaseOutletContext[];
+  currentOutlet: BaseOutletContext | undefined;
   roles: string[];
   currentRoles: string[];
+  status: StatusType;
   changeCurrentInstitution: (institution: BaseInstitution) => void;
-  setCurrentOutlet: (outlet: BaseOutlet) => void;
+  changeCurrentOutlet: (outlet: BaseOutletContext) => void;
   refetchContext: () => void;
 };
 
-// TODO: see if i can write this without much contexts and using tanstack queries for state management instead
 const InstitutionAndOutletContext = createContext<
   InstitutionAndOutletContext | undefined
 >(undefined);
 
-// export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
-//   const { data: session, status: sessionStatus } = useSession();
-//   const [currentInstitution, setCurrentInstitution] = useState<
-//     BaseInstitution | undefined
-//   >(undefined);
-//   const [currentOutlets, setCurrentOutlets] = useState<
-//     BaseOutletContext[] | undefined
-//   >(undefined);
-//   const [currentOutlet, setCurrentOutlet] = useState<
-//     BaseOutletContext | undefined
-//   >(undefined);
-//   const [currentRoles, setCurrentRoles] = useState<string[] | undefined>();
-
-//   // fetch institutions once session is authenticated
-//   const {
-//     data: institutions,
-//     status: institutionsStatus,
-//     refetch: refetchInstitutions,
-//   } = useGetInstitutionsByIds(
-//     session!.user.ext_attrs.tenant_ids,
-//     sessionStatus === "authenticated" &&
-//       !!session &&
-//       session.user.ext_attrs.tenant_ids.length > 0,
-//   );
-
-//   // fetch outlets of institutions once institutions are retrieved
-//   const { data: outlets = [], status: outletStatus } =
-//     useGetAllOutletsOfInstitutions(
-//       session!.user.ext_attrs.tenant_ids,
-//       sessionStatus === "authenticated" &&
-//         !!session &&
-//         session.user.ext_attrs.tenant_ids.length > 0,
-//     );
-
-//   // useQueries({
-//   //   queries: session!.user.ext_attrs.tenant_ids.map((tid) => ({
-//   //     queryFn: () => getAllOutletsInInstitution(tid),
-//   //     queryKey: ["institutions", tid, "outlets"],
-//   //     enabled: !!session,
-//   //   })),
-//   //   combine: (results) => ({
-//   //     data: results.map(res => res.data),
-
-//   //   })
-//   // });
-//   // when list of all institutions user own changes, set the default current institution as index 0
-//   useEffect(() => {
-//     console.log(
-//       `changes in institutions and current institution :${JSON.stringify(institutions, null, 2)}`,
-//     );
-
-//     if (!!institutions && institutions.length > 0 && !currentInstitution) {
-//       console.log(
-//         `setting current institution to the one at index 0: ${JSON.stringify(institutions[0])}}`,
-//       );
-//       setCurrentInstitution(institutions[0]);
-//     }
-//   }, [institutions, setCurrentInstitution]);
-
-//   // set outlets available to current institution when institution changes
-//   useEffect(() => {
-//     if (!!currentInstitution && !!outlets && outlets.length > 0) {
-//       let outletsInCurrentInstitution = outlets.filter(
-//         (o) => o.institution_id === currentInstitution.id,
-//       );
-//       setCurrentOutlets(outletsInCurrentInstitution);
-//     }
-//   }, [currentInstitution]);
-
-//   // set the current outlet when current outlets change
-//   useEffect(() => {
-//     if (!!currentOutlets && currentOutlets.length > 0) {
-//       setCurrentOutlet(currentOutlets[0]);
-//     }
-//   }, [currentOutlets]);
-
-//   // Update roles when institution changes
-//   useEffect(() => {
-//     if (currentInstitution && session) {
-//       const newRoles = session.user.roles
-//         .filter((role) => role.startsWith(currentInstitution.id))
-//         .map((role) => role.substring(currentInstitution.id.length + 1));
-//       console.log(`roles updated to ${JSON.stringify(newRoles, null, 2)}`);
-//       setCurrentRoles(newRoles);
-//     }
-//   }, [currentInstitution, session]);
-
-//   // when user sets a new institution context
-//   function changeCurrentInstitution(institution: BaseInstitution) {
-//     setCurrentInstitution(institution);
-//     console.log(
-//       `change institution context to ${JSON.stringify(institution, null, 2)}`,
-//     );
-//   }
-//   // Loading states
-//   if (sessionStatus === "loading" || institutionsStatus === "pending") {
-//     return <ProgressBar />;
-//   }
-
-//   // Authentication check
-//   if (sessionStatus !== "authenticated") {
-//     return <UnauthenticatedScreen />;
-//   }
-
-//   // Validation checks
-//   if (!session.user.ext_attrs.tenant_ids.length) {
-//     throw new Error("No institutions assigned to user");
-//   }
-
-//   if (institutionsStatus === "error") {
-//     throw new Error("Failed to fetch institutions");
-//   }
-
-//   const status = outletStatus === "pending" ? "pending" : "success";
-
-//   return (
-//     <InstitutionAndOutletContext.Provider
-//       value={{
-//         institutions: institutions,
-//         outlets,
-//         currentInstitution: currentInstitution,
-//         currentOutlets: currentOutlets ?? [],
-//         status,
-//         roles: session.user.roles,
-//         currentRoles: currentRoles ?? [],
-//         changeCurrentInstitution,
-//         setCurrentOutlet,
-//         currentOutlet,
-//         refetchContext: refetchInstitutions,
-//       }}
-//     >
-//       {props.children}
-//     </InstitutionAndOutletContext.Provider>
-//   );
-// }
-
-type InstitutionAndOutlet = BaseInstitution & {
-  outlets: BaseOutlet[];
-};
 export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
   const { data: session, status: sessionStatus } = useSession();
   const [currentInstitution, setCurrentInstitution] = useState<
     BaseInstitution | undefined
   >(undefined);
-  const [currentOutlet, setCurrentOutlet] = useState<BaseOutlet | undefined>(
-    undefined,
-  );
+  const [currentOutlet, setCurrentOutlet] = useState<
+    BaseOutletContext | undefined
+  >(undefined);
   const [currentRoles, setCurrentRoles] = useState<string[] | undefined>();
-
-  // fetch institutions once session is authenticated
-  // const {
-  //   data: institutions,
-  //   status: institutionsStatus,
-  //   refetch: refetchInstitutions,
-  // } = useGetInstitutionsByIds(
-  //   session!.user.ext_attrs.tenant_ids,
-  //   sessionStatus === "authenticated" &&
-  //     !!session &&
-  //     session.user.ext_attrs.tenant_ids.length > 0,
-  // );
 
   if (!session) {
     console.error("no session");
@@ -215,102 +50,45 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
 
   // get institutions
   const {
-    data: institutionAndOutlets,
+    data: institutions,
     isError,
-    isPending: fetchinginstitutionAndOutlets,
+    isPending: fetchInstitutionIsPending,
     refetch: refetchInstitutions,
-  } = useQueries({
-    queries: session.user.ext_attrs.tenant_ids.map((institutionId) => ({
-      queryFn: async () => {
-        let institution = await getInstitutionById(institutionId);
-        let outlets = await getAllOutletsInInstitution(institution.id);
-        return {
-          ...institution,
-          outlets: outlets,
-        };
-      },
-      queryKey: ["institutions", institutionId],
-      enabled: !!session && session.user.ext_attrs.tenant_ids.length > 0,
-    })),
-    combine: (results) => ({
-      data: results.map((res) => res.data) as InstitutionAndOutlet[],
-      isPending: results.some((res) => res.isPending),
-      isError: results.some((res) => res.isError),
-      refetch: () => {
-        results.forEach((res) => res.refetch());
-      },
-    }),
-  });
+  } = InstitutionApi.getInstitutionByIds(session.user.ext_attrs.tenant_ids);
 
   // get outlets
+  const {
+    data: outlets = [],
+    isError: isOutletError,
+    isPending: fetchOutletsPending,
+  } = OutletApis.getAllOutletsOfInstitutionIds(
+    session.user.ext_attrs.tenant_ids,
+  );
 
-  // if (fetchingInstitutions || !institutions) {
-  //   return <ProgressBar />;
-  // }
-
+  // set curr institution
   useEffect(() => {
     if (
       !currentInstitution &&
-      !!institutionAndOutlets &&
-      institutionAndOutlets.length > 0 &&
-      !fetchinginstitutionAndOutlets
+      !institutions.some((instPromise) => instPromise === undefined) &&
+      institutions.length > 0
     ) {
-      setCurrentInstitution(institutionAndOutlets[0]);
-      console.log(`${JSON.stringify(institutionAndOutlets, null, 2)}`);
-      setCurrentOutlet(institutionAndOutlets[0].outlets[0]);
+      setCurrentInstitution(institutions[0]);
+      console.log(`${JSON.stringify(institutions, null, 2)}`);
     }
-  }, [institutionAndOutlets, fetchinginstitutionAndOutlets]);
+  }, [institutions]);
 
-  // fetch outlets of institutions once institutions are retrieved
-  // const { data: outlets = [], status: outletStatus } =
-  //   useGetAllOutletsOfInstitutions(
-  //     session!.user.ext_attrs.tenant_ids,
-  //     sessionStatus === "authenticated" &&
-  //       !!session &&
-  //       session.user.ext_attrs.tenant_ids.length > 0,
-  //   );
-
-  // useQueries({
-  //   queries: session!.user.ext_attrs.tenant_ids.map((tid) => ({
-  //     queryFn: () => getAllOutletsInInstitution(tid),
-  //     queryKey: ["institutions", tid, "outlets"],
-  //     enabled: !!session,
-  //   })),
-  //   combine: (results) => ({
-  //     data: results.map(res => res.data),
-
-  //   })
-  // });
-  // when list of all institutions user own changes, set the default current institution as index 0
-  // useEffect(() => {
-  //   console.log(
-  //     `changes in institutions and current institution :${JSON.stringify(institutions, null, 2)}`,
-  //   );
-
-  //   if (!!institutions && institutions.length > 0 && !currentInstitution) {
-  //     console.log(
-  //       `setting current institution to the one at index 0: ${JSON.stringify(institutions[0])}}`,
-  //     );
-  //     setCurrentInstitution(institutions[0]);
-  //   }
-  // }, [institutions, setCurrentInstitution]);
-
-  // set outlets available to current institution when institution changes
-  // useEffect(() => {
-  //   if (!!currentInstitution && !!outlets && outlets.length > 0) {
-  //     let outletsInCurrentInstitution = outlets.filter(
-  //       (o) => o.institution_id === currentInstitution.id,
-  //     );
-  //     setCurrentOutlets(outletsInCurrentInstitution);
-  //   }
-  // }, [currentInstitution]);
-
-  // set the current outlet when current outlets change
-  // useEffect(() => {
-  //   if (!!currentOutlets && currentOutlets.length > 0) {
-  //     setCurrentOutlet(currentOutlets[0]);
-  //   }
-  // }, [currentOutlets]);
+  // set current outlet
+  useEffect(() => {
+    console.log(`outlets ;${JSON.stringify(outlets, null, 2)}`);
+    if (
+      !outlets.some((outletPromise) => outletPromise === undefined) &&
+      outlets.length > 0 &&
+      !currentOutlet &&
+      !!currentInstitution
+    ) {
+      setCurrentOutlet(outlets[0]);
+    }
+  }, [currentInstitution, outlets]);
 
   // Update roles when institution changes
   useEffect(() => {
@@ -330,10 +108,6 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
       `change institution context to ${JSON.stringify(institution, null, 2)}`,
     );
   }
-  // Loading states
-  // if (sessionStatus === "loading" || institutionsStatus === "pending") {
-  //   return <ProgressBar />;
-  // }
 
   // Authentication check
   if (sessionStatus !== "authenticated") {
@@ -345,37 +119,32 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     throw new Error("No institutions assigned to user");
   }
 
-  // if (institutionsStatus === "error") {
-  //   throw new Error("Failed to fetch institutions");
-  // }
-
-  const status = fetchinginstitutionAndOutlets ? "pending" : "success";
-
-  if (status === "pending" || !currentInstitution) {
-    return <ProgressBar />;
+  function changeCurrentOutlet(outlet: BaseOutletContext) {
+    setCurrentOutlet(outlet);
   }
+  let fetchStatus: StatusType =
+    institutions.some((instPromise) => instPromise === undefined) ||
+    outlets.some((outletPromise) => outletPromise === undefined) ||
+    fetchInstitutionIsPending ||
+    fetchOutletsPending ||
+    !currentInstitution
+      ? "pending"
+      : "success";
 
   return (
     <InstitutionAndOutletContext.Provider
       value={{
-        institutions: institutionAndOutlets,
-        outlets: institutionAndOutlets.filter(
-          (iao) => iao.id === currentInstitution.id,
-        )[0].outlets,
-        currentInstitution: {
-          ...institutionAndOutlets.filter(
-            (iao) => iao.id === currentInstitution.id,
-          )[0],
-        },
-        currentOutlets:
-          institutionAndOutlets.filter(
-            (iao) => iao.id === currentInstitution.id,
-          )[0].outlets ?? [],
-        status,
+        institutions: institutions,
+        outlets: outlets,
+        currentInstitution: currentInstitution,
+        currentOutlets: !!currentInstitution
+          ? outlets.filter((o) => o.institution_id === currentInstitution.id)
+          : [],
         roles: session.user.roles,
+        status: fetchStatus,
         currentRoles: currentRoles ?? [],
         changeCurrentInstitution,
-        setCurrentOutlet,
+        changeCurrentOutlet,
         currentOutlet,
         refetchContext: refetchInstitutions,
       }}

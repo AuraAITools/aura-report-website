@@ -37,7 +37,7 @@ type FormFields = z.infer<typeof formFieldSchema>;
 export default function CreateClassesForm() {
   const { data: levels, status: levelFetchingStatus } = useGetAllLevels();
   const { data: subjects, status: subjectFetchingStatus } = useGetAllSubjects();
-  const { currentInstitution: institution, status: institutionFetchingStatus } =
+  const { currentInstitution, currentOutlets } =
     useInstitutionAndOutletsContext();
   const {
     register,
@@ -55,17 +55,12 @@ export default function CreateClassesForm() {
 
   if (
     levelFetchingStatus === "pending" ||
-    subjectFetchingStatus === "pending" ||
-    institutionFetchingStatus === "pending"
+    subjectFetchingStatus === "pending"
   ) {
     return <ProgressBar />;
   }
 
-  if (
-    levelFetchingStatus === "error" ||
-    subjectFetchingStatus === "error" ||
-    institutionFetchingStatus === "error"
-  ) {
+  if (levelFetchingStatus === "error" || subjectFetchingStatus === "error") {
     throw new Error("failed to load levels");
   }
 
@@ -75,31 +70,41 @@ export default function CreateClassesForm() {
         className='grid grid-cols-8 grid-rows-6'
         onSubmit={handleSubmit(onSubmit)}
       >
-        <FormField
+        <SelectFormField
           {...register("institution")}
+          options={[
+            {
+              value: currentInstitution?.id ?? "loading",
+              display: currentInstitution?.name ?? "loading",
+            },
+          ]}
           labelText='institution'
-          placeholder={institution.name}
           disabled
           type='text'
           className='col-span-4 row-start-1 px-4'
         />
         <SelectFormField
-          options={["Yishun Ave 4", "Marina Bay"]}
+          options={currentOutlets.map((o) => ({
+            value: o.id,
+            display: o.name,
+          }))}
           {...register("outlet")}
           labelText='Location/Outlet'
-          disabled
           type='text'
           className='col-span-4 row-start-1 px-4'
         />
         <SelectFormField
-          options={levels.map((lvl) => lvl.name)}
+          options={levels.map((lvl) => ({ display: lvl.name, value: lvl.id }))}
           {...register("level")}
           labelText='Level'
           type='text'
           className='col-span-4 row-start-2 px-4'
         />
         <SelectFormField
-          options={subjects.map((sub) => sub.name)}
+          options={subjects.map((sub) => ({
+            value: sub.id,
+            display: sub.name,
+          }))}
           {...register("subject")}
           labelText='Subject'
           type='text'
@@ -130,7 +135,7 @@ export default function CreateClassesForm() {
           className='col-span-1 px-4'
         />
         <SelectFormField
-          options={["Month", "Week", "Lesson", "Total"]}
+          options={PRICE_FREQUENCIES.map((pf) => ({ display: pf, value: pf }))}
           {...register("price_frequency")}
           placeholder={"Monthly"}
           labelText='Frequency'
@@ -173,14 +178,14 @@ export default function CreateClassesForm() {
           className='row-start-5 col-span-1 px-4'
         />
         <SelectFormField
-          options={[...DAYS]}
+          options={DAYS.map((d) => ({ display: d, value: d }))}
           {...register("lesson_frequency.day")}
           labelText='freq day'
           type='text'
           className='row-start-5 col-span-1 px-4'
         />
         <SelectFormField
-          options={[...LESSON_FREQ_UNIT]}
+          options={LESSON_FREQ_UNIT.map((lf) => ({ display: lf, value: lf }))}
           {...register("lesson_frequency.unit")}
           labelText='freq unit'
           type='text'

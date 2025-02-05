@@ -1,18 +1,13 @@
-import { StudentWithAssociations } from "@/types/data/Student";
+import { BaseStudent } from "@/types/data/Student";
 import { apiClient } from "../api-client";
 
-export async function getAllStudents(): Promise<StudentWithAssociations[]> {
-  const response =
-    await apiClient.get<StudentWithAssociations[]>("/api/students");
-  console.log(`Students: ${JSON.stringify(response.data)}`);
-  return response.data;
-}
-
-export async function getStudentById(
-  id: string,
-): Promise<StudentWithAssociations> {
-  const response = await apiClient.get<StudentWithAssociations>(
-    `/api/students/${id}`,
+export async function getAllStudentsFromOutlet(
+  institutionId: string,
+  outletId: string,
+) {
+  const studentsPromise = await apiClient.get<BaseStudent[]>(
+    `/api/institutions/${institutionId}/outlets/${outletId}/students`,
   );
-  return response.data;
+
+  return studentsPromise.data;
 }

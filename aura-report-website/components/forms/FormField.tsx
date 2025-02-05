@@ -8,22 +8,24 @@ export type FormFieldProps = {
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export function FormField(props: FormFieldProps) {
+  const { labelText, className, errorMessage, ...formProps } = props;
+
   return (
-    <div className={`${props.className ? props.className : ""}`}>
+    <div className={`${className ? className : ""}`}>
       <label
-        className={`w-[90px] text-right text-[15px] text-black ${props.errorMessage && "border-red-500 text-red-500"}`}
-        htmlFor={props.id}
+        className={`w-[90px] text-right text-[15px] text-black ${errorMessage && "border-red-500 text-red-500"}`}
+        htmlFor={formProps.id}
       >
-        {props.labelText}
+        {labelText}
       </label>
       <input
-        {...props}
-        className={`inline-flex h-[35px] w-full flex-1 items-center justify-center rounded px-2.5 text-[15px] leading-none shadow-[0_0_0_1px] outline-none ${props.errorMessage && "border-red-500 text-red-500"}`}
+        {...formProps}
+        className={`inline-flex h-[35px] w-full flex-1 items-center justify-center rounded px-2.5 text-[15px] leading-none shadow-[0_0_0_1px] outline-none ${errorMessage && "border-red-500 text-red-500"}`}
       />
-      {props.errorMessage && (
+      {errorMessage && (
         <div className='flex gap-4 px-2 items-center bg-red-500 p-1 rounded-md text-white'>
           <ExclamationTriangleIcon />
-          <span>{props.errorMessage}</span>
+          <span>{errorMessage}</span>
         </div>
       )}
     </div>

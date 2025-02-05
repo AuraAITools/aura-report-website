@@ -1,30 +1,29 @@
 "use client";
-import { useInstitutionContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import LoadingComponent from "@/components/ui/loading/LoadingComponent";
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import SubjectsList from "@/features/subjects-dashboard/subjects-list/SubjectsList";
 import { PropsWithChildren } from "react";
 
 export default function SubjectsPage() {
-  const { institution, status } = useInstitutionContext();
+  const { institutions } = useInstitutionAndOutletsContext();
 
-  if (status === "pending") {
-    return (
-      <LoadingComponent
-        image={{
-          src: "/Logo.png",
-          alt: "Aura logo",
-          className: "animate-spin-slow",
-          width: 40,
-          height: 40,
-        }}
-        loadingMessage={"Loading Subjects Dashboard"}
-      />
-    );
-  }
+  // if (status === "pending") {
+  //   return (
+  //     <LoadingComponent
+  //       image={{
+  //         src: "/Logo.png",
+  //         alt: "Aura logo",
+  //         className: "animate-spin-slow",
+  //         width: 40,
+  //         height: 40,
+  //       }}
+  //       loadingMessage={"Loading Subjects Dashboard"}
+  //     />
+  //   );
+  // }
 
-  if (status == "error") {
-    throw new Error("fetching of institution failed");
-  }
+  // if (status == "error") {
+  //   throw new Error("fetching of institution failed");
+  // }
 
   return (
     <div>

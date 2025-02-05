@@ -65,7 +65,7 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     let account = {
       ...data,
-      institution_id: institution.id!,
+      institution_id: institution.id,
     };
     mutate(account, {
       onSuccess: () => {
@@ -80,7 +80,7 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        options={[props.institution.name]}
+        options={[{ display: institution?.name, value: institution?.id }]}
         labelText='Institution'
         errorMessage={errors.institution?.message}
         disabled

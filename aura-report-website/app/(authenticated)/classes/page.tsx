@@ -1,5 +1,6 @@
 "use client";
 
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import CreateClassesForm from "@/features/classes-dashboard/create-classes-form";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
@@ -16,7 +17,13 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { useMemo } from "react";
 
 export default function ClassesPage() {
-  const { data: classes, status, refetch } = useClasses();
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
+  const {
+    data: classes,
+    status,
+    refetch,
+  } = useClasses(currentInstitution?.id ?? "", currentOutlet?.id ?? "");
   const columnDefs: TableColumnDef<CourseWithAssociations>[] = useMemo<
     TableColumnDef<CourseWithAssociations>[]
   >(
@@ -101,10 +108,8 @@ export default function ClassesPage() {
           <CreateClassButton />
           <RefreshDataButton />
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
-          <FilterTableHeaders />
-          <FilterTableContent />
-        </div>
+        <FilterTableHeaders />
+        <FilterTableContent />
       </FilterTableRoot>
     </div>
   );

@@ -1,11 +1,16 @@
 "use client";
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { useQuery } from "@tanstack/react-query";
-import { getAllStudents } from "../requests/students";
+import { getAllStudentsFromOutlet } from "../requests/students";
 
 export function useGetAllStudents() {
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const query = useQuery({
     queryKey: ["students"],
-    queryFn: getAllStudents,
+    queryFn: () =>
+      getAllStudentsFromOutlet(currentInstitution?.id!, currentOutlet?.id!),
+    enabled: status === "success",
   });
   return query;
 }
