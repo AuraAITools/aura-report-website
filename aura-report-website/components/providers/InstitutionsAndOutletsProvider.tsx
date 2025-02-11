@@ -1,6 +1,6 @@
 "use client";
-import { useGetInstitutionsByIds } from "@/lib/hooks/useInstitutions";
-import { useGetAllOutletsOfInstitutions } from "@/lib/hooks/useOutlets";
+import { InstitutionsApi } from "@/lib/hooks/institutions-queries";
+import { OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseInstitution } from "@/types/data/Institution";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { useSession } from "next-auth/react";
@@ -11,20 +11,22 @@ import {
   useEffect,
   useState,
 } from "react";
-import ProgressBar from "../ui/progress-bar/ProgressBar";
 import { UnauthenticatedScreen } from "./Authorization";
 type BaseOutletContext = BaseOutlet & { institution_id: string };
+
+type StatusType = "pending" | "success" | "error";
 type InstitutionAndOutletContext = {
   institutions: BaseInstitution[];
   outlets: BaseOutletContext[];
-  currentInstitution: BaseInstitution;
+  currentInstitution: BaseInstitution | undefined;
   currentOutlets: BaseOutletContext[];
   currentOutlet: BaseOutletContext | undefined;
-  status: "error" | "success" | "pending";
   roles: string[];
   currentRoles: string[];
+  status: StatusType;
   changeCurrentInstitution: (institution: BaseInstitution) => void;
-  setCurrentOutlet: (outlet: BaseOutletContext) => void;
+  changeCurrentOutlet: (outlet: BaseOutletContext) => void;
+  refetchContext: () => void;
 };
 
 const InstitutionAndOutletContext = createContext<
@@ -33,64 +35,66 @@ const InstitutionAndOutletContext = createContext<
 
 export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
   const { data: session, status: sessionStatus } = useSession();
-  const [currentInstitution, setCurrentInstitution] =
-    useState<BaseInstitution | null>(null);
-  const [currentOutlets, setCurrentOutlets] = useState<
-    BaseOutletContext[] | undefined
+  const [currentInstitution, setCurrentInstitution] = useState<
+    BaseInstitution | undefined
   >(undefined);
   const [currentOutlet, setCurrentOutlet] = useState<
     BaseOutletContext | undefined
   >(undefined);
   const [currentRoles, setCurrentRoles] = useState<string[] | undefined>();
 
-  // fetch institutions once session is authenticated
-  const { data: institutions, status: institutionsStatus } =
-    useGetInstitutionsByIds(
-      session!.user.ext_attrs.tenant_ids,
-      sessionStatus === "authenticated" &&
-        !!session &&
-        session.user.ext_attrs.tenant_ids.length > 0,
-    );
+  if (!session) {
+    console.error("no session");
+    return <UnauthenticatedScreen />;
+  }
 
-  // fetch outlets of institutions once institutions are retrieved
-  const { data: outlets = [], status: outletStatus } =
-    useGetAllOutletsOfInstitutions(
-      session!.user.ext_attrs.tenant_ids,
-      sessionStatus === "authenticated" &&
-        !!session &&
-        session.user.ext_attrs.tenant_ids.length > 0,
-    );
+  console.log(`asf ${JSON.stringify(session.user.ext_attrs.tenant_ids)}`);
+  // get institutions
+  const {
+    data: institutions = [],
+    isError: fetchInstitutionError,
+    isPending: fetchInstitutionIsPending,
+    refetch: refetchInstitutions,
+  } = InstitutionsApi.useGetInstitutionByIds(session.user.ext_attrs.tenant_ids);
 
-  // when list of all institutions user own changes, set the default current institution as index 0
+  // get outlets
+  const {
+    data: outlets = [],
+    isError: fetchOutletError,
+    isPending: fetchOutletsPending,
+  } = OutletsApis.useGetAllOutletsOfInstitutionIds(
+    session.user.ext_attrs.tenant_ids,
+  );
+
+  // set curr institution
   useEffect(() => {
-    console.log(
-      `changes in institutions and current institution :${JSON.stringify(institutions, null, 2)}`,
-    );
+    console.log("Institutions effect triggered", {
+      currentInstitution,
+      institutions,
+      hasUndefined: institutions.some((inst) => inst === undefined),
+    });
 
-    if (!!institutions && institutions.length > 0 && !currentInstitution) {
-      console.log(
-        `setting current institution to the one at index 0: ${JSON.stringify(institutions[0])}}`,
-      );
+    if (
+      !currentInstitution &&
+      institutions.length > 0 &&
+      institutions.every((inst) => inst !== undefined)
+    ) {
       setCurrentInstitution(institutions[0]);
     }
-  }, [institutions, setCurrentInstitution]);
+  }, [institutions]);
 
-  // set outlets available to current institution when institution changes
+  // set current outlet
   useEffect(() => {
-    if (!!currentInstitution && !!outlets && outlets.length > 0) {
-      let outletsInCurrentInstitution = outlets.filter(
-        (o) => o.institution_id === currentInstitution.id,
-      );
-      setCurrentOutlets(outletsInCurrentInstitution);
+    console.log(`outlets ;${JSON.stringify(outlets, null, 2)}`);
+    if (
+      !outlets.some((outletPromise) => outletPromise === undefined) &&
+      outlets.length > 0 &&
+      !currentOutlet &&
+      !!currentInstitution
+    ) {
+      setCurrentOutlet(outlets[0]);
     }
-  }, [currentInstitution]);
-
-  // set the current outlet when current outlets change
-  useEffect(() => {
-    if (!!currentOutlets && currentOutlets.length > 0) {
-      setCurrentOutlet(currentOutlets[0]);
-    }
-  }, [currentOutlets]);
+  }, [currentInstitution, outlets]);
 
   // Update roles when institution changes
   useEffect(() => {
@@ -110,10 +114,6 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
       `change institution context to ${JSON.stringify(institution, null, 2)}`,
     );
   }
-  // Loading states
-  if (sessionStatus === "loading" || institutionsStatus === "pending") {
-    return <ProgressBar />;
-  }
 
   // Authentication check
   if (sessionStatus !== "authenticated") {
@@ -125,31 +125,40 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     throw new Error("No institutions assigned to user");
   }
 
-  if (institutionsStatus === "error") {
-    throw new Error("Failed to fetch institutions");
+  function changeCurrentOutlet(outlet: BaseOutletContext) {
+    setCurrentOutlet(outlet);
   }
 
-  const status =
-    outletStatus === "pending" ||
-    currentOutlet === undefined ||
-    currentOutlets === undefined ||
-    currentRoles === undefined
+  let fetchStatus: StatusType = "pending";
+  fetchStatus =
+    institutions.some((instPromise) => !instPromise) ||
+    outlets.some((outletPromise) => !outletPromise) ||
+    fetchInstitutionIsPending ||
+    fetchOutletsPending ||
+    !currentInstitution
       ? "pending"
       : "success";
+
+  if (fetchInstitutionError || fetchOutletError) {
+    fetchStatus = "error";
+  }
 
   return (
     <InstitutionAndOutletContext.Provider
       value={{
         institutions: institutions,
-        outlets,
-        currentInstitution: currentInstitution!,
-        currentOutlets: currentOutlets ?? [],
-        status,
+        outlets: outlets,
+        currentInstitution: currentInstitution,
+        currentOutlets: !!currentInstitution
+          ? outlets.filter((o) => o.institution_id === currentInstitution.id)
+          : [],
         roles: session.user.roles,
+        status: fetchStatus,
         currentRoles: currentRoles ?? [],
         changeCurrentInstitution,
-        setCurrentOutlet,
+        changeCurrentOutlet,
         currentOutlet,
+        refetchContext: refetchInstitutions,
       }}
     >
       {props.children}

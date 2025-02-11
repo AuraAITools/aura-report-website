@@ -9,6 +9,9 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   return config;
 }
 
+/**
+ * api client used by nextjs proxy to send requests to report service backend
+ */
 export const reportServiceApiClient = Axios.create({
   baseURL: env.REPORT_SERVICE_URL,
 });
@@ -20,7 +23,7 @@ reportServiceApiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error(`error occured:`, error);
+    console.error(`error occured:`, error); // TODO: improve
     return Promise.reject(error);
   },
 );

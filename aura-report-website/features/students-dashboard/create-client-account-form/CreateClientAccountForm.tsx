@@ -1,43 +1,31 @@
 import SelectFormField from "@/components/forms/SelectFormField";
-import useCreateAccount from "@/lib/hooks/useAccounts";
-import { ACCOUNT_RELATIONSHIP } from "@/types/data/Account";
+import { ACCOUNT_RELATIONSHIP, BaseAccountSchema } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
-import { BaseInstitution } from "@/types/data/Institution";
+import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormField } from "../../../components/forms/FormField";
 import { SubmitFormButton } from "./SubmitFormButton";
 
-const formFieldsSchema = z.object({
-  institution: z.string().nonempty({ message: "institution is required" }),
-  outlet: z.string().nonempty({ message: "outlet is required" }),
-  email: z.string().email(),
-  contact: z
-    .string()
-    .min(8, {
-      message: "contact must be a valid singapore phone number",
-    })
-    .max(8, {
-      message: "contact must be a valid singapore phone number",
-    }),
-  first_name: z.string().nonempty({ message: "first name is required" }),
-  last_name: z.string().nonempty({ message: "last name is required" }),
-  relationship: z.enum(ACCOUNT_RELATIONSHIP),
+const formFieldsSchema = BaseAccountSchema.omit({
+  id: true,
+}).extend({
+  institution_id: z.string(),
 });
 
 type FormFields = z.infer<typeof formFieldsSchema>;
+
 type FormCallbacks = {
-  onSuccess?: () => void;
+  onSuccess?: (accountEmail: string, accountId: string) => void;
   onFailure?: () => void;
   onError?: () => void;
 };
 type CreateClientAccountFormProps = {
   disabled: boolean;
-  institution: BaseInstitution;
   outlets: BaseOutlet[];
 } & FormCallbacks;
 
@@ -49,10 +37,13 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
   } = useForm<FormFields>({
     resolver: zodResolver(formFieldsSchema),
   });
-  const { mutate, isPending } = useCreateAccount();
+  const { mutate, isPending } = AccountsApis.useCreateStudentClientAccount(); // TODO: create a create client account hook
 
-  const { currentInstitution: institution, status: fetchInstitutionStatus } =
-    useInstitutionAndOutletsContext();
+  const {
+    currentInstitution: institution,
+    status: fetchInstitutionStatus,
+    outlets,
+  } = useInstitutionAndOutletsContext();
 
   if (fetchInstitutionStatus === "pending") {
     return <ProgressBar />;
@@ -63,13 +54,11 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
   }
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    let account = {
-      ...data,
-      institution_id: institution.id!,
-    };
-    mutate(account, {
-      onSuccess: () => {
-        if (props.onSuccess) props.onSuccess();
+    mutate(data, {
+      // TODO: fix
+      onSuccess: (createdAccount) => {
+        if (props.onSuccess)
+          props.onSuccess(createdAccount.email, createdAccount.id);
       },
     });
   };
@@ -80,18 +69,23 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        options={[props.institution.name]}
+        options={[
+          {
+            display: institution?.name ?? "loading",
+            value: institution?.id ?? "",
+          },
+        ]}
         labelText='Institution'
-        errorMessage={errors.institution?.message}
+        errorMessage={errors.institution_id?.message}
         disabled
-        {...register("institution")}
+        {...register("institution_id")}
       />
-      <SelectFormField
-        options={props.outlets.map((o) => o.name)}
+      {/* <SelectFormField
+        options={outlets.map((o) => ({ value: o.id, display: o.name }))}
         labelText={"Outlet"}
-        errorMessage={errors.outlet?.message}
+        errorMessage={errors.outlets?.message}
         {...register("outlet")}
-      />
+      /> */}
       <FormField
         labelText={"Email Address of Parent/Student"}
         {...register("email")}
@@ -114,7 +108,10 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
         {...register("last_name")}
       />
       <SelectFormField
-        options={[...ACCOUNT_RELATIONSHIP]}
+        options={ACCOUNT_RELATIONSHIP.map((relationship) => ({
+          value: relationship,
+          display: relationship.toLocaleLowerCase(),
+        }))}
         labelText='Relationship'
         errorMessage={errors.relationship?.message}
         {...register("relationship")}

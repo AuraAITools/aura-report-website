@@ -6,6 +6,7 @@ import LoadingComponent from "../ui/loading/LoadingComponent";
 
 export type AuthorizationProps = {
   allowedRoles?: string[];
+  hideContent?: boolean;
 } & PropsWithChildren;
 
 /**
@@ -15,6 +16,7 @@ export type AuthorizationProps = {
  * @returns
  */
 export default function Authorization({
+  hideContent,
   children,
   allowedRoles,
 }: AuthorizationProps) {
@@ -60,7 +62,12 @@ export default function Authorization({
       ).length > 0;
   }
 
-  // // do a role check
+  // hide content mode
+  if (!canAccess && hideContent) {
+    return <></>;
+  }
+
+  // do a role check
   if (!canAccess) {
     return <UnauthorisedScreen allowedRoles={allowedRoles} />;
   }

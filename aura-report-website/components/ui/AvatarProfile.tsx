@@ -1,26 +1,35 @@
 import * as Avatar from "@radix-ui/react-avatar";
 
 export type AvatarProfileProps = {
-  src: string;
-  alt: string;
+  profileUrl?: string;
+  name: string;
   fallback: string;
 };
-export function AvatarProfile({ src, alt, fallback }: AvatarProfileProps) {
+export function AvatarProfile({
+  profileUrl,
+  name,
+  fallback,
+}: AvatarProfileProps) {
   return (
-    <div className='flex justify-center items-center'>
-      <Avatar.Root className='inline-flex size-[35px] select-none items-center justify-center overflow-hidden rounded-full align-middle shadow-lg'>
-        <Avatar.Image
-          className='size-full rounded-[inherit] object-cover'
-          src={src}
-          alt={alt}
-        />
-        <Avatar.Fallback
-          className='leading-1 flex size-full items-center justify-center bg-orange-300 text-[12px] font-medium'
-          delayMs={600}
-        >
-          {fallback}
-        </Avatar.Fallback>
-      </Avatar.Root>
-    </div>
+    <Avatar.Root className='inline-flex size-[28px] select-none items-center justify-center overflow-hidden rounded-full align-middle ring-1 ring-orange-300'>
+      <Avatar.Image
+        className='size-full rounded-[inherit] object-cover'
+        src={profileUrl}
+        alt={name}
+      />
+      <Avatar.Fallback
+        className='flex size-full items-center justify-center text-[12px] font-medium'
+        delayMs={600}
+      >
+        {getFirstCharactersInUpperCase(name)}
+      </Avatar.Fallback>
+    </Avatar.Root>
   );
+}
+function getFirstCharactersInUpperCase(name: string) {
+  return name
+    .split(" ")
+    .map((c) => c.at(0))
+    .join()
+    .toUpperCase();
 }

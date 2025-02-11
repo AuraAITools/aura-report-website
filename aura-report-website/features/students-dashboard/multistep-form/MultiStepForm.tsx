@@ -1,6 +1,5 @@
 import LoadingComponent from "@/components/ui/loading/LoadingComponent";
 import MultiStepLayout from "@/components/ui/multi-step-layout/MultiStepLayout";
-import { outlets } from "@/constants/outlets";
 import { useMultiStepLayout } from "@/hooks/useMultiStepLayout";
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
@@ -17,7 +16,11 @@ export default function MultiStepForm() {
     false,
   ]);
 
-  const { currentInstitution, status } = useInstitutionAndOutletsContext();
+  const [createdAccountEmail, setCreatedAccountEmail] = useState<string>("");
+  const [createdAccountId, setCreatedAccountID] = useState<string>("");
+
+  const { currentInstitution, status, currentOutlets } =
+    useInstitutionAndOutletsContext();
 
   if (status === "pending") {
     return (
@@ -40,7 +43,9 @@ export default function MultiStepForm() {
   /**
    * on form submit success, set form as complete and navigate to next step automatically
    */
-  function onFormStepSuccess() {
+  function onFirstFormStepSuccess(accountEmail: string, accountId: string) {
+    setCreatedAccountEmail(accountEmail);
+    setCreatedAccountID(accountId);
     setFormIsCompleted((prev) => {
       const newIsCompleted = [...prev];
       newIsCompleted[currentIndex] = true;
@@ -48,16 +53,29 @@ export default function MultiStepForm() {
     });
     next();
   }
+
+  /**
+   * on form submit success, set form as complete and navigate to next step automatically
+   */
+  function onSecondFormStepSuccess() {
+    setFormIsCompleted((prev) => {
+      const newIsCompleted = [...prev];
+      newIsCompleted[currentIndex] = true;
+      return newIsCompleted;
+    });
+    next();
+  }
+
   const { step, next, currentIndex, steps } = useMultiStepLayout([
     <CreateClientAccountForm
-      onSuccess={onFormStepSuccess}
+      onSuccess={onFirstFormStepSuccess}
       disabled={stepIsCompleted[0]}
-      institution={currentInstitution}
-      outlets={outlets}
+      outlets={currentOutlets}
     />,
     <CreateMultipleStudentsForm
-      accountEmail={"kevinliusingapore@gmail.com"}
-      onSuccess={onFormStepSuccess}
+      accountEmail={createdAccountEmail}
+      accountId={createdAccountId}
+      onSuccess={onSecondFormStepSuccess}
     />,
 
     <div className='relative flex flex-col justify-center items-center p-16'>

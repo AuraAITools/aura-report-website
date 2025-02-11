@@ -14,7 +14,7 @@ export default function RefreshDataButton() {
 
   return (
     <button
-      className={`flex rounded p-1 bg-orange-300 text-white size-8 items-center justify-center hover:bg-orange-400`}
+      className={`inline-flex rounded p-1 bg-orange-300 text-white size-8 items-center justify-center hover:bg-orange-400`}
       onClick={loadData}
     >
       <UpdateIcon className={`${loading && "animate-spin"}`} />

@@ -4,8 +4,11 @@ export const BaseOutletSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   address: z.string(),
+  email: z.string().email().optional(),
   postal_code: z.string(),
   contact_number: z.string(),
+  description: z.string(),
+
   // institution: BaseInstitutionSchema.optional(),
 });
 

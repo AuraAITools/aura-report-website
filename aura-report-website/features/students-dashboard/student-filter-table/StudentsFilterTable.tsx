@@ -22,7 +22,7 @@ export default function StudentsFilterTable({
     () => [
       {
         accessorKey: "name",
-        header: ({ table }) => <span>name</span>,
+        header: ({ table }) => <span>NAME</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
@@ -43,7 +43,7 @@ export default function StudentsFilterTable({
       },
       {
         accessorFn: (row) => (
-          <ConcatenatedLinksList links={[row.outlet.name]} />
+          <ConcatenatedLinksList links={row.outlets.map((o) => o.name)} />
         ),
         id: "outlet",
         header: ({ table }) => <span>OUTLET(S)</span>,
@@ -53,7 +53,9 @@ export default function StudentsFilterTable({
       {
         accessorFn: (row) => (
           <div>
-            {row.account.first_name} {row.account.contact}
+            <p>{row.relationship}</p>
+            <p>{row.name}</p>
+            <p>{row.contact}</p>
           </div>
         ),
         id: "contact",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
@@ -10,17 +11,34 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import useGetAllLevels from "@/lib/hooks/useLevels";
+import { ExpandedLevel, LevelsApis } from "@/lib/hooks/levels-queries";
 import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
-import { LevelWithAssociations } from "@/types/data/Level";
 import { BaseStudent } from "@/types/data/Student";
 import { useMemo } from "react";
 
 export default function LevelsPage() {
-  const { data: levelsData, status, refetch } = useGetAllLevels();
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
 
-  const columns = useMemo<TableColumnDef<LevelWithAssociations>[]>(
+  const {
+    data: levels,
+    isPending,
+    isError,
+    refetch,
+  } = LevelsApis.useGetAllLevelsOfInstitution(currentInstitution?.id);
+
+  const {
+    data: expandedLevels,
+    isPending: fetchExpandedPending,
+    isError: fetchExpandedError,
+  } = LevelsApis.useGetAllExpandedLevelsOfInstitution(
+    levels ?? [],
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
+
+  const columns = useMemo<TableColumnDef<ExpandedLevel>[]>(
     () => [
       {
         accessorKey: "name",
@@ -106,31 +124,14 @@ export default function LevelsPage() {
         header: () => <span>EDUCATORS</span>,
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },
-      // {
-      //   accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-      //   id: "fullName",
-      //   header: "Full Name",
-      //   cell: (info) => info.getValue(),
-      //   filterFn: "fuzzy", //using our custom fuzzy filter function
-      //   // filterFn: fuzzyFilter, //or just define with the function
-      //   sortingFn: fuzzySort, //sort by fuzzy rank (falls back to alphanumeric)
-      // },
     ],
     [],
   );
 
-  if (status === "pending") {
-    return <ProgressBar />;
-  }
-
-  if (status === "error") {
-    throw new Error("Could not fetch levels data");
-  }
-
   return (
     <div className='p-4'>
       <FilterTableRoot
-        data={levelsData}
+        data={expandedLevels}
         columns={columns}
         refreshData={refetch}
       >
@@ -141,7 +142,11 @@ export default function LevelsPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {fetchExpandedPending || isPending ? (
+            <ProgressBar />
+          ) : (
+            <FilterTableContent />
+          )}
         </div>
       </FilterTableRoot>
     </div>

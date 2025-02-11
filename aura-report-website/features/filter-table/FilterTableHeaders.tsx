@@ -1,3 +1,4 @@
+import { generateKey } from "@/utils/id";
 import { flexRender, Header, HeaderGroup } from "@tanstack/react-table";
 import { useFilterTable } from "./FilterTableRoot";
 import { TableData, TableValue } from "./types";
@@ -7,8 +8,11 @@ export function FilterTableHeaders() {
   const headerGroupsNumber = table.getHeaderGroups.length;
   return (
     <thead className={`grid-${headerGroupsNumber} w-full`}>
-      {table.getHeaderGroups().map((headerGroup) => (
-        <FilterTableHeaderGroup headerGroup={headerGroup} />
+      {table.getHeaderGroups().map((headerGroup, idx) => (
+        <FilterTableHeaderGroup
+          key={generateKey("_filter_table", idx.toString(), idx.toString())}
+          headerGroup={headerGroup}
+        />
       ))}
     </thead>
   );
@@ -22,8 +26,8 @@ function FilterTableHeaderGroup({ headerGroup }: FilterHeaderGroupProps) {
 
   return (
     <tr key={headerGroup.id} className={`col-span-1 grid-col-${headerNumber}`}>
-      {headerGroup.headers.map((header) => (
-        <FilterTableHeader header={header} />
+      {headerGroup.headers.map((header, idx) => (
+        <FilterTableHeader key={header.id} header={header} />
       ))}
     </tr>
   );

@@ -1,7 +1,7 @@
 import { BaseAccount } from "@/types/data/Account";
 import { apiClient } from "../api-client";
 
-export async function createAccount(
+export async function createInstitutionAdminAccount(
   account: Partial<BaseAccount> & { institution_id: string },
 ): Promise<void> {
   let body = JSON.stringify({
@@ -9,11 +9,24 @@ export async function createAccount(
     first_name: account.first_name,
     last_name: account.last_name,
     contact: account.contact,
-    relationship: account.relationship,
   });
-  console.log(`sending request with body ${body}`);
   return await apiClient.post(
-    `/api/institutions/${account.institution_id}/accounts`,
+    `/api/institutions/${account.institution_id}/accounts/institution-admins`,
+    body,
+  );
+}
+
+export async function createOutletAdminAccount(
+  account: Partial<BaseAccount> & { institution_id: string; outlet_id: string },
+): Promise<void> {
+  let body = JSON.stringify({
+    email: account.email,
+    first_name: account.first_name,
+    last_name: account.last_name,
+    contact: account.contact,
+  });
+  return await apiClient.post(
+    `/api/institutions/${account.institution_id}/outlets/${account.outlet_id}/accounts/outlet-admins`,
     body,
   );
 }

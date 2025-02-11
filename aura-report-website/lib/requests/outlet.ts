@@ -19,3 +19,14 @@ export async function getAllOutletsInInstitution(
   );
   return response.data;
 }
+
+export async function createOutletInInstitution(
+  outlet: BaseOutlet & { institution_id: string },
+): Promise<BaseOutlet> {
+  const { institution_id, ...outletBody } = outlet;
+  const response = await apiClient.post<BaseOutlet>(
+    `/api/institutions/${outlet.institution_id}/outlets`,
+    JSON.stringify(outletBody),
+  );
+  return response.data;
+}
