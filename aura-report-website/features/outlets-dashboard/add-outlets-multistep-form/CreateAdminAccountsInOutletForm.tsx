@@ -3,17 +3,14 @@ import SelectFormField from "@/components/forms/SelectFormField";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { SubmitFormButton } from "@/features/students-dashboard/create-client-account-form/SubmitFormButton";
-import {
-  useCreateInstitutionAdminAccount,
-  useCreateOutletAdminAccount,
-} from "@/lib/hooks/useAccounts";
+import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { BaseAccount, BaseAccountSchema } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 type FormCallbacks = {
-  onSuccess?: (createdOutletAdmins: BaseAccount[]) => void;
+  onSuccess?: (createdOutletAdmins: BaseAccount) => void;
   onFailure?: () => void;
   onError?: () => void;
 };
@@ -52,10 +49,10 @@ export default function CreateAdminAccountsInOutletForm(
   const {
     mutate: mutateInstitutionAdmin,
     isPending: institutionAdminIsPedning,
-  } = useCreateInstitutionAdminAccount();
+  } = AccountsApis.useCreateInstitutionAdminAccount();
 
   const { mutate: mutateOutletAdmin, isPending: isPendingOutletAdmin } =
-    useCreateOutletAdminAccount();
+    AccountsApis.useCreateOutletAdminAccount();
 
   let outletOptions;
   if (props.targetOutlet) {
@@ -70,19 +67,7 @@ export default function CreateAdminAccountsInOutletForm(
     outletOptions = currentOutlets;
   }
 
-  // TODO: add the submit handler
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(
-      JSON.stringify({
-        email: data.email,
-        last_name: data.last_name,
-        first_name: data.first_name,
-        contact: data.contact,
-        institution_id: data.institution_id,
-      }),
-      null,
-      2,
-    );
     if (data.account_type === "INSTITUTION_ADMIN") {
       mutateInstitutionAdmin(
         {
@@ -93,18 +78,16 @@ export default function CreateAdminAccountsInOutletForm(
           institution_id: data.institution_id,
         },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
             if (props.onSuccess) {
-              props.onSuccess([
-                {
-                  id: "",
-                  email: "",
-                  first_name: "",
-                  last_name: "",
-                  contact: "",
-                  relationship: "PARENT",
-                },
-              ]); //TODO
+              props.onSuccess({
+                id: "",
+                email: "",
+                first_name: "",
+                last_name: "",
+                contact: "",
+                relationship: "PARENT",
+              }); //TODO
             }
             console.log(
               `successfully submitted ${JSON.stringify(data, null, 2)}`,
@@ -127,16 +110,14 @@ export default function CreateAdminAccountsInOutletForm(
       {
         onSuccess: () => {
           if (props.onSuccess) {
-            props.onSuccess([
-              {
-                id: "",
-                email: "",
-                first_name: "",
-                last_name: "",
-                contact: "",
-                relationship: "PARENT",
-              },
-            ]); // TODO:
+            props.onSuccess({
+              id: "",
+              email: "",
+              first_name: "",
+              last_name: "",
+              contact: "",
+              relationship: "PARENT",
+            });
           }
           console.log(
             `successfully submitted ${JSON.stringify(data, null, 2)}`,
@@ -145,6 +126,7 @@ export default function CreateAdminAccountsInOutletForm(
       },
     );
   };
+
   return (
     <form
       className='grid grid-cols-2 gap-6 py-4'

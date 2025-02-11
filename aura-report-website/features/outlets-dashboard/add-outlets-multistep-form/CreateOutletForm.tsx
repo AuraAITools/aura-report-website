@@ -2,7 +2,7 @@ import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { SubmitFormButton } from "@/features/students-dashboard/create-client-account-form/SubmitFormButton";
-import { useCreateOutletInInstitution } from "@/lib/hooks/useOutlets";
+import { OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseOutlet, BaseOutletSchema } from "@/types/data/Outlet";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -25,7 +25,7 @@ export default function CreateOutletForm(props: FormCallbacks) {
   } = useForm<FormFields>({
     // resolver: zodResolver(formFieldSchema),
   });
-  const { mutate, isPending } = useCreateOutletInInstitution();
+  const { mutate, isPending } = OutletsApis.useCreateOutletInInstitution();
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     mutate(data, {

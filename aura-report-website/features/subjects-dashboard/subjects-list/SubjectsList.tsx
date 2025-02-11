@@ -1,10 +1,11 @@
 "use client";
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import LoadingComponent from "@/components/ui/loading/LoadingComponent";
 import {
-  useCreateSubject,
-  useDeleteSubject,
-  useGetAllSubjects,
-} from "@/lib/hooks/useSubjects";
+  SubjectsApi,
+  useCreateSubjectInInstitution,
+  useDeleteSubjectInInstitution,
+} from "@/lib/hooks/subject-queries";
 import { BaseSubject } from "@/types/data/Subject";
 import { generateKey } from "@/utils/id";
 import { Cross1Icon } from "@radix-ui/react-icons";
@@ -28,9 +29,11 @@ function useSubjectsList() {
   return subjects;
 }
 
-function SubjectsList(props: PropsWithChildren) {
-  const { data: subjects, status } = useGetAllSubjects();
-
+function SubjectsList({ children }: PropsWithChildren) {
+  const { currentInstitution } = useInstitutionAndOutletsContext();
+  const { data: subjects, status } = SubjectsApi.useGetAllSubjectsOfInstitution(
+    currentInstitution?.id,
+  );
   if (status === "pending") {
     return (
       <LoadingComponent
@@ -52,7 +55,7 @@ function SubjectsList(props: PropsWithChildren) {
 
   return (
     <SubjectListContext.Provider value={{ subjects }}>
-      <Container>{props.children}</Container>;
+      <Container>{children}</Container>
     </SubjectListContext.Provider>
   );
 }
@@ -111,7 +114,7 @@ function SubjectsListItem(props: SubjectsListItemProps) {
 }
 
 function SubjectsListButton() {
-  const { mutate } = useCreateSubject();
+  const { mutate } = useCreateSubjectInInstitution();
   const [subjectName, setSubjectName] = useState<string>("");
   function addSubject() {
     let subject: Omit<BaseSubject, "id"> = {
@@ -141,7 +144,7 @@ type DeleteListButtonProps = {
   id: string;
 };
 function DeleteListButton(props: DeleteListButtonProps) {
-  const { mutate } = useDeleteSubject();
+  const { mutate } = useDeleteSubjectInInstitution();
 
   function deleteSubject(id: string) {
     mutate(id);

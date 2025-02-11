@@ -8,7 +8,7 @@ export default function CreateOutletsMultiStepFormDialog() {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className='group inline-flex h-[35px] gap-2 items-center rounded bg-orange-300 px-[15px] font-medium hover:bg-orange-400'>
+        <button className='group inline-flex h-[30px] gap-2 items-center rounded bg-orange-300 px-[15px] font-medium hover:bg-orange-400'>
           <PlusCircledIcon className='size-6 text-white group-hover:text-slate-50' />
           <p className='text-white group-hover:text-slate-50'>Add New Outlet</p>
         </button>

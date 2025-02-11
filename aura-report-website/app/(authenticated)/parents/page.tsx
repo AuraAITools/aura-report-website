@@ -1,4 +1,11 @@
 "use client";
+
+import ParentsTable from "@/features/parents-dashboard/parents-table/ParentsTable";
+
 export default function AccountsPage() {
-  return <div>accounts page</div>;
+  return (
+    <div>
+      <ParentsTable />
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
-import { InstitutionApi } from "@/lib/hooks/institution-queries";
-import { OutletApis } from "@/lib/hooks/outlet-queries";
+import { InstitutionsApi } from "@/lib/hooks/institutions-queries";
+import { OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseInstitution } from "@/types/data/Institution";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { useSession } from "next-auth/react";
@@ -48,32 +48,38 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     return <UnauthenticatedScreen />;
   }
 
+  console.log(`asf ${JSON.stringify(session.user.ext_attrs.tenant_ids)}`);
   // get institutions
   const {
-    data: institutions,
-    isError,
+    data: institutions = [],
+    isError: fetchInstitutionError,
     isPending: fetchInstitutionIsPending,
     refetch: refetchInstitutions,
-  } = InstitutionApi.getInstitutionByIds(session.user.ext_attrs.tenant_ids);
+  } = InstitutionsApi.useGetInstitutionByIds(session.user.ext_attrs.tenant_ids);
 
   // get outlets
   const {
     data: outlets = [],
-    isError: isOutletError,
+    isError: fetchOutletError,
     isPending: fetchOutletsPending,
-  } = OutletApis.getAllOutletsOfInstitutionIds(
+  } = OutletsApis.useGetAllOutletsOfInstitutionIds(
     session.user.ext_attrs.tenant_ids,
   );
 
   // set curr institution
   useEffect(() => {
+    console.log("Institutions effect triggered", {
+      currentInstitution,
+      institutions,
+      hasUndefined: institutions.some((inst) => inst === undefined),
+    });
+
     if (
       !currentInstitution &&
-      !institutions.some((instPromise) => instPromise === undefined) &&
-      institutions.length > 0
+      institutions.length > 0 &&
+      institutions.every((inst) => inst !== undefined)
     ) {
       setCurrentInstitution(institutions[0]);
-      console.log(`${JSON.stringify(institutions, null, 2)}`);
     }
   }, [institutions]);
 
@@ -122,14 +128,20 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
   function changeCurrentOutlet(outlet: BaseOutletContext) {
     setCurrentOutlet(outlet);
   }
-  let fetchStatus: StatusType =
-    institutions.some((instPromise) => instPromise === undefined) ||
-    outlets.some((outletPromise) => outletPromise === undefined) ||
+
+  let fetchStatus: StatusType = "pending";
+  fetchStatus =
+    institutions.some((instPromise) => !instPromise) ||
+    outlets.some((outletPromise) => !outletPromise) ||
     fetchInstitutionIsPending ||
     fetchOutletsPending ||
     !currentInstitution
       ? "pending"
       : "success";
+
+  if (fetchInstitutionError || fetchOutletError) {
+    fetchStatus = "error";
+  }
 
   return (
     <InstitutionAndOutletContext.Provider

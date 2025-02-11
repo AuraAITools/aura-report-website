@@ -1,3 +1,4 @@
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -6,44 +7,47 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import { StudentWithAssociations } from "@/types/data/Student";
+import RegisterStudentButton from "@/features/students-dashboard/student-filter-table/RegisterStudentButton";
+import { EducatorsApis } from "@/lib/hooks/educators-queries";
+import { BaseEducatorClientSchema } from "@/types/data/Educator";
 import { useMemo } from "react";
-import RegisterStudentButton from "./RegisterStudentButton";
 
-type StudentsFilterTableProps = {
-  students: StudentWithAssociations[];
-  refetch: () => void;
-};
-export default function StudentsFilterTable({
-  students,
-  refetch,
-}: StudentsFilterTableProps) {
-  const columns = useMemo<TableColumnDef<StudentWithAssociations>[]>(
+export default function EducatorTable() {
+  const { currentInstitution } = useInstitutionAndOutletsContext();
+  const { data: educatorClients = [], refetch } =
+    EducatorsApis.useGetAllEducatorClientsFromInstitution(
+      currentInstitution?.id,
+    );
+
+  // TODO: add columns for courses taught and total students under educator
+  const columns = useMemo<TableColumnDef<BaseEducatorClientSchema>[]>(
     () => [
       {
-        accessorKey: "name",
+        accessorKey: "educator.name",
         header: ({ table }) => <span>NAME</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "level.name",
-        header: ({ table }) => <span>LEVEL</span>,
+        accessorKey: "educator.employment_type",
+        header: ({ table }) => <span>EMPLOYMENT TYPE</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
         accessorFn: (row) => (
           <ConcatenatedLinksList
-            links={row.courses.map((c: { name: any }) => c.name)}
+            links={row.educator.levels.map((lvl) => lvl.name)}
           />
         ),
-        id: "courses",
-        header: ({ table }) => <span>CLASSES ENROLLED</span>,
+        id: "level",
+        header: ({ table }) => <span>LEVEL(S)</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
         accessorFn: (row) => (
-          <ConcatenatedLinksList links={row.outlets.map((o) => o.name)} />
+          <ConcatenatedLinksList
+            links={row.educator.outlets.map((o) => o.name)}
+          />
         ),
         id: "outlet",
         header: ({ table }) => <span>OUTLET(S)</span>,
@@ -51,24 +55,20 @@ export default function StudentsFilterTable({
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorFn: (row) => (
-          <div>
-            <p>{row.relationship}</p>
-            <p>{row.name}</p>
-            <p>{row.contact}</p>
-          </div>
-        ),
-        id: "contact",
+        accessorKey: "contact",
         header: ({ table }) => <span>CONTACT</span>,
-        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
-        filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
+        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
     ],
     [],
   );
   return (
     <div className='p-4'>
-      <FilterTableRoot data={students} columns={columns} refreshData={refetch}>
+      <FilterTableRoot
+        data={educatorClients}
+        columns={columns}
+        refreshData={refetch}
+      >
         <div className='flex justify-between bg-white p-4 rounded-xl'>
           <GlobalFilterInput />
           <PaginationBar />

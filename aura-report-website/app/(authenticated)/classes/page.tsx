@@ -2,7 +2,7 @@
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
-import CreateClassesForm from "@/features/classes-dashboard/create-classes-form";
+import CreateClassesForm from "@/features/classes-dashboard/CreateCoursesForm";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -10,7 +10,7 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import useClasses from "@/lib/hooks/useClasses";
+import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { CourseWithAssociations } from "@/types/data/Course";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
@@ -23,7 +23,10 @@ export default function ClassesPage() {
     data: classes,
     status,
     refetch,
-  } = useClasses(currentInstitution?.id ?? "", currentOutlet?.id ?? "");
+  } = CoursesApis.useGetAllCoursesFromOutlet(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
   const columnDefs: TableColumnDef<CourseWithAssociations>[] = useMemo<
     TableColumnDef<CourseWithAssociations>[]
   >(
@@ -49,23 +52,15 @@ export default function ClassesPage() {
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "end_time",
-        header: ({ table }) => <span>End Time</span>,
+        accessorKey: "lesson_number_frequency",
+        header: ({ table }) => <span>Frequency</span>,
+        cell: ({ cell, row }) => <div>{cell.getValue()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "lesson_freq",
-        header: ({ table }) => <span>Lesson Frequency</span>,
-        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
-      },
-      {
-        accessorKey: "lesson_freq_day",
-        header: ({ table }) => <span>Day</span>,
-        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
-      },
-      {
-        accessorKey: "lesson_freq_unit",
-        header: ({ table }) => <span>Unit</span>,
+        accessorKey: "lesson_weekly_frequency",
+        header: ({ table }) => <span>weekly Frequency</span>,
+        cell: ({ cell, row }) => <div>{cell.getValue()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
@@ -74,7 +69,7 @@ export default function ClassesPage() {
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "level.name",
+        accessorKey: "level",
         header: ({ table }) => <span>Level</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
@@ -111,6 +106,7 @@ export default function ClassesPage() {
         <FilterTableHeaders />
         <FilterTableContent />
       </FilterTableRoot>
+      <CreateClassesForm />
     </div>
   );
 }

@@ -1,4 +1,13 @@
-import { BaseStudent } from "@/types/data/Student";
+import { BaseAccount } from "@/types/data/Account";
+import { BaseCourse } from "@/types/data/Course";
+import { BaseLevel } from "@/types/data/Level";
+import { BaseOutlet } from "@/types/data/Outlet";
+import {
+  BaseStudent,
+  BaseStudentSchema,
+  StudentWithAssociations,
+} from "@/types/data/Student";
+import { z } from "zod";
 import { apiClient } from "../api-client";
 
 export async function getAllStudentsFromOutlet(
@@ -10,4 +19,61 @@ export async function getAllStudentsFromOutlet(
   );
 
   return studentsPromise.data;
+}
+
+export async function getAllStudentsFromInstitution(institutionId: string) {
+  const studentsPromise = await apiClient.get<StudentWithAssociations[]>(
+    `/api/institutions/${institutionId}/students`,
+  );
+
+  return studentsPromise.data;
+}
+
+export async function createStudentClientAccount(
+  institutionId: string,
+  student_client_account: Omit<BaseAccount, "id">,
+) {
+  let response = await apiClient.post<BaseStudent>(
+    `/api/institutions/${institutionId}/accounts/student-clients`,
+    JSON.stringify(student_client_account),
+  );
+  console.log(
+    `created student_client_account ${JSON.stringify(response.data)}`,
+  );
+  return response.data;
+}
+
+export const CreateStudentRequestBodySchema = BaseStudentSchema.omit({
+  relationship: true,
+  id: true,
+  contact: true,
+}).extend({
+  level_id: z.string().uuid(),
+  course_ids: z.string().uuid().array(),
+});
+
+export type CreateStudentRequestBody = z.infer<
+  typeof CreateStudentRequestBodySchema
+>;
+
+export async function createStudentInAccount(
+  institution_id: string,
+  account_id: string,
+  student: CreateStudentRequestBody,
+) {
+  let response = await apiClient.post<
+    BaseStudent & {
+      current_level: string;
+      level: BaseLevel;
+      outlets: BaseOutlet[];
+      courses: BaseCourse[];
+    }
+  >(
+    `/api/institutions/${institution_id}/accounts/${account_id}/students`,
+    JSON.stringify(student),
+  );
+  console.log(
+    `created student_client_account ${JSON.stringify(response.data)}`,
+  );
+  return response.data;
 }

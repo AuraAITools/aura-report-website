@@ -1,16 +1,28 @@
 import { BaseSubject } from "@/types/data/Subject";
+import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import {
-  createSubject,
   deleteSubject,
-  getAllSubjects,
+  getAllSubjectsOfInstitution,
 } from "../requests/subjects";
+import { institutionQueryKeys } from "./institutions-queries";
+const subjectQueryKeys = queryKeyFactory("subjects");
+function useGetAllSubjectsOfInstitution(institutionId?: string) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId) return Promise.reject("institutionId is undefined");
+      return getAllSubjectsOfInstitution(institutionId);
+    },
+    queryKey: [institutionQueryKeys.all, institutionId, subjectQueryKeys.lists],
+  });
+}
 
+// TODO: implement the create function
 type CreateSubjectMutationContext = {
   previousData: BaseSubject[];
 };
-export function useCreateSubject() {
+export function useCreateSubjectInInstitution() {
   const queryClient = useQueryClient();
   return useMutation<
     BaseSubject, // data returned on success
@@ -18,7 +30,7 @@ export function useCreateSubject() {
     Omit<BaseSubject, "id">, // variable passed in to the mutate function
     CreateSubjectMutationContext // context to be passed
   >({
-    mutationFn: createSubject,
+    mutationFn: async () => {}, // TODO: createSubject,
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created subject ${JSON.stringify(data)}`);
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
@@ -63,20 +75,14 @@ export function useCreateSubject() {
   });
 }
 
-export function useGetAllSubjects() {
-  return useQuery({
-    queryFn: getAllSubjects,
-    queryKey: ["subjects"],
-  });
-}
-
+// TODO: implement delete function
 type DeleteSubjectMutationContext = {
   previousData: BaseSubject[];
 };
-export function useDeleteSubject() {
+export function useDeleteSubjectInInstitution() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string, DeleteSubjectMutationContext>({
-    mutationFn: deleteSubject,
+    mutationFn: () => deleteSubject(),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
@@ -117,3 +123,9 @@ export function useDeleteSubject() {
     },
   });
 }
+
+export const SubjectsApi = {
+  useGetAllSubjectsOfInstitution,
+  useCreateSubjectInInstitution,
+  useDeleteSubjectInInstitution,
+};

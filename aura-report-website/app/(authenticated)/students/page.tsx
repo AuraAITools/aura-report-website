@@ -2,16 +2,16 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import LoadingComponent from "@/components/ui/loading/LoadingComponent";
 import StudentsFilterTable from "@/features/students-dashboard/student-filter-table/StudentsFilterTable";
-import { useGetAllStudents } from "@/lib/hooks/useStudents";
+import { StudentsApis } from "@/lib/hooks/students-queries";
 
 export default function StudentsPage() {
+  const { currentInstitution } = useInstitutionAndOutletsContext();
   const {
     status: fetchingStudents,
     error,
     data: students,
     refetch,
-  } = useGetAllStudents();
-  const { currentInstitution } = useInstitutionAndOutletsContext();
+  } = StudentsApis.useGetAllStudentsFromInstitution(currentInstitution?.id);
 
   if (fetchingStudents == "pending") {
     return (
@@ -36,7 +36,11 @@ export default function StudentsPage() {
     );
   }
 
-  return <StudentsFilterTable students={students} refetch={refetch} />;
+  return (
+    <div>
+      <StudentsFilterTable students={students} refetch={refetch} />
+    </div>
+  );
 }
 
 function EmptyListDisplay() {

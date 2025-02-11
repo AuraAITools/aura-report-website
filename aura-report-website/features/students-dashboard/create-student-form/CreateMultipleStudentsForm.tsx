@@ -1,8 +1,9 @@
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import MultiTabLayout from "@/components/ui/multi-tab-layout/MultiTabLayout";
-import { BaseCourseSchema } from "@/types/data/Course";
-import { BaseLevelSchema } from "@/types/data/Level";
-import { BaseStudentSchema } from "@/types/data/Student";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { CoursesApis } from "@/lib/hooks/courses-queries";
+import { LevelsApis } from "@/lib/hooks/levels-queries";
+import { StudentsApis } from "@/lib/hooks/students-queries";
+import { CreateStudentRequestBodySchema } from "@/lib/requests/students";
 import {
   FormProvider,
   SubmitHandler,
@@ -18,21 +19,14 @@ export type CreateMultipleStudentsFormProps = {
   onFailure?: () => void;
   onError?: () => void;
   accountEmail: string;
+  accountId: string;
 };
 
-export const CreateStudentFormFieldsSchema = BaseStudentSchema.omit({
-  id: true,
-}).extend({
-  level: BaseLevelSchema.omit({ id: true }),
-  courses: BaseCourseSchema.pick({ name: true, start_date: true }).array(), // TODO: change to enrolled course
-});
-
-export type CreateStudentFormFields = z.infer<
-  typeof CreateStudentFormFieldsSchema
->;
-
 export const MultipleStudentFormFieldsSchema = z.object({
-  students: z.array(CreateStudentFormFieldsSchema),
+  students: CreateStudentRequestBodySchema.extend({
+    institution_id: z.string().uuid(),
+    account_id: z.string().uuid(),
+  }).array(),
 });
 
 export type MultipleStudentFormFields = z.infer<
@@ -42,20 +36,32 @@ export type MultipleStudentFormFields = z.infer<
 export function CreateMultipleStudentsForm(
   props: CreateMultipleStudentsFormProps,
 ) {
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
+  const { data: levels = [] } = LevelsApis.useGetAllLevelsOfInstitution(
+    currentInstitution?.id,
+  );
+  const { data: availableCourses = [] } =
+    CoursesApis.useGetAllCoursesFromOutlet(
+      currentInstitution?.id,
+      currentOutlet?.id,
+    );
+
+  const { mutate: mutateStudent } =
+    StudentsApis.useCreateStudentInStudentClientAccount();
+
   const methods = useForm<MultipleStudentFormFields>({
     defaultValues: {
       students: [
         {
-          email: props.accountEmail,
-          courses: [
-            {
-              name: "",
-            },
-          ],
+          institution_id: currentInstitution?.id,
+          account_id: props.accountId,
+          course_ids: [],
+          level_id: "",
         },
       ],
     },
-    resolver: zodResolver(MultipleStudentFormFieldsSchema),
+    // resolver: zodResolver(MultipleStudentFormFieldsSchema),
   });
 
   const { control, handleSubmit } = methods;
@@ -67,6 +73,11 @@ export function CreateMultipleStudentsForm(
 
   const onSubmit: SubmitHandler<MultipleStudentFormFields> = (data) => {
     console.log(`submitted form ${JSON.stringify(data)}`);
+    data.students.map((student) => {
+      mutateStudent({
+        ...student,
+      });
+    });
     if (props.onSuccess) {
       props.onSuccess();
     }
@@ -88,7 +99,20 @@ export function CreateMultipleStudentsForm(
                   defaultTitle={`Student #${idx + 1}`.toUpperCase()}
                 />
               ),
-              content: <CreateStudentForm index={idx} />,
+              content: (
+                <CreateStudentForm
+                  accountEmail={props.accountEmail}
+                  index={idx}
+                  levelOptions={levels.map((lvl) => ({
+                    id: lvl.id,
+                    value: lvl.name,
+                  }))}
+                  courseOptions={availableCourses.map((c) => ({
+                    id: c.id,
+                    value: c.name,
+                  }))}
+                />
+              ),
               key: field.id,
               onCrossIconClick: () => {
                 remove(idx);
@@ -99,14 +123,14 @@ export function CreateMultipleStudentsForm(
           buttonTitle={"Add more students"}
           onClick={() =>
             append({
-              email: "",
-              level: {
-                name: "",
-              },
-              courses: [],
+              email: props.accountEmail,
+              level_id: "",
+              course_ids: [],
               name: "",
-              dateOfBirth: new Date(),
-              currentSchool: "",
+              date_of_birth: new Date(),
+              current_school: "",
+              institution_id: currentInstitution?.id || "",
+              account_id: props.accountId,
             })
           }
         />

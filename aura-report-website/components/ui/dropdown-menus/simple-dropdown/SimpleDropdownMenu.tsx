@@ -41,7 +41,7 @@ export function SimpleDropdownMenu({
             return (
               <DropdownMenu.Item
                 key={generateKey("dropdown", o.title, idx.toString())}
-                className='group relative flex h-[25px] select-none text-black hover:text-white items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none outline-none data-[disabled]:pointer-events-none'
+                className='group relative flex h-[25px] select-none text-black hover:text-white hover:bg-orange-400 items-center rounded-[3px] pl-[25px] pr-[5px] text-[13px] leading-none outline-none data-[disabled]:pointer-events-none'
                 onClick={o.onClick}
               >
                 {o.title}
