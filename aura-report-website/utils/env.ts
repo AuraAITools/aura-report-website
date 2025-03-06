@@ -6,7 +6,7 @@ const envSchema = z.object({
   KEYCLOAK_CLIENT_SECRET: z.string(),
   KEYCLOAK_ISSUER: z.string().url(),
   NODE_ENV: z.string(),
-  REPORT_SERVICE_URL: z.string().url(),
+  NEXT_PUBLIC_REPORT_SERVICE_URL: z.string().url(),
 });
 
 type EnvType = z.infer<typeof envSchema>;
@@ -18,7 +18,7 @@ export const env: EnvType = {
   KEYCLOAK_CLIENT_SECRET: process.env.KEYCLOAK_CLIENT_SECRET!,
   KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER!,
   NODE_ENV: process.env.NODE_ENV,
-  REPORT_SERVICE_URL: process.env.REPORT_SERVICE_URL!,
+  NEXT_PUBLIC_REPORT_SERVICE_URL: process.env.NEXT_PUBLIC_REPORT_SERVICE_URL!,
 };
 
 export default envSchema.parse(env);

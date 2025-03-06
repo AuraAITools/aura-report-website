@@ -11,7 +11,7 @@ const nextConfig = {
       fallback: [
         {
           source: "/api/:path*",
-          destination: `${process.env.REPORT_SERVICE_URL}/api/v1/:path*`,
+          destination: `${process.env.NEXT_PUBLIC_REPORT_SERVICE_URL}/api/v1/:path*`,
         },
       ],
     };
