@@ -5,6 +5,7 @@
  * nextjs server will rewrite incoming requests from and proxy it to the API server
  */
 const nextConfig = {
+  output: "standalone", // creates minimal server during build (server.js) and only includes required deps. everything needed to run is in .next/standalone directory
   async rewrites() {
     return {
       // if request does not match any existing routes provided by nextjs, send request to external backend

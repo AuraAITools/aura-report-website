@@ -1,40 +1,42 @@
-FROM node:20.15-alpine AS base
-RUN apk add --no-cache g++ make py3-pip libc6-compat
+# Build dependencies stage
+FROM node:20.15-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-EXPOSE 3000
+RUN apk add --no-cache g++ make py3-pip libc6-compat
+RUN npm ci
 
-FROM base AS builder
+# Builder stage
+FROM node:20.15-alpine AS builder
+ENV NEXT_PUBLIC_REPORT_SERVICE_URL=https://api.auratest.dev
 WORKDIR /app
-# prevents copying of node_modules if present
-RUN npm install
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-
-FROM base AS production
+# Production stage
+FROM node:20.15-alpine AS production
 WORKDIR /app
-
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_REPORT_SERVICE_URL=https://api.auratest.dev
 
-# add non-root user nexths of group nodejs to run the app for security user
+# Only copy production necessities
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Use a non-root user
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 USER nextjs
 
+EXPOSE 3000
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
+CMD ["node", "server.js"]
 
-# RUN npm ci
-
-CMD npm start
-
-FROM base AS dev
-ENV NODE_ENV=development
-RUN npm install 
+# Development stage (separated completely)
+FROM node:20.15-alpine AS dev
+WORKDIR /app
+COPY package*.json ./
+RUN apk add --no-cache g++ make py3-pip libc6-compat
+RUN npm install
 COPY . .
 CMD ["npm", "run", "dev"]
