@@ -2,7 +2,6 @@ import MultiStepLayout from "@/components/ui/multi-step-layout/MultiStepLayout";
 import { useMultiStepLayout } from "@/hooks/useMultiStepLayout";
 import { BaseAccount } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
-import { generateKey } from "@/utils/id";
 import { useState } from "react";
 import CreateAdminAccountsInOutletForm from "./CreateAdminAccountsInOutletForm";
 import CreateOutletForm from "./CreateOutletForm";
@@ -13,8 +12,8 @@ export default function AddOutletsMultiStepForm() {
     false,
     false,
   ]);
-  const [createdOutletAdmins, setCreatedOutletAdmins] = useState<
-    BaseAccount[] | undefined
+  const [createdOutletAdmin, setCreatedOutletAdmin] = useState<
+    BaseAccount | undefined
   >(undefined);
 
   const [createdOutlet, setCreatedOutlet] = useState<BaseOutlet | undefined>(
@@ -29,7 +28,7 @@ export default function AddOutletsMultiStepForm() {
     />,
     <AddOutletsFormCompletion
       createdOutlet={createdOutlet}
-      createdOutletAdmins={createdOutletAdmins}
+      createdOutletAdmin={createdOutletAdmin}
     />,
   ]);
 
@@ -50,8 +49,8 @@ export default function AddOutletsMultiStepForm() {
    * on second form submit success, return successfully created admins
    */
 
-  function onSecondFormSuccess(createdOutletAdmins: BaseAccount[]) {
-    setCreatedOutletAdmins(createdOutletAdmins);
+  function onSecondFormSuccess(createdOutletAdmin: BaseAccount) {
+    setCreatedOutletAdmin(createdOutletAdmin);
     setFormIsCompleted((prev) => {
       const newIsCompleted = [...prev];
       newIsCompleted[currentIndex] = true;
@@ -75,26 +74,18 @@ export default function AddOutletsMultiStepForm() {
 
 type AddOutletsFormCompletionProps = {
   createdOutlet?: BaseOutlet;
-  createdOutletAdmins?: BaseAccount[];
+  createdOutletAdmin?: BaseAccount;
 };
 export function AddOutletsFormCompletion({
   createdOutlet,
-  createdOutletAdmins,
+  createdOutletAdmin,
 }: AddOutletsFormCompletionProps) {
   return (
     <div>
       You have successfully created outlet{" "}
       <strong>{createdOutlet!.name}</strong>
       with the following admins
-      {createdOutletAdmins!.length > 0 && (
-        <ul>
-          {createdOutletAdmins!.map((coa, idx) => (
-            <li key={generateKey("outlet_admins", coa.id, idx.toString())}>
-              {coa.email}
-            </li>
-          ))}
-        </ul>
-      )}
+      {createdOutletAdmin && createdOutletAdmin.email}
     </div>
   );
 }

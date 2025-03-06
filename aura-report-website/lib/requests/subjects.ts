@@ -9,10 +9,14 @@ export async function getAllSubjectsOfInstitution(institutionId: string) {
   return response.data;
 }
 
-export async function createSubject(
-  institutionId: string,
-  subject: Omit<BaseSubject, "id">,
-) {
+export type CreateSubjectParams = {
+  institutionId: string;
+  subject: Omit<BaseSubject, "id">;
+};
+export async function createSubject({
+  institutionId,
+  subject,
+}: CreateSubjectParams) {
   let response = await apiClient.post<BaseSubject>(
     `/api/institutions/${institutionId}/subjects`,
     JSON.stringify(subject),
@@ -21,7 +25,14 @@ export async function createSubject(
   return response.data;
 }
 
-export async function deleteSubject(institutionId: string, id: string) {
+export type DeleteSubjectParams = {
+  institutionId: string;
+  id: string;
+};
+export async function deleteSubject({
+  institutionId,
+  id,
+}: DeleteSubjectParams) {
   let response = await apiClient.delete(
     `/api/institutions/${institutionId}/subjects/${id}`,
   );
