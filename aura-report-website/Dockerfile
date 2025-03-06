@@ -1,15 +1,8 @@
-# Build dependencies stage
-FROM node:20.15-alpine AS deps
-WORKDIR /app
-COPY package*.json ./
-RUN apk add --no-cache g++ make py3-pip libc6-compat
-RUN npm ci
-
 # Builder stage
 FROM node:20.15-alpine AS builder
 ENV NEXT_PUBLIC_REPORT_SERVICE_URL=https://api.auratest.dev
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -19,9 +12,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Only copy production necessities
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builder /.next/standalone ./
+COPY --from=builder /.next/static ./.next/static
+COPY --from=builder /public ./public
 
 # Use a non-root user
 RUN addgroup -g 1001 -S nodejs

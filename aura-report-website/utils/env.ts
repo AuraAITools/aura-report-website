@@ -21,4 +21,4 @@ export const env: EnvType = {
   NEXT_PUBLIC_REPORT_SERVICE_URL: process.env.NEXT_PUBLIC_REPORT_SERVICE_URL!,
 };
 
-export default envSchema.parse(env);
+export default env;
