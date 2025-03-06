@@ -1,20 +1,22 @@
-FROM node:20.15-alpine as base
+FROM node:20.15-alpine AS base
 RUN apk add --no-cache g++ make py3-pip libc6-compat
 WORKDIR /app
 COPY package*.json ./
 EXPOSE 3000
 
-FROM base as builder
+FROM base AS builder
 WORKDIR /app
-COPY . .
+# prevents copying of node_modules if present
 RUN npm install
+COPY . .
 RUN npm run build
 
 
-FROM base as production
+FROM base AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_REPORT_SERVICE_URL=https://api.auratest.dev
 
 # add non-root user nexths of group nodejs to run the app for security user
 RUN addgroup -g 1001 -S nodejs
@@ -31,8 +33,8 @@ COPY --from=builder /app/public ./public
 
 CMD npm start
 
-FROM base as dev
+FROM base AS dev
 ENV NODE_ENV=development
 RUN npm install 
 COPY . .
-CMD npm run dev
+CMD ["npm", "run", "dev"]

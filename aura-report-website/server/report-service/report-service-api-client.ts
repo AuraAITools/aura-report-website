@@ -13,7 +13,7 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
  * api client used by nextjs proxy to send requests to report service backend
  */
 export const reportServiceApiClient = Axios.create({
-  baseURL: env.REPORT_SERVICE_URL,
+  baseURL: env.NEXT_PUBLIC_REPORT_SERVICE_URL,
 });
 
 reportServiceApiClient.interceptors.request.use(authRequestInterceptor);
