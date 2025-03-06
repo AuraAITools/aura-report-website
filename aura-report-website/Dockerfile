@@ -1,7 +1,8 @@
 # Builder stage
 FROM node:20.15-alpine AS builder
+WORKDIR /app
 ENV NEXT_PUBLIC_REPORT_SERVICE_URL=https://api.auratest.dev
-COPY package*.json ./
+COPY package*.json ./  
 RUN npm install
 COPY . .
 RUN npm run build
@@ -12,9 +13,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Only copy production necessities
-COPY --from=builder /.next/standalone ./
-COPY --from=builder /.next/static ./.next/static
-COPY --from=builder /public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # Use a non-root user
 RUN addgroup -g 1001 -S nodejs
