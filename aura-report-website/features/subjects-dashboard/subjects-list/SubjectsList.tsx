@@ -6,13 +6,14 @@ import {
   useCreateSubjectInInstitution,
   useDeleteSubjectInInstitution,
 } from "@/lib/hooks/subject-queries";
+import { CreateSubjectParams } from "@/lib/requests/subjects";
 import { BaseSubject } from "@/types/data/Subject";
 import { generateKey } from "@/utils/id";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-
+type ExtendedSubject = BaseSubject & { institutionId?: string };
 type SubjectListContext = {
-  subjects: BaseSubject[];
+  subjects: ExtendedSubject[];
 };
 
 const SubjectListContext = createContext<SubjectListContext | undefined>(
@@ -53,8 +54,12 @@ function SubjectsList({ children }: PropsWithChildren) {
     throw new Error("Failed to load subjects list");
   }
 
+  const extendedSubjects = subjects.map((s) => ({
+    ...s,
+    institutionId: currentInstitution?.id,
+  }));
   return (
-    <SubjectListContext.Provider value={{ subjects }}>
+    <SubjectListContext.Provider value={{ subjects: extendedSubjects }}>
       <Container>{children}</Container>
     </SubjectListContext.Provider>
   );
@@ -100,27 +105,39 @@ function SubjectsListDisplay() {
 }
 
 type SubjectsListItemProps = {
-  subject: BaseSubject;
+  subject: ExtendedSubject;
 };
 
-function SubjectsListItem(props: SubjectsListItemProps) {
+function SubjectsListItem({ subject }: SubjectsListItemProps) {
+  if (!subject.institutionId) {
+    return <div>Loading ... </div>;
+  }
   return (
     <ul className='flex w-full bg-orange-300 rounded-lg p-4'>
-      <p className='text-white'>{props.subject.name}</p>
+      <p className='text-white'>{subject.name}</p>
       <div className='mr-auto' />
-      <DeleteListButton id={props.subject.id} />
+      <DeleteListButton id={subject.id} institutionId={subject.institutionId} />
     </ul>
   );
 }
 
 function SubjectsListButton() {
   const { mutate } = useCreateSubjectInInstitution();
+  const { currentInstitution } = useInstitutionAndOutletsContext();
   const [subjectName, setSubjectName] = useState<string>("");
+
+  if (!currentInstitution) {
+    return <div> Loading ...</div>; // FIXME: make better loading default for buttons
+  }
+
+  const institutionId = currentInstitution.id;
   function addSubject() {
-    let subject: Omit<BaseSubject, "id"> = {
-      name: subjectName,
-    };
-    mutate(subject);
+    mutate({
+      institutionId: institutionId,
+      subject: {
+        name: subjectName,
+      },
+    });
     setSubjectName("");
   }
   return (
@@ -141,16 +158,20 @@ function SubjectsListButton() {
 }
 
 type DeleteListButtonProps = {
+  institutionId: string;
   id: string;
 };
-function DeleteListButton(props: DeleteListButtonProps) {
+function DeleteListButton({ institutionId, id }: DeleteListButtonProps) {
   const { mutate } = useDeleteSubjectInInstitution();
 
-  function deleteSubject(id: string) {
-    mutate(id);
+  function deleteSubject() {
+    mutate({
+      institutionId,
+      id,
+    });
   }
   return (
-    <button className='text-white' onClick={() => deleteSubject(props.id)}>
+    <button className='text-white' onClick={deleteSubject}>
       <Cross1Icon />
     </button>
   );

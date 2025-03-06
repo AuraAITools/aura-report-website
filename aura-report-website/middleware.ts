@@ -37,12 +37,11 @@ export default withAuth(
   },
 );
 
-const excludeNextAuthRoutes = "/((?!api/auth).*)";
-const excludeStaticRequests =
-  "/((_next/static|_next/image|favicon.ico|logo.png).*)";
-const allApiRoutes = "/api/:path*";
-
 export const config = {
-  matcher: [excludeStaticRequests, excludeNextAuthRoutes, allApiRoutes], // run middleware
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)", // exclude applying middleware on static resource requests like public images
+    "/((?!api/auth).*)", // exclude applying middleware on next auth routes
+    "/api/:path*", // apply middleware on requests all api routes
+  ],
   // TOFIX: dont know why the middleware still runs on excluded static requests
 };

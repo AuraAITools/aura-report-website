@@ -1,10 +1,9 @@
 import { logoutRequest, refreshTokenRequest } from "@/lib/auth/oidc";
 import env from "@/utils/env";
 import NextAuth, { User } from "next-auth";
-import { JWT } from "next-auth/jwt";
 import { ProviderType } from "next-auth/providers/index";
 import KeycloakProvider from "next-auth/providers/keycloak";
-export const authOptions = NextAuth({
+const authOptions = NextAuth({
   providers: [
     KeycloakProvider({
       clientId: env.KEYCLOAK_CLIENT_ID,

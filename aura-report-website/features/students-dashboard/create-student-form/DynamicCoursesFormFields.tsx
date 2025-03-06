@@ -23,7 +23,10 @@ export function DynamicCoursesFormFields({
     fields: courseFields,
     append,
     remove,
-  } = useFieldArray({ control, name: `students.${studentIdx}.course_ids` });
+  } = useFieldArray({
+    control,
+    name: `students.${studentIdx}.course_ids` as any, // FIXME: fix this ungodly type hack when the time comes
+  });
 
   return (
     <div className={`flex flex-col ${className}`}>

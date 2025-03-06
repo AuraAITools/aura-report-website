@@ -3,7 +3,10 @@ import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import {
+  createSubject,
+  CreateSubjectParams,
   deleteSubject,
+  DeleteSubjectParams,
   getAllSubjectsOfInstitution,
 } from "../requests/subjects";
 import { institutionQueryKeys } from "./institutions-queries";
@@ -27,10 +30,10 @@ export function useCreateSubjectInInstitution() {
   return useMutation<
     BaseSubject, // data returned on success
     Error, // error emitted
-    Omit<BaseSubject, "id">, // variable passed in to the mutate function
+    CreateSubjectParams, // variable passed in to the mutate function
     CreateSubjectMutationContext // context to be passed
   >({
-    mutationFn: async () => {}, // TODO: createSubject,
+    mutationFn: async (params) => createSubject(params),
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created subject ${JSON.stringify(data)}`);
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
@@ -49,7 +52,7 @@ export function useCreateSubjectInInstitution() {
       queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
         let optimisticSubjectObject: BaseSubject = {
           id: nanoid(),
-          name: subject.name,
+          name: subject.subject.name,
         };
         let optimisticSubjects = [...oldSubjects, optimisticSubjectObject];
         console.log(
@@ -81,12 +84,17 @@ type DeleteSubjectMutationContext = {
 };
 export function useDeleteSubjectInInstitution() {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, string, DeleteSubjectMutationContext>({
-    mutationFn: () => deleteSubject(),
+  return useMutation<
+    void,
+    Error,
+    DeleteSubjectParams,
+    DeleteSubjectMutationContext
+  >({
+    mutationFn: (deleteParams) => deleteSubject(deleteParams),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
-    onMutate: async (deletedId: string) => {
+    onMutate: async (params: DeleteSubjectParams) => {
       await queryClient.cancelQueries({ queryKey: ["subjects"] });
 
       // take snapshot of old data
@@ -99,7 +107,7 @@ export function useDeleteSubjectInInstitution() {
       // optimistically remove the user from list
       queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
         let optimisticData = oldSubjects.filter(
-          (subject) => subject.id !== deletedId,
+          (subject) => subject.id !== params.id,
         );
         console.log(
           `optimistically updating new data ${JSON.stringify(optimisticData)}`,

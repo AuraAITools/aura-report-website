@@ -2,7 +2,7 @@
 
 /**
  * reverse proxy configurations
- * nextjs server will rewrite incoming requests from static site and proxy it to the API server
+ * nextjs server will rewrite incoming requests from and proxy it to the API server
  */
 const nextConfig = {
   async rewrites() {
