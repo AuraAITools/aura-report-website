@@ -137,14 +137,16 @@ export default function LevelsPage() {
         columns={columns}
         refreshData={refetch}
       >
-        <div className='flex justify-between bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <DialogButton
-            dialog={<CreateLevelsForm />}
-            buttonTitle='Create Level'
-          />
-          <RefreshDataButton />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <DialogButton
+              dialog={<CreateLevelsForm />}
+              buttonTitle='Create Level'
+            />
+            <RefreshDataButton />
+          </div>
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />

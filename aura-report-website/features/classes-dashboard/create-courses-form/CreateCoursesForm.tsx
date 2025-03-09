@@ -2,6 +2,8 @@
 
 import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
+import SelectMultipleFormField from "@/components/forms/SelectMultipleFormField";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { useCreateCourseInOutlet } from "@/lib/hooks/courses-queries";
@@ -117,12 +119,12 @@ export default function CreateClassesForm() {
           type='text'
           className='col-span-4 row-start-2 px-4'
         />
-        <SelectFormField
+        <SelectMultipleFormField
+          formFieldName={""}
           options={subjects.map((sub) => ({
             value: sub.id,
             display: sub.name,
           }))}
-          multiple // TODO: make a nicer multiple input UI
           {...register("subject_ids")}
           labelText='Subject'
           type='text'
@@ -294,13 +296,13 @@ export default function CreateClassesForm() {
           <div>{errors.lesson_freq_unit.message}</div>
         )} */}
 
-        <button
-          type='submit'
-          className='row-start-6 mx-4 mt-4 col-span-full bg-orange-300 text-white rounded-lg hover:bg-orange-400'
-          disabled={isSubmitting}
-        >
-          Create Class
-        </button>
+        <div className='row-start-6'>
+          <SubmitButton
+            disabled={isSubmitting}
+            buttonTitle={"Create Course"}
+            isSubmitting={isSubmitting}
+          />
+        </div>
       </form>
     </div>
   );

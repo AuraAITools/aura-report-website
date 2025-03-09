@@ -13,11 +13,13 @@ export default function RefreshDataButton() {
   }
 
   return (
-    <button
-      className={`inline-flex rounded p-1 bg-orange-300 text-white size-8 items-center justify-center hover:bg-orange-400`}
-      onClick={loadData}
-    >
-      <UpdateIcon className={`${loading && "animate-spin"}`} />
-    </button>
+    <div className='flex justify-center items-center'>
+      <button
+        className={`flex justify-center items-center w-[50px] h-[50px] rounded-md bg-black text-white hover:text-slate-200`}
+        onClick={loadData}
+      >
+        <UpdateIcon className={`size-5 ${loading && "animate-spin"}`} />
+      </button>
+    </div>
   );
 }

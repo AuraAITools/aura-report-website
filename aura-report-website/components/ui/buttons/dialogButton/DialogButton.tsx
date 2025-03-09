@@ -10,8 +10,12 @@ export default function DialogButton(props: DialogButtonProps) {
   const { dialog, buttonTitle } = props;
   return (
     <Dialog.Root>
-      <Dialog.Trigger className='bg-orange-300 rounded-md hover:bg-orange-400 text-white p-2 '>
-        <button>{buttonTitle}</button>
+      <Dialog.Trigger
+        className={`flex justify-center items-center min-w-[100px] min-h-[50px] px-2 bg-black text-white rounded-lg hover:text-slate-200`}
+      >
+        <button className='inline-flex justify-center items-center'>
+          {buttonTitle}
+        </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className='fixed inset-0 bg-gray-300 opacity-50' />

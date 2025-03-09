@@ -96,17 +96,21 @@ export default function ClassesPage() {
         columns={columnDefs}
         refreshData={refetch}
       >
-        <div className='flex justify-between items-center bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <DialogButton
-            dialog={<CreateClassesForm />}
-            buttonTitle='Create Classes'
-          />
-          <RefreshDataButton />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <DialogButton
+              dialog={<CreateClassesForm />}
+              buttonTitle='Create Classes'
+            />
+            <RefreshDataButton />
+          </div>
         </div>
-        <FilterTableHeaders />
-        <FilterTableContent />
+        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+          <FilterTableHeaders />
+          <FilterTableContent />
+        </div>
       </FilterTableRoot>
     </div>
   );

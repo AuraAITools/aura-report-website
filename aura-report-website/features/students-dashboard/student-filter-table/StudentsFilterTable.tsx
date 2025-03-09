@@ -70,15 +70,17 @@ export default function StudentsFilterTable({
   return (
     <div className='p-4'>
       <FilterTableRoot data={students} columns={columns} refreshData={refetch}>
-        <div className='flex justify-between bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <DialogButton
-            dialog={<MultiStepForm />}
-            buttonTitle={"Create Students"}
-          />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <DialogButton
+              dialog={<MultiStepForm />}
+              buttonTitle={"Create Students"}
+            />
 
-          <RefreshDataButton />
+            <RefreshDataButton />
+          </div>
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />

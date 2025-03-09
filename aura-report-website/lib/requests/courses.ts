@@ -24,11 +24,8 @@ export type CreateCourseParams = CreateCourseRequest & {
   institution_id: string;
   outlet_id: string;
 };
-export async function createCourseInOutlet(
-  createCourseParams: CreateCourseParams,
-) {
-  let { institution_id, outlet_id, ...createCourseRequestBody } =
-    createCourseParams;
+export async function createCourseInOutlet(params: CreateCourseParams) {
+  let { institution_id, outlet_id, ...createCourseRequestBody } = params;
   let response = await apiClient.post<BaseCourse>(
     `/api/institutions/${institution_id}/outlets/${outlet_id}/courses`,
     JSON.stringify(createCourseRequestBody),

@@ -42,11 +42,3 @@ export default function StudentsPage() {
     </div>
   );
 }
-
-function EmptyListDisplay() {
-  return (
-    <div className='flex flex-1 w-full h-full bg-white items-center justify-center'>
-      No students found
-    </div>
-  );
-}

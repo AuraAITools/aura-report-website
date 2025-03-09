@@ -1,5 +1,6 @@
 import Authorization from "@/components/providers/Authorization";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
@@ -13,7 +14,7 @@ import { ExpandedOutlet, OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseEducator } from "@/types/data/Educator";
 import { BaseStudent } from "@/types/data/Student";
 import { useMemo } from "react";
-import CreateOutletsMultiStepFormDialog from "../add-outlets-multistep-form/CreateOutletsMultiStepFormDialog";
+import CreateOutletForm from "../add-outlets-multistep-form/CreateOutletForm";
 
 export default function OutletsTable() {
   const { currentInstitution, currentOutlets, status } =
@@ -127,13 +128,18 @@ export default function OutletsTable() {
         columns={columns}
         refreshData={refetch}
       >
-        <div className='flex justify-between bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <Authorization allowedRoles={["institution-admin"]} hideContent>
-            <CreateOutletsMultiStepFormDialog />
-          </Authorization>
-          <RefreshDataButton />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <Authorization allowedRoles={["institution-admin"]} hideContent>
+              <DialogButton
+                dialog={<CreateOutletForm />}
+                buttonTitle={"Create Outlet"}
+              />
+            </Authorization>
+            <RefreshDataButton />
+          </div>
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
