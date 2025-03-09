@@ -21,7 +21,7 @@ export function CreateSubjectForm() {
   };
   return (
     <form
-      className='grid grid-cols-6 gap-6 py-4'
+      className='grid grid-rows-2 grid-cols-3 gap-6 py-4'
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
@@ -34,15 +34,15 @@ export function CreateSubjectForm() {
             display: currentInstitution?.name ?? "loading",
           },
         ]}
-        className='col-span-2 row-start-1 text-gray-300 pointer-events-none'
+        className='col-span-1 row-start-1 text-gray-300 pointer-events-none'
         errorMessage={errors.name?.message}
       />
       <FormField
         {...register("name")}
         labelText='name'
-        className='col-span-2 row-start-1 text-gray-300 pointer-events-none'
         errorMessage={errors.name?.message}
       />
+      {/* TODO: create reusable submit button */}
       <SubmitFormButton className='col-span-2' loading={isPending}>
         Create
       </SubmitFormButton>
