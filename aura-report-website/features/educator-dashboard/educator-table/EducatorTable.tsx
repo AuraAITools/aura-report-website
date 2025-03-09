@@ -70,15 +70,17 @@ export default function EducatorTable() {
         columns={columns}
         refreshData={refetch}
       >
-        <div className='flex justify-between bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <DialogButton
-            // TODO: create educator form
-            dialog={<MultiStepForm />}
-            buttonTitle={"Create Educator"}
-          />
-          <RefreshDataButton />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <DialogButton
+              // TODO: create educator form
+              dialog={<MultiStepForm />}
+              buttonTitle={"Create Educator"}
+            />
+            <RefreshDataButton />
+          </div>
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
