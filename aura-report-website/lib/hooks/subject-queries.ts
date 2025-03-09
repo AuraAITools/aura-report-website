@@ -1,7 +1,6 @@
 import { BaseSubject } from "@/types/data/Subject";
 import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { nanoid } from "nanoid";
 import {
   createSubject,
   CreateSubjectParams,
@@ -33,37 +32,37 @@ export function useCreateSubjectInInstitution() {
     CreateSubjectParams, // variable passed in to the mutate function
     CreateSubjectMutationContext // context to be passed
   >({
-    mutationFn: async (params) => createSubject(params),
+    mutationFn: createSubject,
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created subject ${JSON.stringify(data)}`);
-      queryClient.invalidateQueries({ queryKey: ["subjects"] });
+      queryClient.invalidateQueries({ queryKey: subjectQueryKeys.all });
     },
-    onMutate: async (subject) => {
-      queryClient.cancelQueries({ queryKey: ["subjects"] });
+    // onMutate: async (subject) => {
+    //   queryClient.cancelQueries({ queryKey: ["subjects"] });
 
-      // take snapshot if old data
-      const previousSubjects = queryClient.getQueryData([
-        "subjects",
-      ]) as BaseSubject[];
-      console.log(
-        `taking snapshot of previous data ${JSON.stringify(previousSubjects)}`,
-      );
-      // optimistically add to list
-      queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
-        let optimisticSubjectObject: BaseSubject = {
-          id: nanoid(),
-          name: subject.subject.name,
-        };
-        let optimisticSubjects = [...oldSubjects, optimisticSubjectObject];
-        console.log(
-          `optimistically updating new data ${JSON.stringify(oldSubjects)}`,
-        );
-        return optimisticSubjects;
-      });
+    //   // take snapshot if old data
+    //   const previousSubjects = queryClient.getQueryData([
+    //     "subjects",
+    //   ]) as BaseSubject[];
+    //   console.log(
+    //     `taking snapshot of previous data ${JSON.stringify(previousSubjects)}`,
+    //   );
+    //   // optimistically add to list
+    //   queryClient.setQueryData(["subjects"], (oldSubjects: BaseSubject[]) => {
+    //     let optimisticSubjectObject: BaseSubject = {
+    //       id: nanoid(),
+    //       name: subject.name,
+    //     };
+    //     let optimisticSubjects = [...oldSubjects, optimisticSubjectObject];
+    //     console.log(
+    //       `optimistically updating new data ${JSON.stringify(oldSubjects)}`,
+    //     );
+    //     return optimisticSubjects;
+    //   });
 
-      // pass snapshot of old data as context, we can use this context to rollback if error
-      return { previousData: previousSubjects };
-    },
+    //   // pass snapshot of old data as context, we can use this context to rollback if error
+    //   return { previousData: previousSubjects };
+    // },
     onError: (err, variables, context) => {
       // conduct rollback
       console.log(`conducting rollback as request failed`);
@@ -132,7 +131,7 @@ export function useDeleteSubjectInInstitution() {
   });
 }
 
-export const SubjectsApi = {
+export const SubjectsApis = {
   useGetAllSubjectsOfInstitution,
   useCreateSubjectInInstitution,
   useDeleteSubjectInInstitution,

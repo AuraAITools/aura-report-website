@@ -10,16 +10,15 @@ export async function getAllSubjectsOfInstitution(institutionId: string) {
 }
 
 export type CreateSubjectParams = {
-  institutionId: string;
-  subject: Omit<BaseSubject, "id">;
-};
-export async function createSubject({
-  institutionId,
-  subject,
-}: CreateSubjectParams) {
+  institution_id: string;
+} & Omit<BaseSubject, "id">;
+export async function createSubject(params: CreateSubjectParams) {
+  const { institution_id, ...subjectBody } = params;
+  console.log(`created subject ${JSON.stringify(params)}`);
+
   let response = await apiClient.post<BaseSubject>(
-    `/api/institutions/${institutionId}/subjects`,
-    JSON.stringify(subject),
+    `/api/institutions/${institution_id}/subjects`,
+    JSON.stringify(subjectBody),
   );
   console.log(`created subject ${JSON.stringify(response.data)}`);
   return response.data;

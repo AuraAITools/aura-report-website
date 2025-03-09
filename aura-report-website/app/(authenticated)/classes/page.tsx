@@ -1,8 +1,9 @@
 "use client";
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
-import CreateClassesForm from "@/features/classes-dashboard/CreateCoursesForm";
+import CreateClassesForm from "@/features/classes-dashboard/create-courses-form/CreateCoursesForm";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -12,8 +13,6 @@ import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { CourseWithAssociations } from "@/types/data/Course";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { useMemo } from "react";
 
 export default function ClassesPage() {
@@ -100,43 +99,15 @@ export default function ClassesPage() {
         <div className='flex justify-between items-center bg-white p-4 rounded-xl'>
           <GlobalFilterInput />
           <PaginationBar />
-          <CreateClassButton />
+          <DialogButton
+            dialog={<CreateClassesForm />}
+            buttonTitle='Create Classes'
+          />
           <RefreshDataButton />
         </div>
         <FilterTableHeaders />
         <FilterTableContent />
       </FilterTableRoot>
-      <CreateClassesForm />
     </div>
-  );
-}
-
-function CreateClassButton() {
-  return (
-    <Dialog.Root>
-      <Dialog.Trigger className='bg-orange-300 rounded-md hover:bg-orange-400 text-white p-2 '>
-        <button>Create</button>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className='fixed inset-0 bg-gray-300 opacity-50' />
-        <Dialog.Content className='fixed flex flex-col left-1/2 top-1/2 max-h-[85vh] w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none overflow-auto'>
-          <CloseDialogButton />
-          <CreateClassesForm />
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
-}
-
-function CloseDialogButton() {
-  return (
-    <Dialog.Close asChild>
-      <button
-        className='absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-black hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none'
-        aria-label='Close'
-      >
-        <Cross2Icon className='size-6' />
-      </button>
-    </Dialog.Close>
   );
 }

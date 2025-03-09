@@ -4,15 +4,20 @@ import { BaseLevel } from "@/types/data/Level";
 import { BaseStudent } from "@/types/data/Student";
 import { BaseSubject } from "@/types/data/Subject";
 import { queryKeyFactory } from "@/utils/query-key-factory";
-import { useQueries, useQuery } from "@tanstack/react-query";
 import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  createLevelInInstitution,
   getAllCoursesOfLevelInOutlet,
   getAllEducatorsOfLevelInOutlet,
   getAllLevelsOfInstitution,
   getAllStudentsOfLevelInOutlet,
   getAllSubjectsOfLevelInInstitution,
 } from "../requests/levels";
-import { institutionQueryKeys } from "./institutions-queries";
 
 export type ExpandedLevel = BaseLevel & {
   courses: BaseCourse[];
@@ -22,7 +27,23 @@ export type ExpandedLevel = BaseLevel & {
 };
 
 export const levelsQueryKeys = queryKeyFactory("levels");
-
+function useCreateLevelOfInstitution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createLevelInInstitution,
+    onError: (error, variables) => {
+      console.log(`rolling back optimistic update with id`);
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("success");
+      queryClient.invalidateQueries({ queryKey: levelsQueryKeys.lists() });
+    },
+    onSettled: (data, error, variables, context) => {
+      console.log("settled");
+    },
+    // refetchInterval: 1*1000
+  });
+}
 function useGetAllLevelsOfInstitution(institutionId?: string) {
   return useQuery({
     queryFn: async () => {
@@ -31,11 +52,7 @@ function useGetAllLevelsOfInstitution(institutionId?: string) {
       }
       return getAllLevelsOfInstitution(institutionId);
     },
-    queryKey: [
-      institutionQueryKeys.all,
-      institutionId,
-      levelsQueryKeys.lists(),
-    ],
+    queryKey: levelsQueryKeys.lists(),
     enabled: !!institutionId,
   });
 }
@@ -112,6 +129,7 @@ async function getExpandedLevel(
 }
 
 export const LevelsApis = {
+  useCreateLevelOfInstitution,
   useGetAllLevelsOfInstitution,
   useGetAllExpandedLevelsOfInstitution,
 };

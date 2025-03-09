@@ -25,7 +25,7 @@ export default function SelectFormField(props: SelectFormFieldProps) {
         {options &&
           options.map((opt, idx) => (
             <option
-              key={generateKey("_opt", "", idx.toString())}
+              key={generateKey("_opt", opt.value, idx.toString())}
               value={opt.value}
             >
               {opt.display}

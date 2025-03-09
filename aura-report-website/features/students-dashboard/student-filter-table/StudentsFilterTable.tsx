@@ -1,3 +1,4 @@
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -8,7 +9,7 @@ import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { StudentWithAssociations } from "@/types/data/Student";
 import { useMemo } from "react";
-import RegisterStudentButton from "./RegisterStudentButton";
+import MultiStepForm from "../multistep-form/MultiStepForm";
 
 type StudentsFilterTableProps = {
   students: StudentWithAssociations[];
@@ -72,7 +73,11 @@ export default function StudentsFilterTable({
         <div className='flex justify-between bg-white p-4 rounded-xl'>
           <GlobalFilterInput />
           <PaginationBar />
-          <RegisterStudentButton />
+          <DialogButton
+            dialog={<MultiStepForm />}
+            buttonTitle={"Create Students"}
+          />
+
           <RefreshDataButton />
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>

@@ -6,7 +6,7 @@ import { useInstitutionAndOutletsContext } from "@/components/providers/Institut
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { useCreateCourseInOutlet } from "@/lib/hooks/courses-queries";
 import { LevelsApis } from "@/lib/hooks/levels-queries";
-import { SubjectsApi } from "@/lib/hooks/subject-queries";
+import { SubjectsApis } from "@/lib/hooks/subject-queries";
 import { CreateCourseParams } from "@/lib/requests/courses";
 import { DAYS, PRICE_FREQUENCIES } from "@/types/data/Course";
 import { generateKey } from "@/utils/id";
@@ -44,7 +44,7 @@ export default function CreateClassesForm() {
   const { data: levels, status: levelFetchingStatus } =
     LevelsApis.useGetAllLevelsOfInstitution(currentInstitution?.id);
   const { data: subjects, status: subjectFetchingStatus } =
-    SubjectsApi.useGetAllSubjectsOfInstitution(currentInstitution?.id);
+    SubjectsApis.useGetAllSubjectsOfInstitution(currentInstitution?.id);
   const { mutate } = useCreateCourseInOutlet();
 
   const {

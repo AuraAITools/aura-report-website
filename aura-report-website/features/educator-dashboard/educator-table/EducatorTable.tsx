@@ -1,4 +1,5 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -7,7 +8,7 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import RegisterStudentButton from "@/features/students-dashboard/student-filter-table/RegisterStudentButton";
+import MultiStepForm from "@/features/students-dashboard/multistep-form/MultiStepForm";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { BaseEducatorClientSchema } from "@/types/data/Educator";
 import { useMemo } from "react";
@@ -72,7 +73,11 @@ export default function EducatorTable() {
         <div className='flex justify-between bg-white p-4 rounded-xl'>
           <GlobalFilterInput />
           <PaginationBar />
-          <RegisterStudentButton />
+          <DialogButton
+            // TODO: create educator form
+            dialog={<MultiStepForm />}
+            buttonTitle={"Create Educator"}
+          />
           <RefreshDataButton />
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
@@ -11,6 +12,7 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
+import CreateLevelsForm from "@/features/levels-dashboard/create-levels-form/CreateLevelsForm";
 import { ExpandedLevel, LevelsApis } from "@/lib/hooks/levels-queries";
 import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
@@ -138,6 +140,10 @@ export default function LevelsPage() {
         <div className='flex justify-between bg-white p-4 rounded-xl'>
           <GlobalFilterInput />
           <PaginationBar />
+          <DialogButton
+            dialog={<CreateLevelsForm />}
+            buttonTitle='Create Level'
+          />
           <RefreshDataButton />
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
