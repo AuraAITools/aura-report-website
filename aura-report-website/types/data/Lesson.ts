@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseCourseSchema, DAYS } from "./Course";
+import { BaseCourseSchema } from "./Course";
 import { BaseEducatorSchema } from "./Educator";
 import { BaseStudentSchema } from "./Student";
 export const LESSON_STATUS = [
@@ -17,12 +17,12 @@ export const LESSON_STATUS = [
 
 export const BaseLessonSchema = z.object({
   id: z.string(),
+  name: z.string(),
   status: z.enum(LESSON_STATUS),
   date: z.string().date(),
   start_time: z.string().time(),
   end_time: z.string().time(),
   description: z.string().optional(),
-  day: z.enum(DAYS),
 });
 
 export const ExpandedLessonSchema = BaseLessonSchema.extend({

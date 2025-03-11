@@ -1,4 +1,5 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -10,6 +11,7 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { ExpandedLesson } from "@/types/data/Lesson";
 import { useMemo } from "react";
+import CreateLessonForm from "../create-lesson-form/CreateLessonForm";
 
 export default function LessonsTable() {
   const { currentInstitution, currentOutlet } =
@@ -45,7 +47,6 @@ export default function LessonsTable() {
         accessorFn: (row) => (
           <div>
             <p>{row.date}</p>
-            <p>{row.day}</p>
             <p>
               {row.start_time} - {row.end_time}
             </p>
@@ -92,10 +93,16 @@ export default function LessonsTable() {
         columns={columns}
         refreshData={refetch}
       >
-        <div className='flex justify-between bg-white p-4 rounded-xl'>
+        <div className='flex justify-between items-center p-4 rounded-xl bg-white'>
           <GlobalFilterInput />
           <PaginationBar />
-          <RefreshDataButton />
+          <div className='flex justify-center items-center p-2 gap-2'>
+            <DialogButton
+              dialog={<CreateLessonForm />}
+              buttonTitle={"Create Lesson"}
+            />
+            <RefreshDataButton />
+          </div>
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
