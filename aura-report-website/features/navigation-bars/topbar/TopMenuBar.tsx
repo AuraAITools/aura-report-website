@@ -2,7 +2,6 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { AvatarProfile } from "@/components/ui/AvatarProfile";
 import { SimpleDropdownMenu } from "@/components/ui/dropdown-menus/simple-dropdown/SimpleDropdownMenu";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import * as Menubar from "@radix-ui/react-menubar";
 import { signOut } from "next-auth/react";
@@ -17,16 +16,13 @@ export default function TopMenuBar({ profileCard }: TopMenuBarProps) {
     currentOutlets,
     changeCurrentOutlet,
     changeCurrentInstitution,
-    status,
   } = useInstitutionAndOutletsContext();
 
   return (
     <Menubar.Root className='flex w-full h-16 gap-2 items-center sticky top-0 overflow-hidden px-4 py-1.5 shadow-lg'>
       <Menubar.Menu>
         <SearchBar />
-        {status === "pending" ? (
-          <ProgressBar />
-        ) : (
+        {
           <SimpleDropdownMenu
             focusedOption={{
               title: currentInstitution?.name ?? "no institutions yet",
@@ -36,28 +32,28 @@ export default function TopMenuBar({ profileCard }: TopMenuBarProps) {
               },
             }}
             options={institutions.map((i) => ({
-              title: i.name,
+              title: i?.name ?? "no institutions yet",
               onClick: () => changeCurrentInstitution(i),
             }))}
           />
-        )}
+        }
         <div className='flex-auto' />
-        {status === "pending" ? (
-          <ProgressBar />
-        ) : (
+        {
           <SimpleDropdownMenu
             focusedOption={{
-              title: !!currentOutlet ? currentOutlet.name : "no outlets yet",
+              title: currentOutlet?.name ?? "no outlets yet",
               onClick: () => {
                 !!currentOutlet && changeCurrentOutlet(currentOutlet);
               },
             }}
-            options={currentOutlets.map((o) => ({
-              title: o.name,
-              onClick: () => changeCurrentOutlet(o),
-            }))}
+            options={
+              currentOutlets.map((o) => ({
+                title: o.name,
+                onClick: () => changeCurrentOutlet(o),
+              })) || []
+            }
           />
-        )}
+        }
 
         <div className='mr-auto'></div>
         <Menubar.Trigger>
