@@ -6,7 +6,6 @@ import { getInstitutionById } from "../requests/institutions";
 export const institutionQueryKeys = queryKeyFactory("institutions");
 
 function useGetInstitutionByIds(institutionIds: string[]) {
-  console.log("ejrags");
   console.log(`${JSON.stringify(institutionIds)}`);
 
   return useQueries({

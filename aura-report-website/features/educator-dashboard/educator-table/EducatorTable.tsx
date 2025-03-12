@@ -8,10 +8,10 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import MultiStepForm from "@/features/students-dashboard/multistep-form/MultiStepForm";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { BaseEducatorClientSchema } from "@/types/data/Educator";
 import { useMemo } from "react";
+import CreateEducatorForm from "../create-educator-form/CreateEducatorForm";
 
 export default function EducatorTable() {
   const { currentInstitution } = useInstitutionAndOutletsContext();
@@ -34,22 +34,31 @@ export default function EducatorTable() {
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorFn: (row) => (
-          <ConcatenatedLinksList
-            links={row.educator.levels.map((lvl) => lvl.name)}
-          />
-        ),
+        accessorFn: (row) => {
+          return row.educator?.levels ? (
+            <ConcatenatedLinksList
+              links={row.educator.levels.map((lvl) => lvl.name)}
+            />
+          ) : (
+            <div>None</div>
+          );
+        },
         id: "level",
         header: ({ table }) => <span>LEVEL(S)</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorFn: (row) => (
-          <ConcatenatedLinksList
-            links={row.educator.outlets.map((o) => o.name)}
-          />
-        ),
+        accessorFn: (row) => {
+          return row.educator ? (
+            <ConcatenatedLinksList
+              links={row.educator.outlets.map((outlet) => outlet.name)}
+            />
+          ) : (
+            <div>no outlets found</div>
+          );
+        },
+
         id: "outlet",
         header: ({ table }) => <span>OUTLET(S)</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
@@ -76,7 +85,7 @@ export default function EducatorTable() {
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
               // TODO: create educator form
-              dialog={<MultiStepForm />}
+              dialog={<CreateEducatorForm />}
               buttonTitle={"Create Educator"}
             />
             <RefreshDataButton />

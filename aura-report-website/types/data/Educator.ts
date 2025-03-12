@@ -3,12 +3,13 @@ import { BaseLevelSchema } from "./Level";
 import { BaseOutletSchema } from "./Outlet";
 import { BaseSubjectSchema } from "./Subject";
 
-const EMPLOYMENT_TYPE = ["FULL_TIME", "PART_TIME"] as const;
+export const EMPLOYMENT_TYPE = ["FULL_TIME", "PART_TIME"] as const;
 export const BaseEducatorSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   email: z.string().email(),
   start_date: z.string().date(),
+  date_of_birth: z.string().date(),
   employment_type: z.enum(EMPLOYMENT_TYPE),
   levels: z.lazy(() => BaseLevelSchema.array()),
   subjects: z.lazy(() => BaseSubjectSchema.array()),
