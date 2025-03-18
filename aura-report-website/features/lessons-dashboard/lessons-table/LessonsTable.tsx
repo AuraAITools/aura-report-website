@@ -72,12 +72,12 @@ export default function LessonsTable() {
         ),
         id: "EDUCATORS",
         header: ({ table }) => <span>EDUCATORS</span>,
-        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>() && "N/A"}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
 
       {
-        accessorKey: "description",
+        accessorFn: (row) => <span>{row.description || "N/A"}</span>,
         id: "DESCRIPTION",
         header: ({ table }) => <span>DESCRIPTION</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,

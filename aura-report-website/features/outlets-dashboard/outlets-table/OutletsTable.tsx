@@ -1,7 +1,6 @@
 import Authorization from "@/components/providers/Authorization";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -28,7 +27,7 @@ export default function OutletsTable() {
     data: expandedOutlets,
     isPending: expandedOutletsIsPending,
     refetch,
-  } = OutletsApis.useGetExpandedOutlets(currentOutlets, currentInstitution?.id);
+  } = OutletsApis.useGetExpandedOutlets(currentInstitution?.id);
 
   /**
    * column definitions
@@ -124,7 +123,7 @@ export default function OutletsTable() {
   return (
     <div className='p-4'>
       <FilterTableRoot
-        data={expandedOutlets}
+        data={expandedOutlets ?? []}
         columns={columns}
         refreshData={refetch}
       >
@@ -143,7 +142,7 @@ export default function OutletsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          {expandedOutletsIsPending ? <ProgressBar /> : <FilterTableContent />}
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>

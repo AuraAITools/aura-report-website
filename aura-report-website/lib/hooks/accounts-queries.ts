@@ -5,6 +5,7 @@ import {
   createOutletAdminAccount,
 } from "../requests/accounts";
 import { createStudentClientAccount } from "../requests/students";
+import { parentKeys } from "./parents-queries";
 function useCreateInstitutionAdminAccount() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -52,7 +53,7 @@ function useCreateStudentClientAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: ["student-clients"] });
+      queryClient.invalidateQueries({ queryKey: parentKeys.lists() });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");

@@ -11,7 +11,6 @@ import {
   getAllStudentsFromInstitution,
   getAllStudentsFromOutlet,
 } from "../requests/students";
-import { institutionQueryKeys } from "./institutions-queries";
 import { outletKeys } from "./outlets-queries";
 
 const studentsQueryKeys = queryKeyFactory("students");
@@ -65,7 +64,7 @@ function useGetAllStudentsFromInstitution(institutionId?: string) {
       }
       return getAllStudentsFromInstitution(institutionId);
     },
-    queryKey: [institutionQueryKeys.all, institutionId, studentsQueryKeys.all],
+    queryKey: studentsQueryKeys.lists(),
   });
 }
 
@@ -84,7 +83,7 @@ function useCreateStudentInStudentClientAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: ["student-clients"] });
+      queryClient.invalidateQueries({ queryKey: studentsQueryKeys.lists() });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");

@@ -5,8 +5,8 @@ import {
   createCourseInOutlet,
   CreateCourseParams,
   getAllCoursesFromOutlet,
+  getAllExpandedCoursesFromOutlet,
 } from "../requests/courses";
-import { outletKeys } from "./outlets-queries";
 
 export const courseKeys = queryKeyFactory("courses");
 
@@ -18,7 +18,22 @@ function useGetAllCoursesFromOutlet(institutionId?: string, outletId?: string) {
       }
       return getAllCoursesFromOutlet(institutionId, outletId);
     },
-    queryKey: [outletKeys.lists(), outletId, courseKeys.all],
+    queryKey: courseKeys.lists(),
+  });
+}
+
+function useGetAllExpandedCoursesFromOutlet(
+  institutionId?: string,
+  outletId?: string,
+) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId || !outletId) {
+        return Promise.reject("no institution id or outlet id yet");
+      }
+      return getAllExpandedCoursesFromOutlet(institutionId, outletId);
+    },
+    queryKey: courseKeys.lists(),
   });
 }
 
@@ -38,7 +53,7 @@ export function useCreateCourseInOutlet() {
       createCourseInOutlet(course),
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created course ${JSON.stringify(data)}`);
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
     },
     // onMutate: async (course) => {
     //   queryClient.cancelQueries({ queryKey: ["courses"] });
@@ -82,5 +97,6 @@ export function useCreateCourseInOutlet() {
 
 export const CoursesApis = {
   useGetAllCoursesFromOutlet,
+  useGetAllExpandedCoursesFromOutlet,
   useCreateCourseInOutlet,
 };

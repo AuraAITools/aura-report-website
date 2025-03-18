@@ -4,6 +4,7 @@ import {
   createEducatorAccountInInstitution,
   createEducatorForAccountInOutlet,
   getAllEducatorClientsFromInstitution,
+  getAllEducatorsFromOutlet,
 } from "../requests/educator";
 import { institutionQueryKeys } from "./institutions-queries";
 
@@ -16,6 +17,21 @@ function useGetAllEducatorClientsFromInstitution(institutionId?: string) {
         return Promise.reject("no institutionId or outletId yet");
       }
       return getAllEducatorClientsFromInstitution(institutionId);
+    },
+    queryKey: [institutionQueryKeys.all, institutionId, educatorKeys.all],
+  });
+}
+
+function useGetAllEducatorsFromInstitution(
+  institutionId?: string,
+  outletId?: string,
+) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId || !outletId) {
+        return Promise.reject("no institutionId or outletId yet");
+      }
+      return getAllEducatorsFromOutlet(institutionId, outletId);
     },
     queryKey: [institutionQueryKeys.all, institutionId, educatorKeys.all],
   });
@@ -56,6 +72,7 @@ function useCreateEducatorForAccountInOutlet() {
 }
 
 export const EducatorsApis = {
+  useGetAllEducatorsFromInstitution,
   useGetAllEducatorClientsFromInstitution,
   useCreateEducatorAccountInInstitution,
   useCreateEducatorForAccountInOutlet,

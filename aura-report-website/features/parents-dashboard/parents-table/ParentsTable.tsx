@@ -1,5 +1,4 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -71,10 +70,6 @@ export default function ParentsTable() {
     [],
   );
 
-  if (status === "pending") {
-    return <ProgressBar />;
-  }
-
   if (status === "error") {
     throw new Error("cannot load outlets");
   }
@@ -90,7 +85,7 @@ export default function ParentsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          {isPending ? <ProgressBar /> : <FilterTableContent />}
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>

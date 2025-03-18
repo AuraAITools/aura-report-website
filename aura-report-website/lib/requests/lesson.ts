@@ -16,6 +16,7 @@ export const CreateLessonParamsSchema = z
 
 export async function createLessonInOutlet(params: CreateLessonParams) {
   const { institution_id, outlet_id, course_id, ...requestBody } = params;
+  console.log("here:" + JSON.stringify(requestBody));
   return await apiClient.post<CreateLessonParams>(
     `/api/institutions/${institution_id}/outlets/${outlet_id}/courses/${course_id}/lessons`,
     JSON.stringify(requestBody),

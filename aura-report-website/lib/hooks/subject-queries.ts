@@ -8,7 +8,6 @@ import {
   DeleteSubjectParams,
   getAllSubjectsOfInstitution,
 } from "../requests/subjects";
-import { institutionQueryKeys } from "./institutions-queries";
 const subjectQueryKeys = queryKeyFactory("subjects");
 function useGetAllSubjectsOfInstitution(institutionId?: string) {
   return useQuery({
@@ -16,7 +15,7 @@ function useGetAllSubjectsOfInstitution(institutionId?: string) {
       if (!institutionId) return Promise.reject("institutionId is undefined");
       return getAllSubjectsOfInstitution(institutionId);
     },
-    queryKey: [institutionQueryKeys.all, institutionId, subjectQueryKeys.lists],
+    queryKey: subjectQueryKeys.lists(),
   });
 }
 
@@ -35,7 +34,7 @@ export function useCreateSubjectInInstitution() {
     mutationFn: createSubject,
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created subject ${JSON.stringify(data)}`);
-      queryClient.invalidateQueries({ queryKey: subjectQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: subjectQueryKeys.lists() });
     },
     // onMutate: async (subject) => {
     //   queryClient.cancelQueries({ queryKey: ["subjects"] });

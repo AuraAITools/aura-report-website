@@ -1,4 +1,8 @@
 import { BaseCourse, BaseCourseSchema } from "@/types/data/Course";
+import { BaseLessonSchema } from "@/types/data/Lesson";
+import { BaseLevelSchema } from "@/types/data/Level";
+import { BaseOutletSchema } from "@/types/data/Outlet";
+import { BaseSubjectSchema } from "@/types/data/Subject";
 import { z } from "zod";
 import { apiClient } from "../api-client";
 export async function getAllCoursesFromOutlet(
@@ -7,6 +11,23 @@ export async function getAllCoursesFromOutlet(
 ) {
   const coursesPromise = await apiClient.get<BaseCourse[]>(
     `/api/institutions/${institutionId}/outlets/${outletId}/courses`,
+  );
+  return coursesPromise.data;
+}
+
+export const ExpandedCourseSchema = BaseCourseSchema.extend({
+  outlet: BaseOutletSchema,
+  level: BaseLevelSchema,
+  lessons: BaseLessonSchema.array(),
+  subjects: BaseSubjectSchema.array(),
+});
+export type ExpandedCourse = z.infer<typeof ExpandedCourseSchema>;
+export async function getAllExpandedCoursesFromOutlet(
+  institutionId: string,
+  outletId: string,
+) {
+  const coursesPromise = await apiClient.get<ExpandedCourse[]>(
+    `/api/institutions/${institutionId}/outlets/${outletId}/courses/expand`,
   );
   return coursesPromise.data;
 }

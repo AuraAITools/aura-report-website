@@ -3,7 +3,7 @@ import * as Progress from "@radix-ui/react-progress";
 import { useProgress } from "./useProgress";
 
 export default function ProgressBar() {
-  const { progress, setProgress } = useProgress(10, 70, 500);
+  const { progress, setProgress } = useProgress(10, 70, 30);
   return (
     <Progress.Root
       className='relative sm:h-[25px] sm:w-[300px] md:w-[640px] lg:w-[700px] overflow-hidden rounded-full bg-white shadow-lg'

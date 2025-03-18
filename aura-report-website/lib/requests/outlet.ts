@@ -1,5 +1,6 @@
 import { BaseOutlet } from "@/types/data/Outlet";
 import { apiClient } from "../api-client";
+import { ExpandedOutlet } from "../hooks/outlets-queries";
 
 export async function getOutletById(
   institutionId: string,
@@ -16,6 +17,15 @@ export async function getAllOutletsInInstitution(
 ): Promise<BaseOutlet[]> {
   const response = await apiClient.get<BaseOutlet[]>(
     `/api/institutions/${id}/outlets`,
+  );
+  return response.data;
+}
+
+export async function getAllExpandedOutletsInInstitution(
+  id: string,
+): Promise<BaseOutlet[]> {
+  const response = await apiClient.get<ExpandedOutlet[]>(
+    `/api/institutions/${id}/outlets/expand`,
   );
   return response.data;
 }

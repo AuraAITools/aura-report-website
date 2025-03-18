@@ -4,19 +4,11 @@ import { BaseLevel } from "@/types/data/Level";
 import { BaseStudent } from "@/types/data/Student";
 import { BaseSubject } from "@/types/data/Subject";
 import { queryKeyFactory } from "@/utils/query-key-factory";
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createLevelInInstitution,
-  getAllCoursesOfLevelInOutlet,
-  getAllEducatorsOfLevelInOutlet,
+  getAllExpandedLevelsOfInstitution,
   getAllLevelsOfInstitution,
-  getAllStudentsOfLevelInOutlet,
-  getAllSubjectsOfLevelInInstitution,
 } from "../requests/levels";
 
 export type ExpandedLevel = BaseLevel & {
@@ -57,76 +49,89 @@ function useGetAllLevelsOfInstitution(institutionId?: string) {
   });
 }
 
-function useGetAllExpandedLevelsOfInstitution(
-  levels: BaseLevel[],
-  institutionId?: string,
-  outletId?: string,
-) {
-  return useQueries({
-    queries: levels.map((lvl) => ({
-      queryFn: async () => {
-        console.log(
-          `running queries with ${institutionId}, ${outletId}, ${JSON.stringify(lvl.id)}`,
-        );
-        if (!institutionId || !outletId) {
-          return Promise.reject("institutionId or outletId is undefined");
-        }
-        return getExpandedLevel(institutionId, outletId, lvl);
-      },
-      queryKey: [levelsQueryKeys.detail(lvl.id)],
-    })),
-    combine: (results) => ({
-      data: results.map((res) => res.data),
-      isPending: results.some((res) => res.isPending),
-      isError: results.some((res) => res.isError),
-    }),
+// function useGetAllExpandedLevelsOfInstitution(
+//   levels: BaseLevel[],
+//   institutionId?: string,
+//   outletId?: string,
+// ) {
+//   return useQueries({
+//     queries: levels.map((lvl) => ({
+//       queryFn: async () => {
+//         console.log(
+//           `running queries with ${institutionId}, ${outletId}, ${JSON.stringify(lvl.id)}`,
+//         );
+//         if (!institutionId || !outletId) {
+//           return Promise.reject("institutionId or outletId is undefined");
+//         }
+//         return getExpandedLevel(institutionId, outletId, lvl);
+//       },
+//       queryKey: [levelsQueryKeys.detail(lvl.id)],
+//     })),
+//     combine: (results) => ({
+//       data: results.map((res) => res.data),
+//       isPending: results.some((res) => res.isPending),
+//       isError: results.some((res) => res.isError),
+//     }),
+//   });
+// }
+
+function useGetAllExpandedLevelsOfInstitution(institutionId?: string) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId) {
+        return Promise.reject("institution ID is undefined");
+      }
+      return getAllExpandedLevelsOfInstitution(institutionId);
+    },
+    queryKey: levelsQueryKeys.lists(),
+    enabled: !!institutionId,
   });
 }
 
-async function getExpandedLevel(
-  institutionId: string,
-  outletId: string,
-  level: BaseLevel,
-) {
-  const studentsPromise = getAllStudentsOfLevelInOutlet(
-    institutionId,
-    outletId,
-    level.id,
-  );
-  // get all educators of level
-  const educatorsPromise = getAllEducatorsOfLevelInOutlet(
-    institutionId,
-    outletId,
-    level.id,
-  );
+// async function getExpandedLevel(
+//   institutionId: string,
+//   outletId: string,
+//   level: BaseLevel,
+// ) {
+//   const studentsPromise = getAllStudentsOfLevelInOutlet(
+//     institutionId,
+//     outletId,
+//     level.id,
+//   );
+//   // get all educators of level
+//   const educatorsPromise = getAllEducatorsOfLevelInOutlet(
+//     institutionId,
+//     outletId,
+//     level.id,
+//   );
 
-  // get all courses of level
-  const coursesPromise = getAllCoursesOfLevelInOutlet(
-    institutionId,
-    outletId,
-    level.id,
-  );
+//   // get all courses of level
+//   const coursesPromise = getAllCoursesOfLevelInOutlet(
+//     institutionId,
+//     outletId,
+//     level.id,
+//   );
 
-  const subjectsPromise = getAllSubjectsOfLevelInInstitution(
-    institutionId,
-    level.id,
-  );
+//   const subjectsPromise = getAllSubjectsOfLevelInInstitution(
+//     institutionId,
+//     level.id,
+//   );
 
-  let [students, educators, courses, subjects] = await Promise.all([
-    studentsPromise,
-    educatorsPromise,
-    coursesPromise,
-    subjectsPromise,
-  ]);
+//   let [students, educators, courses, subjects] = await Promise.all([
+//     studentsPromise,
+//     educatorsPromise,
+//     coursesPromise,
+//     subjectsPromise,
+//   ]);
 
-  return {
-    ...level,
-    students: students.data,
-    educators: educators.data,
-    courses: courses.data,
-    subjects: subjects.data,
-  };
-}
+//   return {
+//     ...level,
+//     students: students.data,
+//     educators: educators.data,
+//     courses: courses.data,
+//     subjects: subjects.data,
+//   };
+// }
 
 export const LevelsApis = {
   useCreateLevelOfInstitution,

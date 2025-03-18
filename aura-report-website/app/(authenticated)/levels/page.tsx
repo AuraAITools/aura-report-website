@@ -3,7 +3,6 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
@@ -24,21 +23,11 @@ export default function LevelsPage() {
     useInstitutionAndOutletsContext();
 
   const {
-    data: levels,
-    isPending,
-    isError,
-    refetch,
-  } = LevelsApis.useGetAllLevelsOfInstitution(currentInstitution?.id);
-
-  const {
-    data: expandedLevels,
+    data: expandedLevels = [],
     isPending: fetchExpandedPending,
     isError: fetchExpandedError,
-  } = LevelsApis.useGetAllExpandedLevelsOfInstitution(
-    levels ?? [],
-    currentInstitution?.id,
-    currentOutlet?.id,
-  );
+    refetch,
+  } = LevelsApis.useGetAllExpandedLevelsOfInstitution(currentInstitution?.id);
 
   const columns = useMemo<TableColumnDef<ExpandedLevel>[]>(
     () => [
@@ -150,11 +139,7 @@ export default function LevelsPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          {fetchExpandedPending || isPending ? (
-            <ProgressBar />
-          ) : (
-            <FilterTableContent />
-          )}
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>

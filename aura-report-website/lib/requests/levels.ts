@@ -23,6 +23,21 @@ export async function getAllLevelsOfInstitution(institutionId: string) {
   ).data;
 }
 
+export type ExpandedLevel = {
+  students: BaseStudent;
+  educators: BaseEducator;
+  courses: BaseCourse;
+  subjects: BaseSubject;
+} & BaseLevel;
+
+export async function getAllExpandedLevelsOfInstitution(institutionId: string) {
+  return (
+    await apiClient.get<ExpandedLevel[]>(
+      `/api/institutions/${institutionId}/levels/expand`,
+    )
+  ).data;
+}
+
 export async function getAllStudentsOfLevelInOutlet(
   institutionId: string,
   outletId: string,

@@ -2,8 +2,9 @@
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
+import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import CreateClassesForm from "@/features/classes-dashboard/create-courses-form/CreateCoursesForm";
+import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -12,7 +13,8 @@ import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
-import { CourseWithAssociations } from "@/types/data/Course";
+import { ExpandedCourse } from "@/lib/requests/courses";
+import { BaseLesson } from "@/types/data/Lesson";
 import { useMemo } from "react";
 
 export default function ClassesPage() {
@@ -22,12 +24,12 @@ export default function ClassesPage() {
     data: classes,
     status,
     refetch,
-  } = CoursesApis.useGetAllCoursesFromOutlet(
+  } = CoursesApis.useGetAllExpandedCoursesFromOutlet(
     currentInstitution?.id,
     currentOutlet?.id,
   );
-  const columnDefs: TableColumnDef<CourseWithAssociations>[] = useMemo<
-    TableColumnDef<CourseWithAssociations>[]
+  const columnDefs: TableColumnDef<ExpandedCourse>[] = useMemo<
+    TableColumnDef<ExpandedCourse>[]
   >(
     () => [
       {
@@ -68,22 +70,43 @@ export default function ClassesPage() {
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "level",
+        accessorKey: "level.name",
         header: ({ table }) => <span>Level</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "subject.name",
+        accessorFn: (row) => (
+          <ConcatenatedLinksList links={row.subjects.map((sub) => sub.name)} />
+        ),
+        id: "subjects",
         header: ({ table }) => <span>Subject</span>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
+        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
+      },
+      {
+        accessorFn: (row) => row.lessons, //note: normal non-fuzzy filter column - case sensitive
+        id: "lessons",
+        header: ({ table }) => <span>Lesson(s)</span>,
+        cell: ({ row, cell }) => {
+          let items = (cell.getValue() as BaseLesson[]).map((lesson) => {
+            return {
+              ...lesson,
+              url: `/lessons/${lesson.id}`,
+            };
+          });
+          return (
+            <FilterTableCellPopOver
+              title='Lessons'
+              items={items}
+              footerNav={{ title: "Manage", url: "/lessons" }}
+            />
+          );
+        },
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
     ],
     [],
   );
-
-  if (status === "pending") {
-    return <ProgressBar />;
-  }
 
   if (status === "error") {
     throw new Error("Could not fetch classes data");
@@ -92,7 +115,7 @@ export default function ClassesPage() {
   return (
     <div className='p-4'>
       <FilterTableRoot
-        data={classes}
+        data={classes ?? []}
         columns={columnDefs}
         refreshData={refetch}
       >

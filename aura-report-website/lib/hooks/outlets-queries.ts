@@ -3,11 +3,17 @@ import { BaseEducator } from "@/types/data/Educator";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { BaseStudent } from "@/types/data/Student";
 import { queryKeyFactory } from "@/utils/query-key-factory";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { getAllCoursesFromOutlet } from "../requests/courses";
 import { getAllEducatorsFromOutlet } from "../requests/educator";
 import {
   createOutletInInstitution,
+  getAllExpandedOutletsInInstitution,
   getAllOutletsInInstitution,
 } from "../requests/outlet";
 import { getAllStudentsFromOutlet } from "../requests/students";
@@ -44,30 +50,16 @@ function useGetAllOutletsOfInstitutionIds(institutionIds: string[]) {
  * @param institutionId
  * @returns
  */
-function useGetExpandedOutlets(outlets: BaseOutlet[], institutionId?: string) {
-  return useQueries({
-    queries: outlets.map((co) => ({
-      queryKey: [
-        institutionQueryKeys.all,
-        institutionId,
-        outletKeys.detail(co.id),
-      ],
-      queryFn: () => {
-        if (!institutionId) {
-          return Promise.reject("no institution id");
-        }
-        return fetchExpandedOutlets(institutionId, co);
-      },
-    })),
-    combine: (results) => {
-      return {
-        data: results.map((res) => res.data),
-        isPending: results.some((res) => res.isPending),
-        refetch: () => {
-          results.forEach((query) => query.refetch());
-        },
-      };
+function useGetExpandedOutlets(institutionId?: string) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId) {
+        return Promise.reject("institution ID is undefined");
+      }
+      return getAllExpandedOutletsInInstitution(institutionId);
     },
+    queryKey: outletKeys.lists(),
+    enabled: !!institutionId,
   });
 }
 
@@ -91,7 +83,7 @@ export function useCreateOutletInInstitution() {
 
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
-        queryKey: ["outlets"],
+        queryKey: outletKeys.all,
       });
     },
   });

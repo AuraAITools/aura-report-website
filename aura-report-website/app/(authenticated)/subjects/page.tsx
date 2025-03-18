@@ -1,7 +1,6 @@
 "use client";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -134,7 +133,7 @@ export default function SubjectsPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          {isPending ? <ProgressBar /> : <FilterTableContent />}
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>

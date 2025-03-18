@@ -1,9 +1,8 @@
 import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useQuery } from "@tanstack/react-query";
 import { getAllParents } from "../requests/parents";
-import { institutionQueryKeys } from "./institutions-queries";
 
-const parentKeys = queryKeyFactory("parents");
+export const parentKeys = queryKeyFactory("parents");
 
 export function useGetAllParents(institutionId?: string) {
   return useQuery({
@@ -13,6 +12,6 @@ export function useGetAllParents(institutionId?: string) {
       }
       return getAllParents(institutionId);
     },
-    queryKey: [institutionQueryKeys.all, institutionId, parentKeys.lists()],
+    queryKey: parentKeys.lists(),
   });
 }

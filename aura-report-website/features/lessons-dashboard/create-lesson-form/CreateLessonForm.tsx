@@ -20,10 +20,10 @@ export default function CreateLessonForm() {
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
   // get all educators
-  const { data: educators } =
-    EducatorsApis.useGetAllEducatorClientsFromInstitution(
-      currentInstitution?.id,
-    );
+  const { data: educators } = EducatorsApis.useGetAllEducatorsFromInstitution(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
   // get all students
   const { data: students } = StudentsApis.useGetAllStudentsFromInstitution(
     currentInstitution?.id,
@@ -84,7 +84,7 @@ export default function CreateLessonForm() {
         options={
           educators?.map((edu) => ({
             value: edu.id,
-            display: edu.first_name,
+            display: edu.name,
           })) ?? []
         }
         formFieldName={""}
