@@ -12,6 +12,8 @@ import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { ExpandedLesson } from "@/types/data/Lesson";
 import { useMemo } from "react";
 import CreateLessonForm from "../create-lesson-form/CreateLessonForm";
+import EditLessonDetailsForm from "../edit-lesson-form/EditLessonDetailsForm";
+import { Row } from "@tanstack/react-table";
 
 export default function LessonsTable() {
   const { currentInstitution, currentOutlet } =
@@ -67,12 +69,16 @@ export default function LessonsTable() {
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorFn: (row) => (
-          <ConcatenatedLinksList links={row.educators.map((s) => s.name)} />
-        ),
+        accessorFn: (row) => {
+          return row.educators.length > 0 ? (
+            <ConcatenatedLinksList links={row.educators.map((s) => s.name)} />
+          ) : (
+            <div>N/A</div>
+          );
+        },
         id: "EDUCATORS",
         header: ({ table }) => <span>EDUCATORS</span>,
-        cell: ({ row, getValue }) => <div>{getValue<boolean>() && "N/A"}</div>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
 
@@ -86,6 +92,10 @@ export default function LessonsTable() {
     ],
     [],
   );
+
+  const renderEditLessonForm = (row: Row<ExpandedLesson>) => {
+    return <EditLessonDetailsForm lesson={row.original} />;
+  };
   return (
     <div className='p-4'>
       <FilterTableRoot
@@ -106,7 +116,7 @@ export default function LessonsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          <FilterTableContent editRowContent={renderEditLessonForm} />
         </div>
       </FilterTableRoot>
     </div>

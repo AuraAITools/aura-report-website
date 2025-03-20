@@ -10,8 +10,9 @@ import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { BaseEducatorClientSchema } from "@/types/data/Educator";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import CreateEducatorForm from "../create-educator-form/CreateEducatorForm";
+import { Row } from "@tanstack/react-table";
 
 export default function EducatorTable() {
   const { currentInstitution } = useInstitutionAndOutletsContext();
@@ -93,7 +94,13 @@ export default function EducatorTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

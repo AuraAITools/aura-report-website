@@ -11,7 +11,8 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { CreateSubjectForm } from "@/features/subjects-dashboard/create-subject-form/CreateSubjectForm";
 import { SubjectsApis } from "@/lib/hooks/subject-queries";
 import { BaseSubject } from "@/types/data/Subject";
-import { useMemo } from "react";
+import { Row } from "@tanstack/react-table";
+import { ReactNode, useMemo } from "react";
 
 export default function SubjectsPage() {
   const { currentInstitution, currentOutlet } =
@@ -133,7 +134,13 @@ export default function SubjectsPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

@@ -10,7 +10,8 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { useGetAllParents } from "@/lib/hooks/parents-queries";
 import { BaseParentClientAccount } from "@/types/data/Parents";
 import { BaseStudent } from "@/types/data/Student";
-import { useMemo } from "react";
+import { Row } from "@tanstack/react-table";
+import { ReactNode, useMemo } from "react";
 
 export default function ParentsTable() {
   const { currentInstitution, status } = useInstitutionAndOutletsContext();
@@ -85,7 +86,13 @@ export default function ParentsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

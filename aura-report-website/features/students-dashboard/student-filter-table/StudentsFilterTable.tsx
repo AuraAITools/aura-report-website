@@ -8,8 +8,9 @@ import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { StudentWithAssociations } from "@/types/data/Student";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import MultiStepForm from "../multistep-form/MultiStepForm";
+import { Row } from "@tanstack/react-table";
 
 type StudentsFilterTableProps = {
   students: StudentWithAssociations[];
@@ -84,7 +85,13 @@ export default function StudentsFilterTable({
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

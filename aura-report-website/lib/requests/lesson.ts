@@ -1,4 +1,8 @@
-import { BaseLessonSchema, ExpandedLesson } from "@/types/data/Lesson";
+import {
+  BaseLessonSchema,
+  ExpandedLesson,
+  LESSON_STATUS,
+} from "@/types/data/Lesson";
 import { z } from "zod";
 import { apiClient } from "../api-client";
 
@@ -22,6 +26,34 @@ export async function createLessonInOutlet(params: CreateLessonParams) {
     JSON.stringify(requestBody),
   );
 }
+
+export const UpdateLessonParamsSchema = z.object({
+  institution_id: z.string().uuid(),
+  outlet_id: z.string().uuid(),
+  course_id: z.string().uuid(),
+  lesson_id: z.string().uuid(),
+  educator_ids: z.string().uuid().array().optional(),
+  student_ids: z.string().uuid().array().optional(),
+  name: z.string().optional(),
+  status: z.enum(LESSON_STATUS).optional(),
+  date: z.string().date().optional(),
+  start_time: z.string().time().optional(),
+  end_time: z.string().time().optional(),
+  description: z.string().optional().optional(),
+});
+
+export type UpdateLessonParams = z.infer<typeof UpdateLessonParamsSchema>;
+
+export async function updateLessonInOutlet(params: UpdateLessonParams) {
+  const { institution_id, outlet_id, course_id, lesson_id, ...requestBody } =
+    params;
+  console.log("here:" + JSON.stringify(requestBody));
+  return await apiClient.patch<UpdateLessonParams>(
+    `/api/institutions/${institution_id}/outlets/${outlet_id}/courses/${course_id}/lessons/${lesson_id}`,
+    JSON.stringify(requestBody),
+  );
+}
+
 export async function getAllExpandedLessonsOfInstitution(
   institutionId: string,
 ) {

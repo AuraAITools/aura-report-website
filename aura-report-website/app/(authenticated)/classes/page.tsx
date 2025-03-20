@@ -15,7 +15,8 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { ExpandedCourse } from "@/lib/requests/courses";
 import { BaseLesson } from "@/types/data/Lesson";
-import { useMemo } from "react";
+import { Row } from "@tanstack/react-table";
+import { ReactNode, useMemo } from "react";
 
 export default function ClassesPage() {
   const { currentInstitution, currentOutlet } =
@@ -132,7 +133,12 @@ export default function ClassesPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

@@ -21,6 +21,8 @@ const config: Config = {
           "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         "slideLeftAndFade":
           "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "fadeIn": "fadeIn 150ms ease-in",
+        "fadeOut": "fadeOut 150ms ease-out",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -57,6 +59,14 @@ const config: Config = {
         slideLeftAndFade: {
           from: { opacity: "0", transform: "translateX(2px)" },
           to: { opacity: "1", transform: "translateX(0)" },
+        },
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        fadeOut: {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
         },
       },
     },

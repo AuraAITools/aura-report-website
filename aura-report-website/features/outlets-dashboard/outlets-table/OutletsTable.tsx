@@ -12,8 +12,9 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { ExpandedOutlet, OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseEducator } from "@/types/data/Educator";
 import { BaseStudent } from "@/types/data/Student";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import CreateOutletForm from "../add-outlets-multistep-form/CreateOutletForm";
+import { Row } from "@tanstack/react-table";
 
 export default function OutletsTable() {
   const { currentInstitution, currentOutlets, status } =
@@ -142,7 +143,13 @@ export default function OutletsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>

@@ -16,7 +16,8 @@ import { ExpandedLevel, LevelsApis } from "@/lib/hooks/levels-queries";
 import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
 import { BaseStudent } from "@/types/data/Student";
-import { useMemo } from "react";
+import { Row } from "@tanstack/react-table";
+import { ReactNode, useMemo } from "react";
 
 export default function LevelsPage() {
   const { currentInstitution, currentOutlet } =
@@ -139,7 +140,13 @@ export default function LevelsPage() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
-          <FilterTableContent />
+          {/* TODO: implement */}
+
+          <FilterTableContent
+            editRowContent={function (row: Row<any>): ReactNode {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </FilterTableRoot>
     </div>
