@@ -10,6 +10,7 @@ import {
   CreateStudentRequestBody,
   getAllStudentsFromInstitution,
   getAllStudentsFromOutlet,
+  updateStudentInInstitution,
 } from "../requests/students";
 import { outletKeys } from "./outlets-queries";
 
@@ -92,9 +93,28 @@ function useCreateStudentInStudentClientAccount() {
   });
 }
 
+function useUpdateStudentInInstitution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateStudentInInstitution,
+    onError: (error, variables) => {
+      console.log(`rolling back optimistic update with id`);
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("success");
+      queryClient.invalidateQueries({ queryKey: studentsQueryKeys.lists() });
+    },
+    onSettled: (data, error, variables, context) => {
+      console.log("settled");
+    },
+    // refetchInterval: 1*1000
+  });
+}
+
 export const StudentsApis = {
   useGetAllStudentsOfOutlets,
   useGetAllStudentsFromOutlet,
   useGetAllStudentsFromInstitution,
   useCreateStudentInStudentClientAccount,
+  useUpdateStudentInInstitution,
 };

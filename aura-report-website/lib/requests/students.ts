@@ -9,6 +9,7 @@ import {
 } from "@/types/data/Student";
 import { z } from "zod";
 import { apiClient } from "../api-client";
+import { UpdateStudentParams } from "@/features/students-dashboard/edit-student-form/EditStudentForm";
 
 export async function getAllStudentsFromOutlet(
   institutionId: string,
@@ -76,4 +77,13 @@ export async function createStudentInAccount(
     `created student_client_account ${JSON.stringify(response.data)}`,
   );
   return response.data;
+}
+
+export async function updateStudentInInstitution(params: UpdateStudentParams) {
+  const { institution_id, student_id, ...requestBody } = params;
+  console.log("here:" + JSON.stringify(requestBody));
+  return await apiClient.patch<StudentWithAssociations>(
+    `/api/institutions/${institution_id}/students/${student_id}`,
+    JSON.stringify(requestBody),
+  );
 }
