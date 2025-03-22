@@ -12,6 +12,7 @@ import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import CreateLevelsForm from "@/features/levels-dashboard/create-levels-form/CreateLevelsForm";
+import EditLevelForm from "@/features/levels-dashboard/edit-level-form/EditLevelForm";
 import { ExpandedLevel, LevelsApis } from "@/lib/hooks/levels-queries";
 import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
@@ -143,9 +144,9 @@ export default function LevelsPage() {
           {/* TODO: implement */}
 
           <FilterTableContent
-            editRowContent={function (row: Row<any>): ReactNode {
-              throw new Error("Function not implemented.");
-            }}
+            editRowContent={(row: Row<ExpandedLevel>) => (
+              <EditLevelForm level={row.original} />
+            )}
           />
         </div>
       </FilterTableRoot>

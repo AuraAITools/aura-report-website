@@ -113,7 +113,7 @@ export default function EditLessonDetailsForm({
           labelText='Lesson Name (Optional)'
           placeholder={"i.e. lesson name"}
           type='text'
-          value={lesson.name}
+          defaultValue={lesson.name}
           className='w-1/2'
         />
         <SelectMultipleFormField
@@ -131,7 +131,7 @@ export default function EditLessonDetailsForm({
         <FormField
           {...register("description")}
           labelText='description'
-          value={lesson.description}
+          defaultValue={lesson.description}
           placeholder={"i.e. description"}
           type='text'
           className='w-1/2'
@@ -139,7 +139,7 @@ export default function EditLessonDetailsForm({
         <FormField
           {...register("date")}
           labelText='lesson date'
-          value={lesson.date}
+          defaultValue={lesson.date}
           type='date'
           className='w-1/2'
         />
@@ -147,14 +147,14 @@ export default function EditLessonDetailsForm({
           {...register("start_time")}
           labelText='lesson start time'
           type='time'
-          value={lesson.start_time}
+          defaultValue={lesson.start_time}
           className='w-1/2'
         />
         <FormField
           {...register("end_time")}
           labelText='lesson end time'
           type='time'
-          value={lesson.end_time}
+          defaultValue={lesson.end_time}
           className='w-1/2'
         />
         <SubmitButton

@@ -2,7 +2,6 @@ import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
 import React from "react";
 import { StudentWithAssociations } from "@/types/data/Student";
-import { z } from "zod";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { LevelsApis } from "@/lib/hooks/levels-queries";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
@@ -10,19 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import SelectMultipleFormField from "@/components/forms/SelectMultipleFormField";
 import SubmitButton from "@/components/forms/SubmitButton";
 import { StudentsApis } from "@/lib/hooks/students-queries";
-
-export const UpdateStudentParamsSchema = z.object({
-  institution_id: z.string().uuid(),
-  student_id: z.string().uuid(),
-  name: z.string().optional(),
-  date_of_birth: z.coerce.date().optional(),
-  current_school: z.string().optional(),
-  level_id: z.string().uuid(),
-  outlet_ids: z.string().uuid().array(),
-  course_ids: z.string().uuid().array(),
-});
-
-export type UpdateStudentParams = z.infer<typeof UpdateStudentParamsSchema>;
+import { UpdateStudentParams } from "@/lib/requests/students";
 
 export type EditStudentFormProps = {
   student: StudentWithAssociations;

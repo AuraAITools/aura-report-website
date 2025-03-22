@@ -15,6 +15,8 @@ import { BaseStudent } from "@/types/data/Student";
 import { ReactNode, useMemo } from "react";
 import CreateOutletForm from "../add-outlets-multistep-form/CreateOutletForm";
 import { Row } from "@tanstack/react-table";
+import EditOutletForm from "../edit-outlets-form/EditOutletForm";
+import { BaseOutlet } from "@/types/data/Outlet";
 
 export default function OutletsTable() {
   const { currentInstitution, currentOutlets, status } =
@@ -143,12 +145,10 @@ export default function OutletsTable() {
         </div>
         <div className='w-full my-4 rounded-xl bg-white p-4'>
           <FilterTableHeaders />
-          {/* TODO: implement */}
-
           <FilterTableContent
-            editRowContent={function (row: Row<any>): ReactNode {
-              throw new Error("Function not implemented.");
-            }}
+            editRowContent={(row: Row<ExpandedOutlet>) => (
+              <EditOutletForm outlet={row.original} />
+            )}
           />
         </div>
       </FilterTableRoot>

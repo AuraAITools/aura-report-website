@@ -1,6 +1,7 @@
 import { BaseOutlet } from "@/types/data/Outlet";
 import { apiClient } from "../api-client";
 import { ExpandedOutlet } from "../hooks/outlets-queries";
+import { z } from "zod";
 
 export async function getOutletById(
   institutionId: string,
@@ -37,6 +38,30 @@ export async function createOutletInInstitution(
   const response = await apiClient.post<BaseOutlet>(
     `/api/institutions/${outlet.institution_id}/outlets`,
     JSON.stringify(outletBody),
+  );
+  return response.data;
+}
+
+export const UpdateOutletParamsSchema = z.object({
+  institution_id: z.string().uuid(),
+  outlet_id: z.string().uuid(),
+  name: z.string().optional(),
+  address: z.string().optional(),
+  postal_code: z.string().optional(),
+  contact_number: z.string().optional(),
+  email: z.string().email().optional(),
+  description: z.string().optional(),
+});
+
+export type UpdateOutletParams = z.infer<typeof UpdateOutletParamsSchema>;
+
+export async function updateOutletInInstitution(
+  params: UpdateOutletParams,
+): Promise<BaseOutlet> {
+  const { institution_id, outlet_id, ...requestBody } = params;
+  const response = await apiClient.patch<BaseOutlet>(
+    `/api/institutions/${params.institution_id}/outlets/${params.outlet_id}`,
+    JSON.stringify(requestBody),
   );
   return response.data;
 }

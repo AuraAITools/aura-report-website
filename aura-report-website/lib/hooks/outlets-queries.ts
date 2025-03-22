@@ -15,6 +15,7 @@ import {
   createOutletInInstitution,
   getAllExpandedOutletsInInstitution,
   getAllOutletsInInstitution,
+  updateOutletInInstitution,
 } from "../requests/outlet";
 import { getAllStudentsFromOutlet } from "../requests/students";
 import { institutionQueryKeys } from "./institutions-queries";
@@ -89,6 +90,24 @@ export function useCreateOutletInInstitution() {
   });
 }
 
+export function useUpdateOutletInInstitution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateOutletInInstitution,
+    onError: (error, variables) => {
+      // An error happened!
+      console.error(error);
+      console.log(`rolling back optimistic update with id`);
+    },
+
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: outletKeys.lists(),
+      });
+    },
+  });
+}
+
 /**
  * function that asynchronously fetches associations (courses, educators, students) for an outlet and transforms the results
  * @param institutionId
@@ -123,4 +142,5 @@ export const OutletsApis = {
   useGetAllOutletsOfInstitutionIds,
   useGetExpandedOutlets,
   useCreateOutletInInstitution,
+  useUpdateOutletInInstitution,
 };

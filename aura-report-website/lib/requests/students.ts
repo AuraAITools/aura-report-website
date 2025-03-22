@@ -9,7 +9,6 @@ import {
 } from "@/types/data/Student";
 import { z } from "zod";
 import { apiClient } from "../api-client";
-import { UpdateStudentParams } from "@/features/students-dashboard/edit-student-form/EditStudentForm";
 
 export async function getAllStudentsFromOutlet(
   institutionId: string,
@@ -78,6 +77,19 @@ export async function createStudentInAccount(
   );
   return response.data;
 }
+
+export const UpdateStudentParamsSchema = z.object({
+  institution_id: z.string().uuid(),
+  student_id: z.string().uuid(),
+  name: z.string().optional(),
+  date_of_birth: z.coerce.date().optional(),
+  current_school: z.string().optional(),
+  level_id: z.string().uuid(),
+  outlet_ids: z.string().uuid().array(),
+  course_ids: z.string().uuid().array(),
+});
+
+export type UpdateStudentParams = z.infer<typeof UpdateStudentParamsSchema>;
 
 export async function updateStudentInInstitution(params: UpdateStudentParams) {
   const { institution_id, student_id, ...requestBody } = params;
