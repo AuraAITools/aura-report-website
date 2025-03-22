@@ -4,7 +4,7 @@ import SideSlideOverlay from "@/components/ui/overlay/side-overlay/SideSlideOver
 import { ReactNode } from "react";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 export type FilterTableContentProps = {
-  editRowContent: (row: Row<any>) => ReactNode;
+  editRowContent?: (row: Row<any>) => ReactNode;
 };
 export function FilterTableContent({
   editRowContent,
@@ -21,14 +21,16 @@ export function FilterTableContent({
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
-            <td>
-              <SideSlideOverlay
-                content={editRowContent(row)}
-                triggerButton={
-                  <DotsVerticalIcon className='text-black hover:scale-125' />
-                }
-              />
-            </td>
+            {!!editRowContent && (
+              <td>
+                <SideSlideOverlay
+                  content={editRowContent(row)}
+                  triggerButton={
+                    <DotsVerticalIcon className='text-black hover:scale-125' />
+                  }
+                />
+              </td>
+            )}
           </tr>
         );
       })}

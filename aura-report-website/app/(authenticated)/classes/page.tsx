@@ -134,11 +134,7 @@ export default function ClassesPage() {
         <div className='w-full my-4 rounded-xl bg-white p-4 '>
           <FilterTableHeaders />
           {/* TODO: implement */}
-          <FilterTableContent
-            editRowContent={function (row: Row<any>): ReactNode {
-              throw new Error("Function not implemented.");
-            }}
-          />
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>

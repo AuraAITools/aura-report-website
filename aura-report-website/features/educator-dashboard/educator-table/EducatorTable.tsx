@@ -96,11 +96,7 @@ export default function EducatorTable() {
           <FilterTableHeaders />
           {/* TODO: implement */}
 
-          <FilterTableContent
-            editRowContent={function (row: Row<any>): ReactNode {
-              throw new Error("Function not implemented.");
-            }}
-          />
+          <FilterTableContent />
         </div>
       </FilterTableRoot>
     </div>
