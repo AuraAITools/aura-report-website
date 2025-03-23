@@ -12,6 +12,7 @@ import { ReactNode, useMemo } from "react";
 import MultiStepForm from "../multistep-form/MultiStepForm";
 import { Row } from "@tanstack/react-table";
 import EditStudentForm from "../edit-student-form/EditStudentForm";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 
 type StudentsFilterTableProps = {
   students: StudentWithAssociations[];
@@ -84,14 +85,14 @@ export default function StudentsFilterTable({
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           <FilterTableContent
             editRowContent={(row: Row<StudentWithAssociations>) => (
               <EditStudentForm student={row.original} />
             )}
           />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

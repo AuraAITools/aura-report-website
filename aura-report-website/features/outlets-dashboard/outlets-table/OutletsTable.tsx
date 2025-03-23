@@ -12,11 +12,11 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { ExpandedOutlet, OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseEducator } from "@/types/data/Educator";
 import { BaseStudent } from "@/types/data/Student";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import CreateOutletForm from "../add-outlets-multistep-form/CreateOutletForm";
 import { Row } from "@tanstack/react-table";
 import EditOutletForm from "../edit-outlets-form/EditOutletForm";
-import { BaseOutlet } from "@/types/data/Outlet";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 
 export default function OutletsTable() {
   const { currentInstitution, currentOutlets, status } =
@@ -26,11 +26,8 @@ export default function OutletsTable() {
    * fetch expanded outlet data for table and transform query results
    */
 
-  let {
-    data: expandedOutlets,
-    isPending: expandedOutletsIsPending,
-    refetch,
-  } = OutletsApis.useGetExpandedOutlets(currentInstitution?.id);
+  let { data: expandedOutlets = [], refetch } =
+    OutletsApis.useGetExpandedOutlets(currentInstitution?.id);
 
   /**
    * column definitions
@@ -61,7 +58,7 @@ export default function OutletsTable() {
           );
         },
         header: ({ table }) => {
-          return <span>COURSES</span>;
+          return <span>CLASSES</span>;
         },
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },
@@ -126,7 +123,7 @@ export default function OutletsTable() {
   return (
     <div className='p-4'>
       <FilterTableRoot
-        data={expandedOutlets ?? []}
+        data={expandedOutlets}
         columns={columns}
         refreshData={refetch}
       >
@@ -143,14 +140,14 @@ export default function OutletsTable() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4'>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           <FilterTableContent
             editRowContent={(row: Row<ExpandedOutlet>) => (
               <EditOutletForm outlet={row.original} />
             )}
           />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

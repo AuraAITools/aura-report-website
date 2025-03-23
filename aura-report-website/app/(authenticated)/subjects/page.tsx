@@ -1,6 +1,7 @@
 "use client";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -132,12 +133,11 @@ export default function SubjectsPage() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4'>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
-          {/* TODO: implement */}
-
+          {/* TODO: implement edit form*/}
           <FilterTableContent />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

@@ -15,14 +15,14 @@ export function FilterTableContent({
     <tbody>
       {table.getRowModel().rows.map((row) => {
         return (
-          <tr key={row.id}>
+          <tr key={row.id} className='border-y'>
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id} className='p-4'>
+              <td key={cell.id} className='pl-10 py-4 text-left'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
             {!!editRowContent && (
-              <td>
+              <td className='text-left'>
                 <SideSlideOverlay
                   content={editRowContent(row)}
                   triggerButton={

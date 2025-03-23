@@ -5,6 +5,7 @@ import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import CreateClassesForm from "@/features/classes-dashboard/create-courses-form/CreateCoursesForm";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -131,11 +132,11 @@ export default function ClassesPage() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           {/* TODO: implement */}
           <FilterTableContent />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

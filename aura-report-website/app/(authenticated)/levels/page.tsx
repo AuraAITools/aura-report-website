@@ -4,6 +4,7 @@ import { useInstitutionAndOutletsContext } from "@/components/providers/Institut
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -18,18 +19,14 @@ import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
 import { BaseStudent } from "@/types/data/Student";
 import { Row } from "@tanstack/react-table";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 export default function LevelsPage() {
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
 
-  const {
-    data: expandedLevels = [],
-    isPending: fetchExpandedPending,
-    isError: fetchExpandedError,
-    refetch,
-  } = LevelsApis.useGetAllExpandedLevelsOfInstitution(currentInstitution?.id);
+  const { data: expandedLevels = [], refetch } =
+    LevelsApis.useGetAllExpandedLevelsOfInstitution(currentInstitution?.id);
 
   const columns = useMemo<TableColumnDef<ExpandedLevel>[]>(
     () => [
@@ -139,16 +136,14 @@ export default function LevelsPage() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
-          {/* TODO: implement */}
-
           <FilterTableContent
             editRowContent={(row: Row<ExpandedLevel>) => (
               <EditLevelForm level={row.original} />
             )}
           />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

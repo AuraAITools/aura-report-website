@@ -1,5 +1,6 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
 import { FilterTableHeaders } from "@/features/filter-table/FilterTableHeaders";
 import { FilterTableRoot } from "@/features/filter-table/FilterTableRoot";
@@ -84,12 +85,11 @@ export default function ParentsTable() {
           {/* TODO: create button to create student clietn account + add student */}
           <RefreshDataButton />
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4'>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           {/* TODO: implement */}
-
           <FilterTableContent />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

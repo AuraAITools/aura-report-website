@@ -14,6 +14,8 @@ import { useMemo } from "react";
 import CreateLessonForm from "../create-lesson-form/CreateLessonForm";
 import EditLessonDetailsForm from "../edit-lesson-form/EditLessonDetailsForm";
 import { Row } from "@tanstack/react-table";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
+import { CircleIcon } from "@radix-ui/react-icons";
 
 export default function LessonsTable() {
   const { currentInstitution, currentOutlet } =
@@ -41,8 +43,16 @@ export default function LessonsTable() {
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorKey: "status",
+        accessorFn: (row) => (
+          <div className='flex gap-2 items-center'>
+            <CircleIcon className='fill-yellow-400 text-yellow-400' />
+            {/* TODO: create a map of icons to each lesson status to dynamically generate the status row */}
+            <p>{row.status}</p>
+          </div>
+        ),
+        id: "status",
         header: ({ table }) => <span>STATUS</span>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
@@ -114,10 +124,10 @@ export default function LessonsTable() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           <FilterTableContent editRowContent={renderEditLessonForm} />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );

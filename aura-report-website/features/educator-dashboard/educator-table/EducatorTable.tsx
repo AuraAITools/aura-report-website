@@ -10,9 +10,9 @@ import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { BaseEducatorClientSchema } from "@/types/data/Educator";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import CreateEducatorForm from "../create-educator-form/CreateEducatorForm";
-import { Row } from "@tanstack/react-table";
+import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 
 export default function EducatorTable() {
   const { currentInstitution } = useInstitutionAndOutletsContext();
@@ -92,12 +92,12 @@ export default function EducatorTable() {
             <RefreshDataButton />
           </div>
         </div>
-        <div className='w-full my-4 rounded-xl bg-white p-4 '>
+        <FilterTableContentContainer>
           <FilterTableHeaders />
           {/* TODO: implement */}
 
           <FilterTableContent />
-        </div>
+        </FilterTableContentContainer>
       </FilterTableRoot>
     </div>
   );
