@@ -59,7 +59,7 @@ function useGetExpandedOutlets(institutionId?: string) {
       }
       return getAllExpandedOutletsInInstitution(institutionId);
     },
-    queryKey: outletKeys.lists(),
+    queryKey: outletKeys.institutionLists(institutionId),
     enabled: !!institutionId,
   });
 }
@@ -84,7 +84,7 @@ export function useCreateOutletInInstitution() {
 
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
-        queryKey: outletKeys.all,
+        queryKey: outletKeys.institutionLists(variables.institution_id),
       });
     },
   });
@@ -102,7 +102,7 @@ export function useUpdateOutletInInstitution() {
 
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({
-        queryKey: outletKeys.lists(),
+        queryKey: outletKeys.institutionLists(variables.institution_id),
       });
     },
   });

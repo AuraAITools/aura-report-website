@@ -7,15 +7,15 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import { StudentWithAssociations } from "@/types/data/Student";
-import { ReactNode, useMemo } from "react";
+import { BaseStudent, StudentWithAssociations } from "@/types/data/Student";
+import { useMemo } from "react";
 import MultiStepForm from "../multistep-form/MultiStepForm";
 import { Row } from "@tanstack/react-table";
 import EditStudentForm from "../edit-student-form/EditStudentForm";
 import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 
 type StudentsFilterTableProps = {
-  students: StudentWithAssociations[];
+  students: BaseStudent[];
   refetch: () => void;
 };
 export default function StudentsFilterTable({

@@ -15,33 +15,10 @@ import { generateKey } from "@/utils/id";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-// const formFieldSchema = z.object({
-//   institution: z.string(),
-//   outlet: z.string(),
-//   level: z.string(),
-//   subject: z.string(),
-//   price: z.string(),
-//   price_frequency: z.enum(PRICE_FREQUENCIES),
-//   max_class_size: z.string().optional(),
-//   class_name: z.string(),
-//   //   educator: z.string().optional(),
-//   start_date: z.string().date(),
-//   end_date: z.string().date(),
-//   lesson_start_time: z.string(),
-//   lesson_end_time: z.string(),
-//   lesson_frequency: z.object({
-//     day: z.enum(DAYS),
-//     unit: z.enum(LESSON_FREQ_UNIT),
-//     freq: z.string(),
-//   }),
-// });
-
-// type FormFields = z.infer<typeof formFieldSchema>;
-
 export default function CreateClassesForm() {
   const [lessonGenerationTemplateNumber, setLessonGenerationTemplateNumber] =
     useState<number>(1);
-  const { currentInstitution, currentOutlets, currentOutlet, status } =
+  const { currentInstitution, currentOutlets, currentOutlet } =
     useInstitutionAndOutletsContext();
   const { data: levels, status: levelFetchingStatus } =
     LevelsApis.useGetAllLevelsOfInstitution(currentInstitution?.id);

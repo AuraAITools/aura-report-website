@@ -4,7 +4,6 @@ import { BaseOutlet } from "@/types/data/Outlet";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,25 +32,14 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(formFieldsSchema),
   });
   const { mutate, isPending } = AccountsApis.useCreateStudentClientAccount(); // TODO: create a create client account hook
 
-  const {
-    currentInstitution: institution,
-    status: fetchInstitutionStatus,
-    outlets,
-  } = useInstitutionAndOutletsContext();
-
-  if (fetchInstitutionStatus === "pending") {
-    return <ProgressBar />;
-  }
-
-  if (fetchInstitutionStatus === "error") {
-    throw new Error("Failed to fetch institution of user");
-  }
+  const { currentInstitution: institution, outlets } =
+    useInstitutionAndOutletsContext();
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     mutate(data, {

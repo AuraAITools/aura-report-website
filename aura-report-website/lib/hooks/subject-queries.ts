@@ -15,11 +15,10 @@ function useGetAllSubjectsOfInstitution(institutionId?: string) {
       if (!institutionId) return Promise.reject("institutionId is undefined");
       return getAllSubjectsOfInstitution(institutionId);
     },
-    queryKey: subjectQueryKeys.lists(),
+    queryKey: subjectQueryKeys.institutionLists(institutionId),
   });
 }
 
-// TODO: implement the create function
 type CreateSubjectMutationContext = {
   previousData: BaseSubject[];
 };
@@ -34,7 +33,9 @@ export function useCreateSubjectInInstitution() {
     mutationFn: createSubject,
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created subject ${JSON.stringify(data)}`);
-      queryClient.invalidateQueries({ queryKey: subjectQueryKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: subjectQueryKeys.institutionLists(variables.institution_id),
+      });
     },
     // onMutate: async (subject) => {
     //   queryClient.cancelQueries({ queryKey: ["subjects"] });

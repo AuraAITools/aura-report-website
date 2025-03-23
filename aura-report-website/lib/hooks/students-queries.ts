@@ -1,10 +1,5 @@
 import { queryKeyFactory } from "@/utils/query-key-factory";
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createStudentInAccount,
   CreateStudentRequestBody,
@@ -12,35 +7,8 @@ import {
   getAllStudentsFromOutlet,
   updateStudentInInstitution,
 } from "../requests/students";
-import { outletKeys } from "./outlets-queries";
 
 const studentsQueryKeys = queryKeyFactory("students");
-
-function useGetAllStudentsOfOutlets(
-  institutionId?: string,
-  outletIds: string[] = [],
-) {
-  return useQueries({
-    queries: outletIds.map((outletId) => ({
-      queryKey: studentsQueryKeys.lists(),
-      queryFn: async () => {
-        if (!institutionId || !outletId) {
-          return Promise.reject("no institutionId or outletId yet");
-        }
-        return getAllStudentsFromOutlet(institutionId, outletId);
-      },
-    })),
-    combine: (results) => {
-      return {
-        data: results.map((res) => res.data),
-        isPending: results.some((res) => res.isPending),
-        refetch: () => {
-          results.forEach((query) => query.refetch());
-        },
-      };
-    },
-  });
-}
 
 function useGetAllStudentsFromOutlet(
   institutionId?: string,
@@ -53,7 +21,7 @@ function useGetAllStudentsFromOutlet(
       }
       return getAllStudentsFromOutlet(institutionId, outletId);
     },
-    queryKey: [outletKeys.list, outletId, studentsQueryKeys.all],
+    queryKey: studentsQueryKeys.outletLists(institutionId, outletId),
   });
 }
 
@@ -65,7 +33,7 @@ function useGetAllStudentsFromInstitution(institutionId?: string) {
       }
       return getAllStudentsFromInstitution(institutionId);
     },
-    queryKey: studentsQueryKeys.lists(),
+    queryKey: studentsQueryKeys.institutionLists(institutionId),
   });
 }
 
@@ -84,7 +52,9 @@ function useCreateStudentInStudentClientAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: studentsQueryKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: studentsQueryKeys.institutionLists(variables.institution_id), // invalidate both institution and outlet caches for students
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -112,7 +82,6 @@ function useUpdateStudentInInstitution() {
 }
 
 export const StudentsApis = {
-  useGetAllStudentsOfOutlets,
   useGetAllStudentsFromOutlet,
   useGetAllStudentsFromInstitution,
   useCreateStudentInStudentClientAccount,

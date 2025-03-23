@@ -12,6 +12,6 @@ export function useGetAllParents(institutionId?: string) {
       }
       return getAllParents(institutionId);
     },
-    queryKey: parentKeys.lists(),
+    queryKey: parentKeys.institutionLists(institutionId),
   });
 }

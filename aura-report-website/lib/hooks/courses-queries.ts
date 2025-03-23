@@ -18,7 +18,7 @@ function useGetAllCoursesFromOutlet(institutionId?: string, outletId?: string) {
       }
       return getAllCoursesFromOutlet(institutionId, outletId);
     },
-    queryKey: courseKeys.lists(),
+    queryKey: courseKeys.outletLists(institutionId, outletId),
   });
 }
 
@@ -33,7 +33,7 @@ function useGetAllExpandedCoursesFromOutlet(
       }
       return getAllExpandedCoursesFromOutlet(institutionId, outletId);
     },
-    queryKey: courseKeys.lists(),
+    queryKey: courseKeys.outletLists(institutionId, outletId),
   });
 }
 
@@ -53,7 +53,12 @@ export function useCreateCourseInOutlet() {
       createCourseInOutlet(course),
     onSuccess: (data, variables, context) => {
       console.log(`succesfully created course ${JSON.stringify(data)}`);
-      queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.outletLists(
+          variables.institution_id,
+          variables.outlet_id,
+        ),
+      });
     },
     // onMutate: async (course) => {
     //   queryClient.cancelQueries({ queryKey: ["courses"] });

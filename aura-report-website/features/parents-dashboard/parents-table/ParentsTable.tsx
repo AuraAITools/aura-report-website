@@ -11,17 +11,14 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { useGetAllParents } from "@/lib/hooks/parents-queries";
 import { BaseParentClientAccount } from "@/types/data/Parents";
 import { BaseStudent } from "@/types/data/Student";
-import { Row } from "@tanstack/react-table";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 export default function ParentsTable() {
-  const { currentInstitution, status } = useInstitutionAndOutletsContext();
+  const { currentInstitution } = useInstitutionAndOutletsContext();
 
-  const {
-    data: parents = [],
-    isPending,
-    refetch,
-  } = useGetAllParents(currentInstitution?.id);
+  const { data: parents = [], refetch } = useGetAllParents(
+    currentInstitution?.id,
+  );
 
   /**
    * column definitions
@@ -71,11 +68,6 @@ export default function ParentsTable() {
     ],
     [],
   );
-
-  if (status === "error") {
-    throw new Error("cannot load outlets");
-  }
-
   return (
     <div className='p-4'>
       <FilterTableRoot data={parents} columns={columns} refreshData={refetch}>

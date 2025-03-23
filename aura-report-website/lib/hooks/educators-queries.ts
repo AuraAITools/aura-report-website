@@ -6,7 +6,6 @@ import {
   getAllEducatorClientsFromInstitution,
   getAllEducatorsFromOutlet,
 } from "../requests/educator";
-import { institutionQueryKeys } from "./institutions-queries";
 
 export const educatorKeys = queryKeyFactory("educators");
 
@@ -18,7 +17,7 @@ function useGetAllEducatorClientsFromInstitution(institutionId?: string) {
       }
       return getAllEducatorClientsFromInstitution(institutionId);
     },
-    queryKey: [institutionQueryKeys.all, institutionId, educatorKeys.all],
+    queryKey: educatorKeys.institutionLists(institutionId),
   });
 }
 
@@ -33,7 +32,7 @@ function useGetAllEducatorsFromInstitution(
       }
       return getAllEducatorsFromOutlet(institutionId, outletId);
     },
-    queryKey: [institutionQueryKeys.all, institutionId, educatorKeys.all],
+    queryKey: educatorKeys.institutionLists(institutionId),
   });
 }
 
@@ -46,7 +45,9 @@ function useCreateEducatorAccountInInstitution() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: educatorKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: educatorKeys.institutionLists(variables.institution_id),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -54,6 +55,10 @@ function useCreateEducatorAccountInInstitution() {
   });
 }
 
+/**
+ * TODO: make the query outlet scoped
+ * @returns
+ */
 function useCreateEducatorForAccountInOutlet() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -63,7 +68,9 @@ function useCreateEducatorForAccountInOutlet() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: educatorKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: educatorKeys.institutionLists(variables.institution_id),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");

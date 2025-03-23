@@ -18,7 +18,12 @@ export function useCreateLessonInOutlet() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: lessonKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: lessonKeys.outletLists(
+          variables.institution_id,
+          variables.outlet_id,
+        ),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -36,7 +41,12 @@ export function useUpdateLessonInOutlet() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: lessonKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: lessonKeys.outletLists(
+          variables.institution_id,
+          variables.outlet_id,
+        ),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -69,7 +79,8 @@ export function useGetAllLessonsOfOutlet(
       }
       return getAllExpandedLessonsOutlet(institutionId, outletId);
     },
-    queryKey: lessonKeys.lists(),
+    queryKey: lessonKeys.outletLists(institutionId, outletId),
+    enabled: !!institutionId && !!outletId,
   });
 }
 

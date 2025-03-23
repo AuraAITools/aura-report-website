@@ -23,7 +23,6 @@ type InstitutionAndOutletContext = {
   currentOutlet: BaseOutletContext | undefined;
   roles: string[];
   currentRoles: string[];
-  status: StatusType;
   changeCurrentInstitution: (institution: BaseInstitution) => void;
   changeCurrentOutlet: (outlet: BaseOutletContext) => void;
   refetchContext: () => void;
@@ -48,7 +47,6 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     return <UnauthenticatedScreen />;
   }
 
-  console.log(`asf ${JSON.stringify(session.user.ext_attrs.tenant_ids)}`);
   // get institutions
   const {
     data: institutions = [],
@@ -77,7 +75,7 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     if (
       !currentInstitution &&
       institutions.length > 0 &&
-      institutions.every((inst) => inst !== undefined)
+      institutions.every((inst) => inst !== undefined) // succesfully get all institution details
     ) {
       setCurrentInstitution(institutions[0]);
     }
@@ -115,6 +113,10 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
     );
   }
 
+  function changeCurrentOutlet(outlet: BaseOutletContext) {
+    setCurrentOutlet(outlet);
+  }
+
   // Authentication check
   if (sessionStatus !== "authenticated") {
     return <UnauthenticatedScreen />;
@@ -123,24 +125,6 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
   // Validation checks
   if (!session.user.ext_attrs.tenant_ids.length) {
     throw new Error("No institutions assigned to user");
-  }
-
-  function changeCurrentOutlet(outlet: BaseOutletContext) {
-    setCurrentOutlet(outlet);
-  }
-
-  let fetchStatus: StatusType = "pending";
-  fetchStatus =
-    institutions.some((instPromise) => !instPromise) ||
-    outlets.some((outletPromise) => !outletPromise) ||
-    fetchInstitutionIsPending ||
-    fetchOutletsPending ||
-    !currentInstitution
-      ? "pending"
-      : "success";
-
-  if (fetchInstitutionError || fetchOutletError) {
-    fetchStatus = "error";
   }
 
   return (
@@ -153,7 +137,6 @@ export function InstitutionsAndOutletsProvider(props: PropsWithChildren) {
           ? outlets.filter((o) => o.institution_id === currentInstitution.id)
           : [],
         roles: session.user.roles,
-        status: fetchStatus,
         currentRoles: currentRoles ?? [],
         changeCurrentInstitution,
         changeCurrentOutlet,

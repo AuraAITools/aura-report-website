@@ -19,8 +19,7 @@ import EditOutletForm from "../edit-outlets-form/EditOutletForm";
 import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 
 export default function OutletsTable() {
-  const { currentInstitution, currentOutlets, status } =
-    useInstitutionAndOutletsContext();
+  const { currentInstitution } = useInstitutionAndOutletsContext();
 
   /**
    * fetch expanded outlet data for table and transform query results
@@ -115,10 +114,6 @@ export default function OutletsTable() {
     ],
     [],
   );
-
-  if (status === "error") {
-    throw new Error("Failed to fetch outlet or institution");
-  }
 
   return (
     <div className='p-4'>

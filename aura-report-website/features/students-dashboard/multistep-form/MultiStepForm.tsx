@@ -1,4 +1,3 @@
-import LoadingComponent from "@/components/ui/loading/LoadingComponent";
 import MultiStepLayout from "@/components/ui/multi-step-layout/MultiStepLayout";
 import { useMultiStepLayout } from "@/hooks/useMultiStepLayout";
 
@@ -19,27 +18,8 @@ export default function MultiStepForm() {
   const [createdAccountEmail, setCreatedAccountEmail] = useState<string>("");
   const [createdAccountId, setCreatedAccountID] = useState<string>("");
 
-  const { currentInstitution, status, currentOutlets } =
-    useInstitutionAndOutletsContext();
+  const { currentOutlets } = useInstitutionAndOutletsContext();
 
-  if (status === "pending") {
-    return (
-      <LoadingComponent
-        image={{
-          src: "/Logo.png",
-          alt: "Aura logo",
-          className: "animate-spin-slow",
-          width: 40,
-          height: 40,
-        }}
-        loadingMessage={"Fetching Institution"}
-      />
-    );
-  }
-
-  if (status === "error") {
-    throw new Error("institution not loaded");
-  }
   /**
    * on form submit success, set form as complete and navigate to next step automatically
    */

@@ -29,7 +29,9 @@ function useCreateLevelOfInstitution() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: levelsQueryKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: levelsQueryKeys.institutionLists(variables.institution_id),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -47,7 +49,9 @@ export function useUpdateLevelInInstitution() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: levelsQueryKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: levelsQueryKeys.institutionLists(variables.institution_id),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -64,7 +68,7 @@ function useGetAllLevelsOfInstitution(institutionId?: string) {
       }
       return getAllLevelsOfInstitution(institutionId);
     },
-    queryKey: levelsQueryKeys.lists(),
+    queryKey: levelsQueryKeys.institutionLists(institutionId),
     enabled: !!institutionId,
   });
 }
@@ -77,7 +81,7 @@ function useGetAllExpandedLevelsOfInstitution(institutionId?: string) {
       }
       return getAllExpandedLevelsOfInstitution(institutionId);
     },
-    queryKey: levelsQueryKeys.lists(),
+    queryKey: levelsQueryKeys.institutionLists(institutionId),
     enabled: !!institutionId,
   });
 }

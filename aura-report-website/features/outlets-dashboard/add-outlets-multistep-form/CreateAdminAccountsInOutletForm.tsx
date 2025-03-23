@@ -31,12 +31,9 @@ type FormFields = z.infer<typeof formFieldsSchema>;
 export default function CreateAdminAccountsInOutletForm(
   props: CreateAdminAccountsInOutletFormProps,
 ) {
-  const { currentInstitution, status, currentOutlets } =
+  const { currentInstitution, currentOutlets } =
     useInstitutionAndOutletsContext();
 
-  if (status === "pending") {
-    return <ProgressBar />;
-  }
   const {
     register,
     handleSubmit,

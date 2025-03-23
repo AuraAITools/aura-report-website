@@ -4,13 +4,16 @@ import StudentsFilterTable from "@/features/students-dashboard/student-filter-ta
 import { StudentsApis } from "@/lib/hooks/students-queries";
 
 export default function StudentsPage() {
-  const { currentInstitution } = useInstitutionAndOutletsContext();
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const {
-    status: fetchingStudents,
     error,
-    data: students,
+    data: students = [],
     refetch,
-  } = StudentsApis.useGetAllStudentsFromInstitution(currentInstitution?.id);
+  } = StudentsApis.useGetAllStudentsFromOutlet(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
 
   if (error) {
     return (
@@ -22,7 +25,7 @@ export default function StudentsPage() {
 
   return (
     <div>
-      <StudentsFilterTable students={students ?? []} refetch={refetch} />
+      <StudentsFilterTable students={students} refetch={refetch} />
     </div>
   );
 }
