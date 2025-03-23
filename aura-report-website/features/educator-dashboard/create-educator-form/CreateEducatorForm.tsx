@@ -15,7 +15,11 @@ type CreateEducatorFormParams = CreateEducatorParams & {
   last_name: string;
   contact: string;
 };
-export default function CreateEducatorForm() {
+
+type CreateEducatorFormProps = {
+  onSuccess: () => void;
+};
+export default function CreateEducatorForm(props: CreateEducatorFormProps) {
   const {
     register,
     handleSubmit,
@@ -40,7 +44,9 @@ export default function CreateEducatorForm() {
     createEducatorAccount(params, {
       onSuccess: (account_response) => {
         params.educator_account_id = account_response.data.id;
-        createEducatorForAccountInOutlet(params);
+        createEducatorForAccountInOutlet(params, {
+          onSuccess: props.onSuccess,
+        });
       },
     });
   };

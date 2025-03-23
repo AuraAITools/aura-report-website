@@ -127,7 +127,9 @@ export default function SubjectsPage() {
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialog={<CreateSubjectForm />}
+              dialogFn={(onSuccess) => (
+                <CreateSubjectForm onSuccess={onSuccess} />
+              )}
               buttonTitle='Create Subject'
             />
             <RefreshDataButton />

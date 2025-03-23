@@ -130,7 +130,9 @@ export default function LevelsPage() {
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialog={<CreateLevelsForm />}
+              dialogFn={(onSuccess) => (
+                <CreateLevelsForm onSuccess={onSuccess} />
+              )}
               buttonTitle='Create Level'
             />
             <RefreshDataButton />

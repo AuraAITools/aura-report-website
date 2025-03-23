@@ -86,7 +86,9 @@ export default function EducatorTable() {
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
               // TODO: create educator form
-              dialog={<CreateEducatorForm />}
+              dialogFn={(onSuccess) => (
+                <CreateEducatorForm onSuccess={onSuccess} />
+              )}
               buttonTitle={"Create Educator"}
             />
             <RefreshDataButton />

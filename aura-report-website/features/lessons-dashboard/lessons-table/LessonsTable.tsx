@@ -118,7 +118,9 @@ export default function LessonsTable() {
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialog={<CreateLessonForm />}
+              dialogFn={(onSuccess) => (
+                <CreateLessonForm onSuccess={onSuccess} />
+              )}
               buttonTitle={"Create Lesson"}
             />
             <RefreshDataButton />

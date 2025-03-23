@@ -126,7 +126,9 @@ export default function ClassesPage() {
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialog={<CreateClassesForm />}
+              dialogFn={(onSuccess) => (
+                <CreateClassesForm onSuccess={onSuccess} />
+              )}
               buttonTitle='Create Classes'
             />
             <RefreshDataButton />

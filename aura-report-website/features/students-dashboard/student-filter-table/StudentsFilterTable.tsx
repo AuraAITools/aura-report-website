@@ -78,7 +78,7 @@ export default function StudentsFilterTable({
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialog={<MultiStepForm />}
+              dialogFn={() => <MultiStepForm />}
               buttonTitle={"Create Students"}
             />
 

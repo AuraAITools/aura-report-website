@@ -14,8 +14,10 @@ export const CreateLevelParamsSchema = z.object({
 });
 
 export type CreateLevelParams = z.infer<typeof CreateLevelParamsSchema>;
-
-export default function CreateLevelsForm() {
+type CreateLevelsFormProps = {
+  onSuccess: () => void;
+};
+export default function CreateLevelsForm({ onSuccess }: CreateLevelsFormProps) {
   const { currentInstitution } = useInstitutionAndOutletsContext();
   const methods = useForm<CreateLevelParams>({
     // resolver: zodResolver(formFieldSchema), //include validation in future
@@ -32,7 +34,7 @@ export default function CreateLevelsForm() {
 
   const onSubmit: SubmitHandler<CreateLevelParams> = async (params) => {
     console.log(JSON.stringify(params));
-    mutate(params);
+    mutate(params, { onSuccess: () => onSuccess() });
   };
 
   return (

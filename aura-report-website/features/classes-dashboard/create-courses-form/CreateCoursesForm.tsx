@@ -14,8 +14,10 @@ import { DAYS, PRICE_FREQUENCIES } from "@/types/data/Course";
 import { generateKey } from "@/utils/id";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-export default function CreateClassesForm() {
+type CreateClassesFormProps = {
+  onSuccess: () => void;
+};
+export default function CreateClassesForm(props: CreateClassesFormProps) {
   const [lessonGenerationTemplateNumber, setLessonGenerationTemplateNumber] =
     useState<number>(1);
   const { currentInstitution, currentOutlets, currentOutlet } =
@@ -37,11 +39,12 @@ export default function CreateClassesForm() {
 
   const onSubmit: SubmitHandler<CreateCourseParams> = async (data) => {
     console.log(`submitted data ${JSON.stringify(data, null, 2)}`);
-    mutate({
-      ...data,
-    });
-    console.log("submitting");
-    console.log(`data: ${JSON.stringify(data)}`);
+    mutate(
+      {
+        ...data,
+      },
+      { onSuccess: props.onSuccess },
+    );
   };
 
   if (

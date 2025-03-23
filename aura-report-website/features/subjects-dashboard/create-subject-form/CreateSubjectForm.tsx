@@ -5,8 +5,10 @@ import { SubmitFormButton } from "@/features/students-dashboard/create-client-ac
 import { useCreateSubjectInInstitution } from "@/lib/hooks/subject-queries";
 import { CreateSubjectParams } from "@/lib/requests/subjects";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-export function CreateSubjectForm() {
+type CreateSubjectFormProps = {
+  onSuccess: () => void;
+};
+export function CreateSubjectForm(props: CreateSubjectFormProps) {
   const { currentInstitution } = useInstitutionAndOutletsContext();
   const {
     register,
@@ -17,7 +19,7 @@ export function CreateSubjectForm() {
 
   const onSubmit: SubmitHandler<CreateSubjectParams> = async (params) => {
     console.log(JSON.stringify(params));
-    mutate(params);
+    mutate(params, { onSuccess: props.onSuccess });
   };
   return (
     <form

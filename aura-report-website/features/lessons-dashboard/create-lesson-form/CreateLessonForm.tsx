@@ -9,8 +9,10 @@ import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
 import { CreateLessonParams } from "@/lib/requests/lesson";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-export default function CreateLessonForm() {
+type CreateLessonFormProps = {
+  onSuccess: () => void;
+};
+export default function CreateLessonForm(props: CreateLessonFormProps) {
   const {
     register,
     handleSubmit,
@@ -35,7 +37,7 @@ export default function CreateLessonForm() {
   );
   const onSubmit: SubmitHandler<CreateLessonParams> = (params) => {
     console.log(JSON.stringify(params));
-    mutate(params);
+    mutate(params, { onSuccess: props.onSuccess });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

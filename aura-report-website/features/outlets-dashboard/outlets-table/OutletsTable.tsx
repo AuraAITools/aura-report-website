@@ -128,7 +128,9 @@ export default function OutletsTable() {
           <div className='flex justify-center items-center p-2 gap-2'>
             <Authorization allowedRoles={["institution-admin"]} hideContent>
               <DialogButton
-                dialog={<CreateOutletForm />}
+                dialogFn={(onSuccess) => (
+                  <CreateOutletForm onSuccess={onSuccess} />
+                )}
                 buttonTitle={"Create Outlet"}
               />
             </Authorization>
