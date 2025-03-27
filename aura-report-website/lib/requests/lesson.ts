@@ -39,7 +39,7 @@ export const UpdateLessonParamsSchema = z.object({
   student_ids: z.string().uuid().array().optional(),
   name: z.string().optional(),
   status: z.enum(LESSON_STATUS).optional(),
-  date: z.string().date().optional(),
+  date: z.coerce.date().optional(),
   start_time: z
     .string()
     .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {

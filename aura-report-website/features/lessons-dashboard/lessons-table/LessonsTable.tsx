@@ -58,7 +58,7 @@ export default function LessonsTable() {
       {
         accessorFn: (row) => (
           <div>
-            <p>{row.date}</p>
+            <p>{row.date.toString()}</p>
             <p>
               {row.start_time} - {row.end_time}
             </p>

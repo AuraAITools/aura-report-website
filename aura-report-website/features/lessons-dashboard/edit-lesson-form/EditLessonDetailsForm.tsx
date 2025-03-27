@@ -139,7 +139,7 @@ export default function EditLessonDetailsForm({
         <FormField
           {...register("date")}
           labelText='lesson date'
-          defaultValue={lesson.date}
+          defaultValue={lesson.date.toString()}
           type='date'
           className='w-1/2'
         />
