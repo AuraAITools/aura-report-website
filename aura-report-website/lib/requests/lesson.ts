@@ -16,7 +16,10 @@ export const CreateLessonParamsSchema = z
     educator_ids: z.string().uuid().array(),
     student_ids: z.string().uuid().array(),
   })
-  .merge(BaseLessonSchema);
+  .merge(BaseLessonSchema)
+  .omit({
+    id: true,
+  });
 
 export async function createLessonInOutlet(params: CreateLessonParams) {
   const { institution_id, outlet_id, course_id, ...requestBody } = params;
@@ -37,8 +40,18 @@ export const UpdateLessonParamsSchema = z.object({
   name: z.string().optional(),
   status: z.enum(LESSON_STATUS).optional(),
   date: z.string().date().optional(),
-  start_time: z.string().time().optional(),
-  end_time: z.string().time().optional(),
+  start_time: z
+    .string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+      message: "Please enter a valid time in 24-hour format (HH:MM)",
+    })
+    .optional(),
+  end_time: z
+    .string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+      message: "Please enter a valid time in 24-hour format (HH:MM)",
+    })
+    .optional(),
   description: z.string().optional().optional(),
 });
 

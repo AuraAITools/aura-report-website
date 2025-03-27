@@ -41,10 +41,11 @@ export const CreateCourseRequestSchema = BaseCourseSchema.extend({
 
 export type CreateCourseRequest = z.infer<typeof CreateCourseRequestSchema>;
 
-export type CreateCourseParams = CreateCourseRequest & {
-  institution_id: string;
-  outlet_id: string;
-};
+export const CreateCourseParamsSchema = CreateCourseRequestSchema.extend({
+  institution_id: z.string().uuid(),
+  outlet_id: z.string().uuid(),
+});
+export type CreateCourseParams = z.infer<typeof CreateCourseParamsSchema>;
 export async function createCourseInOutlet(params: CreateCourseParams) {
   let { institution_id, outlet_id, ...createCourseRequestBody } = params;
   let response = await apiClient.post<BaseCourse>(

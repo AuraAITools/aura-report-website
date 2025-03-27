@@ -11,7 +11,7 @@ export default function SubmitButton(props: SubmitButtonProps) {
   return (
     <button
       type='submit'
-      className={`w-[200px] min-h-[60px] mx-4 mt-4 bg-black text-white rounded-lg hover:text-slate-200 ${className && className}`}
+      className={`w-[200px] min-h-[60px] bg-black text-white rounded-lg hover:text-slate-200 ${className}`}
       disabled={disabled}
     >
       {isSubmitting ? (

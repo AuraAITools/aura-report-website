@@ -8,7 +8,7 @@ import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormField } from "../../../components/forms/FormField";
-import { SubmitFormButton } from "./SubmitFormButton";
+import SubmitButton from "@/components/forms/SubmitButton";
 
 const formFieldsSchema = BaseAccountSchema.omit({
   id: true,
@@ -104,13 +104,12 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
         errorMessage={errors.relationship?.message}
         {...register("relationship")}
       />
-      <SubmitFormButton
-        className='col-span-2'
-        loading={isPending}
-        disabled={props.disabled}
-      >
-        Create Account
-      </SubmitFormButton>
+      <SubmitButton
+        disabled={isPending}
+        buttonTitle={"Create Account"}
+        isSubmitting={isPending}
+        className='w-full'
+      />
     </form>
   );
 }

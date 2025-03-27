@@ -1,9 +1,13 @@
 import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import { SubmitFormButton } from "@/features/students-dashboard/create-client-account-form/SubmitFormButton";
 import { useCreateSubjectInInstitution } from "@/lib/hooks/subject-queries";
-import { CreateSubjectParams } from "@/lib/requests/subjects";
+import {
+  CreateSubjectParams,
+  CreateSubjectParamsSchema,
+} from "@/lib/requests/subjects";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 type CreateSubjectFormProps = {
   onSuccess: () => void;
@@ -14,18 +18,17 @@ export function CreateSubjectForm(props: CreateSubjectFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateSubjectParams>();
-  const { mutate, isPending } = useCreateSubjectInInstitution();
+  } = useForm<CreateSubjectParams>({
+    resolver: zodResolver(CreateSubjectParamsSchema),
+  });
+  const { mutate: createSubject, isPending } = useCreateSubjectInInstitution();
 
   const onSubmit: SubmitHandler<CreateSubjectParams> = async (params) => {
     console.log(JSON.stringify(params));
-    mutate(params, { onSuccess: props.onSuccess });
+    createSubject(params, { onSuccess: props.onSuccess });
   };
   return (
-    <form
-      className='grid grid-rows-2 grid-cols-3 gap-6 py-4'
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className='flex flex-col gap-2' onSubmit={handleSubmit(onSubmit)}>
       <SelectFormField
         {...register("institution_id")}
         labelText='institution'
@@ -37,17 +40,19 @@ export function CreateSubjectForm(props: CreateSubjectFormProps) {
           },
         ]}
         className='col-span-1 row-start-1 text-gray-300 pointer-events-none'
-        errorMessage={errors.name?.message}
+        errorMessage={errors.institution_id?.message}
       />
       <FormField
         {...register("name")}
         labelText='name'
         errorMessage={errors.name?.message}
       />
-      {/* TODO: create reusable submit button */}
-      <SubmitFormButton className='col-span-2' loading={isPending}>
-        Create
-      </SubmitFormButton>
+      <SubmitButton
+        disabled={isPending}
+        buttonTitle={"Create Subject"}
+        isSubmitting={isPending}
+        className='w-full'
+      />
     </form>
   );
 }

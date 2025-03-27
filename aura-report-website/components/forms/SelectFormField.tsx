@@ -1,4 +1,5 @@
 import { generateKey } from "@/utils/id";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export type SelectFormFieldProps = {
   labelText: string;
@@ -32,6 +33,13 @@ export default function SelectFormField(props: SelectFormFieldProps) {
             </option>
           ))}
       </select>
+      {/* Error message */}
+      {errorMessage && (
+        <div className='flex gap-4 px-2 items-center bg-red-500 p-1 rounded-b-md ring-1 text-white'>
+          <ExclamationTriangleIcon />
+          <span>{errorMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

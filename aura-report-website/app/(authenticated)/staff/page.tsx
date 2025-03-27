@@ -1,4 +1,5 @@
 "use client";
-export default function OutletPage() {
-  return <div>outlet page</div>;
+
+export default function StaffPage() {
+  return <div>StaffPage</div>;
 }

@@ -23,7 +23,7 @@ export function FormField(props: FormFieldProps) {
         className={`inline-flex h-[35px] w-full flex-1 items-center justify-center rounded px-2.5 text-[15px] leading-none shadow-[0_0_0_1px] outline-none ${errorMessage && "border-red-500 text-red-500"}`}
       />
       {errorMessage && (
-        <div className='flex gap-4 px-2 items-center bg-red-500 p-1 rounded-md text-white'>
+        <div className='flex gap-4 px-2 items-center bg-red-500 p-1 rounded-b-md ring-1 text-white'>
           <ExclamationTriangleIcon />
           <span>{errorMessage}</span>
         </div>

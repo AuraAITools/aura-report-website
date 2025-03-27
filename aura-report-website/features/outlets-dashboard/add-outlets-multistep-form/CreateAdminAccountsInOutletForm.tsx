@@ -1,8 +1,8 @@
 import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
-import { SubmitFormButton } from "@/features/students-dashboard/create-client-account-form/SubmitFormButton";
 import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { BaseAccount, BaseAccountSchema } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
@@ -45,7 +45,7 @@ export default function CreateAdminAccountsInOutletForm(
 
   const {
     mutate: mutateInstitutionAdmin,
-    isPending: institutionAdminIsPedning,
+    isPending: institutionAdminIsPending,
   } = AccountsApis.useCreateInstitutionAdminAccount();
 
   const { mutate: mutateOutletAdmin, isPending: isPendingOutletAdmin } =
@@ -184,7 +184,12 @@ export default function CreateAdminAccountsInOutletForm(
         labelText='Institution'
         errorMessage={errors.institution_id?.message}
       />
-      <SubmitFormButton className='col-span-2'>Submit</SubmitFormButton>
+      <SubmitButton
+        disabled={institutionAdminIsPending}
+        buttonTitle={"Create Account"}
+        isSubmitting={institutionAdminIsPending}
+        className='w-full'
+      />
     </form>
   );
 }

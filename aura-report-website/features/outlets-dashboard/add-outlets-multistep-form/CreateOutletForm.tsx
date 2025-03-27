@@ -1,11 +1,13 @@
 import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import { SubmitFormButton } from "@/features/students-dashboard/create-client-account-form/SubmitFormButton";
 import { OutletsApis } from "@/lib/hooks/outlets-queries";
 import { BaseOutlet, BaseOutletSchema } from "@/types/data/Outlet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+
 const formFieldSchema = BaseOutletSchema.extend({
   institution_id: z.string().uuid(),
 });
@@ -15,20 +17,22 @@ type FormCallbacks = {
   onFailure?: () => void;
   onError?: () => void;
 };
+
 export default function CreateOutletForm(props: FormCallbacks) {
   const { currentInstitution } = useInstitutionAndOutletsContext();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormFields>({
-    // resolver: zodResolver(formFieldSchema),
+    resolver: zodResolver(formFieldSchema),
   });
-  const { mutate, isPending } = OutletsApis.useCreateOutletInInstitution();
+  const { mutate: createOutlet, isPending } =
+    OutletsApis.useCreateOutletInInstitution();
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    mutate(data, {
+    createOutlet(data, {
       onSuccess: (data) => {
         if (props.onSuccess) {
           props.onSuccess(data);
@@ -91,9 +95,12 @@ export default function CreateOutletForm(props: FormCallbacks) {
         type='tel'
         errorMessage={errors.contact_number?.message}
       />
-      <SubmitFormButton loading={isPending} className='col-span-2'>
-        Submit
-      </SubmitFormButton>
+      <SubmitButton
+        disabled={isPending}
+        buttonTitle={"Create Outlet"}
+        isSubmitting={isPending}
+        className='w-full'
+      />
     </form>
   );
 }

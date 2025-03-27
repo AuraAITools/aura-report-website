@@ -19,9 +19,13 @@ export const BaseLessonSchema = z.object({
   id: z.string(),
   name: z.string(),
   status: z.enum(LESSON_STATUS),
-  date: z.string().date(),
-  start_time: z.string().time(),
-  end_time: z.string().time(),
+  date: z.coerce.date(),
+  start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
+  end_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
   description: z.string().optional(),
 });
 

@@ -7,7 +7,12 @@ import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
-import { CreateLessonParams } from "@/lib/requests/lesson";
+import {
+  CreateLessonParams,
+  CreateLessonParamsSchema,
+} from "@/lib/requests/lesson";
+import { LESSON_STATUS } from "@/types/data/Lesson";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 type CreateLessonFormProps = {
   onSuccess: () => void;
@@ -18,26 +23,29 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<CreateLessonParams>({});
+  } = useForm<CreateLessonParams>({
+    resolver: zodResolver(CreateLessonParamsSchema),
+  });
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
   // get all educators
-  const { data: educators } = EducatorsApis.useGetAllEducatorsFromInstitution(
-    currentInstitution?.id,
-    currentOutlet?.id,
-  );
+  const { data: educators = [] } =
+    EducatorsApis.useGetAllEducatorsFromInstitution(
+      currentInstitution?.id,
+      currentOutlet?.id,
+    );
   // get all students
-  const { data: students } = StudentsApis.useGetAllStudentsFromInstitution(
+  const { data: students = [] } = StudentsApis.useGetAllStudentsFromInstitution(
     currentInstitution?.id,
   );
-  const { mutate } = LessonsApis.useCreateLessonInOutlet();
-  const { data: courses } = CoursesApis.useGetAllCoursesFromOutlet(
+  const { mutate: createLesson } = LessonsApis.useCreateLessonInOutlet();
+  const { data: courses = [] } = CoursesApis.useGetAllCoursesFromOutlet(
     currentInstitution?.id,
     currentOutlet?.id,
   );
   const onSubmit: SubmitHandler<CreateLessonParams> = (params) => {
     console.log(JSON.stringify(params));
-    mutate(params, { onSuccess: props.onSuccess });
+    createLesson(params, { onSuccess: props.onSuccess });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -52,7 +60,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         labelText='institution'
         disabled
         type='text'
-        className='w-1/2'
+        errorMessage={errors.institution_id?.message}
       />
       <SelectFormField
         {...register("outlet_id")}
@@ -65,78 +73,87 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         labelText='outlets'
         disabled
         type='text'
-        className='w-1/2'
+        errorMessage={errors.outlet_id?.message}
       />
       {/* Course ids */}
-      <SelectMultipleFormField
+      <SelectFormField
         {...register("course_id")}
         labelText={"Course"}
-        options={
-          courses?.map((course) => ({
-            value: course.id,
-            display: course.name,
-          })) ?? []
-        }
-        formFieldName={""}
+        options={courses.map((course) => ({
+          value: course.id,
+          display: course.name,
+        }))}
+        type='text'
+        errorMessage={errors.course_id?.message}
       />
       {/* educator */}
       <SelectMultipleFormField
         {...register("educator_ids")}
         labelText={"Educator(s)"}
-        options={
-          educators?.map((edu) => ({
-            value: edu.id,
-            display: edu.name,
-          })) ?? []
-        }
+        options={educators.map((edu) => ({
+          value: edu.id,
+          display: edu.name,
+        }))}
         formFieldName={""}
+        errorMessage={errors.educator_ids?.message}
       />
       <FormField
         {...register("name")}
         labelText='Lesson Name (Optional)'
         placeholder={"i.e. lesson name"}
         type='text'
-        className='w-1/2'
+        errorMessage={errors.name?.message}
       />
       <SelectMultipleFormField
         {...register("student_ids")}
         labelText={"Student(s)"}
-        options={
-          students?.map((student) => ({
-            value: student.id,
-            display: student.name,
-          })) ?? []
-        }
+        options={students.map((student) => ({
+          value: student.id,
+          display: student.name,
+        }))}
         formFieldName={""}
+        errorMessage={errors.student_ids?.message}
       />
       <FormField
         {...register("description")}
         labelText='description'
         placeholder={"i.e. description"}
         type='text'
-        className='w-1/2'
+        errorMessage={errors.description?.message}
       />
       <FormField
         {...register("date")}
         labelText='lesson date'
         type='date'
-        className='w-1/2'
+        errorMessage={errors.date?.message}
       />
       <FormField
         {...register("start_time")}
         labelText='lesson start time'
         type='time'
-        className='w-1/2'
+        errorMessage={errors.start_time?.message}
       />
       <FormField
         {...register("end_time")}
         labelText='lesson end time'
         type='time'
-        className='w-1/2'
+        errorMessage={errors.end_time?.message}
+      />
+      <SelectFormField
+        {...register("status")}
+        options={LESSON_STATUS.map((status) => ({
+          value: status,
+          display: status,
+        }))}
+        defaultValue={LESSON_STATUS[4]}
+        labelText='Lesson Status'
+        type='text'
+        errorMessage={errors.status?.message}
       />
       <SubmitButton
+        className='mt-2 w-full'
         disabled={isSubmitting}
-        buttonTitle={"Add Lesson"}
+        buttonTitle={"Create Lesson"}
         isSubmitting={isSubmitting}
       />
     </form>

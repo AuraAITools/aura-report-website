@@ -22,25 +22,32 @@ export type PriceFrequency = (typeof PRICE_FREQUENCIES)[number];
 export type Days = (typeof DAYS)[number];
 export const BaseLessonGenerationTemplateSchema = z.object({
   id: z.string().uuid(),
-  start_time: z.string().time(),
-  end_time: z.string().time(),
+  start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
+  end_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
   day_of_week: z.enum(DAYS),
   week_number: z.number(),
 });
 
 export const BaseCourseSchema = z.object({
   id: z.string().uuid(),
-  name: z.string(),
-  max_size: z.number().min(1).max(10000),
-  price: z.number().min(1).max(10000),
+  name: z.string().min(1),
+  max_size: z.coerce.number().min(1).max(10000),
+  price: z.coerce.number().min(0).max(10000),
   price_frequency: z.enum(PRICE_FREQUENCIES),
-  start_date: z.string(),
-  end_date: z.string(),
-  start_time: z.string(),
-  end_time: z.string(),
-  lesson_number_frequency: z.number(),
-  lesson_weekly_frequency: z.number(),
-  lesson_generation_templates: BaseLessonGenerationTemplateSchema.array(),
+  start_date: z.coerce.date(),
+  end_date: z.coerce.date(),
+  start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
+  end_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Please enter a valid time in 24-hour format (HH:MM)",
+  }),
+  lesson_number_frequency: z.coerce.number().min(1).max(20),
+  lesson_weekly_frequency: z.coerce.number().min(1).max(20),
 });
 
 export type BaseLessonGenerationTemplate = z.infer<

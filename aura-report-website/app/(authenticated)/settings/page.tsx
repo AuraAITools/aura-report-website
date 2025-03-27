@@ -1,4 +1,4 @@
 "use client";
-export default function StaffPage() {
-  return <div>Staff page</div>;
+export default function SettingsPage() {
+  return <div>SettingsPage</div>;
 }
