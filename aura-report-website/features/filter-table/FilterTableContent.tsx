@@ -15,7 +15,10 @@ export function FilterTableContent({
     <tbody>
       {table.getRowModel().rows.map((row) => {
         return (
-          <tr key={row.id} className='border-y'>
+          <tr
+            key={row.id}
+            className='border-y hover:bg-orange-300 focus:bg-orange-300 hover:text-white'
+          >
             {row.getVisibleCells().map((cell) => (
               <td key={cell.id} className='pl-10 py-4 text-left'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -26,7 +29,7 @@ export function FilterTableContent({
                 <SideSlideOverlay
                   content={editRowContent(row)}
                   triggerButton={
-                    <DotsVerticalIcon className='text-black hover:scale-125' />
+                    <DotsVerticalIcon className='text-black hover:scale-125 mr-4' />
                   }
                 />
               </td>

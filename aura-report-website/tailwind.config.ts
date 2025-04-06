@@ -16,13 +16,15 @@ const config: Config = {
         "swipeOut": "swipeOut 100ms ease-out",
         "slideUpAndFade": "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         "slideRightAndFade":
-          "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+          "slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         "slideDownAndFade":
           "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         "slideLeftAndFade":
-          "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "fadeIn": "fadeIn 150ms ease-in",
-        "fadeOut": "fadeOut 150ms ease-out",
+          "slideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "slideDown": "slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+        "slideUp": "slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+        "fadeIn": "fadeIn 400ms ease-in",
+        "fadeOut": "fadeOut 400ms ease-out",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -49,15 +51,23 @@ const config: Config = {
           to: { opacity: "1", transform: "translateY(0)" },
         },
         slideRightAndFade: {
-          from: { opacity: "0", transform: "translateX(-2px)" },
+          from: { opacity: "0", transform: "translateX(-100%)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
         slideDownAndFade: {
           from: { opacity: "0", transform: "translateY(-2px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        slideDown: {
+          from: { height: "0px" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        slideUp: {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0px" },
+        },
         slideLeftAndFade: {
-          from: { opacity: "0", transform: "translateX(2px)" },
+          from: { opacity: "0", transform: "translateX(100%)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
         fadeIn: {

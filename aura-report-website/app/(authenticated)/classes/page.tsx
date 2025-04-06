@@ -16,7 +16,6 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { ExpandedCourse } from "@/lib/requests/courses";
 import { BaseLesson } from "@/types/data/Lesson";
-import { Row } from "@tanstack/react-table";
 import { ReactNode, useMemo } from "react";
 
 export default function ClassesPage() {
@@ -78,7 +77,9 @@ export default function ClassesPage() {
       },
       {
         accessorFn: (row) => (
-          <ConcatenatedLinksList links={row.subjects.map((sub) => sub.name)} />
+          <ConcatenatedLinksList
+            links={row.subjects?.map((sub) => sub.name) ?? []}
+          />
         ),
         id: "subjects",
         header: ({ table }) => <span>Subject</span>,
@@ -90,12 +91,13 @@ export default function ClassesPage() {
         id: "lessons",
         header: ({ table }) => <span>Lesson(s)</span>,
         cell: ({ row, cell }) => {
-          let items = (cell.getValue() as BaseLesson[]).map((lesson) => {
-            return {
-              ...lesson,
-              url: `/lessons/${lesson.id}`,
-            };
-          });
+          let items =
+            (cell.getValue() as BaseLesson[])?.map((lesson) => {
+              return {
+                ...lesson,
+                url: `/lessons/${lesson.id}`,
+              };
+            }) ?? [];
           return (
             <FilterTableCellPopOver
               title='Lessons'

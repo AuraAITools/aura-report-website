@@ -39,7 +39,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|[^/]+\.[^/]+$).*)/", // exclude applying middleware on static resources and public images
+    "/((?!_next/static|_next/image).*)", // exclude applying middleware on static resources and public images
     "/((?!api/auth).*)", // exclude applying middleware on next auth routes
     "/api/:path*", // apply middleware on requests all api routes
   ],

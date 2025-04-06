@@ -21,14 +21,13 @@ const SideSlideOverlay = ({
       <Dialog.Trigger asChild>{triggerButton}</Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className='fixed inset-0 bg-black/50 data-[state=open]:animate-fadeIn data-[state=closed]:animate-fadeOut' />
+        <Dialog.Overlay className='fixed inset-0 bg-black/50 data-[state=open]:animate-slideLeftAndFade data-[state=closed]:animate-slideRightAndFade' />
 
-        <Dialog.Content className='fixed top-0 right-0 h-full w-3/4 max-w-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full'>
-          <div className='flex flex-col h-full p-6'>
-            <Dialog.Close asChild>
-              <Cross1Icon className='fixed right-5 size-5' />
-            </Dialog.Close>
-            <Dialog.Description className=''>{content}</Dialog.Description>
+        <Dialog.Content className='fixed top-0 right-0 h-full rounded-l-xl w-3/4 max-w-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full'>
+          <div className='flex flex-col h-full'>
+            <Dialog.Description className='h-full'>
+              {content}
+            </Dialog.Description>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
