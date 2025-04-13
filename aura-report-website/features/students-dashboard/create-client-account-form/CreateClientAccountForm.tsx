@@ -10,13 +10,21 @@ import { z } from "zod";
 import { FormField } from "../../../components/forms/FormField";
 import SubmitButton from "@/components/forms/SubmitButton";
 
-const formFieldsSchema = BaseAccountSchema.omit({
+const CreateStudentClientAccountParamsSchema = BaseAccountSchema.omit({
   id: true,
-}).extend({
-  institution_id: z.string(),
-});
+})
+  .extend({
+    institution_id: z.string(),
+    relationship: z.enum(ACCOUNT_RELATIONSHIP),
+  })
+  .omit({
+    personas: true,
+    pending_account_actions: true,
+  });
 
-type FormFields = z.infer<typeof formFieldsSchema>;
+type CreateStudentClientAccountParams = z.infer<
+  typeof CreateStudentClientAccountParamsSchema
+>;
 
 type FormCallbacks = {
   onSuccess?: (accountEmail: string, accountId: string) => void;
@@ -33,16 +41,17 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormFields>({
-    resolver: zodResolver(formFieldsSchema),
+  } = useForm<CreateStudentClientAccountParams>({
+    resolver: zodResolver(CreateStudentClientAccountParamsSchema),
   });
-  const { mutate, isPending } = AccountsApis.useCreateStudentClientAccount(); // TODO: create a create client account hook
+  const { mutate: createStudentClientAccount, isPending } =
+    AccountsApis.useCreateStudentClientAccount(); // TODO: create a create client account hook
 
   const { currentInstitution: institution, outlets } =
     useInstitutionAndOutletsContext();
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
-    mutate(data, {
+  const onSubmit: SubmitHandler<CreateStudentClientAccountParams> = (data) => {
+    createStudentClientAccount(data, {
       // TODO: fix
       onSuccess: (createdAccount) => {
         if (props.onSuccess)

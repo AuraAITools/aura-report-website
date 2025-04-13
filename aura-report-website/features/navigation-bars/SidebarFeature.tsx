@@ -7,8 +7,10 @@ import {
   CalendarIcon,
   ClipboardCopyIcon,
   ClipboardIcon,
+  ContainerIcon,
   CubeIcon,
   EyeOpenIcon,
+  FaceIcon,
   FileTextIcon,
   FontStyleIcon,
   GearIcon,
@@ -44,6 +46,10 @@ const sidebarShelfItemConfigurations: SidebarShelfItemProps[] = [
     href: "/outlets",
   },
   {
+    icon: <ContainerIcon />,
+    href: "/rooms",
+  },
+  {
     icon: <MixerVerticalIcon />,
     href: "/levels",
   },
@@ -60,11 +66,15 @@ const sidebarShelfItemConfigurations: SidebarShelfItemProps[] = [
     href: "/lessons",
   },
   {
+    icon: <PersonIcon />,
+    href: "/accounts",
+  },
+  {
     icon: <HandIcon />,
     href: "/students",
   },
   {
-    icon: <PersonIcon />,
+    icon: <FaceIcon />,
     href: "/parents",
   },
   {
@@ -115,6 +125,11 @@ export function SidebarFeature() {
             href='/outlets'
             leftIcon={<SewingPinFilledIcon className='size-6' />}
           />
+          <Sidebar.Item
+            title='Rooms'
+            href='/rooms'
+            leftIcon={<ContainerIcon className='size-6' />}
+          />
         </Sidebar.Group>
         <Sidebar.Group groupName='MANAGE EDUCATION' showSeparator>
           <Sidebar.Item
@@ -140,6 +155,11 @@ export function SidebarFeature() {
         </Sidebar.Group>
         <Sidebar.Group groupName='MANAGE PEOPLE' showSeparator>
           <Sidebar.Item
+            title='Accounts'
+            href='/accounts'
+            leftIcon={<PersonIcon className='size-6' />}
+          />
+          <Sidebar.Item
             title='Students'
             href='/students'
             leftIcon={<HandIcon className='size-6' />}
@@ -147,7 +167,7 @@ export function SidebarFeature() {
           <Sidebar.Item
             title='Parents'
             href='/parents'
-            leftIcon={<PersonIcon className='size-6' />}
+            leftIcon={<FaceIcon className='size-6' />}
           />
           <Sidebar.Item
             title='Educators'

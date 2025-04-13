@@ -64,17 +64,9 @@ function useGetExpandedOutlets(institutionId?: string) {
   });
 }
 
-type CreateOutletMutationContext = {
-  previousData: BaseOutlet[];
-};
 export function useCreateOutletInInstitution() {
   const queryClient = useQueryClient();
-  return useMutation<
-    BaseOutlet,
-    Error,
-    BaseOutlet & { institution_id: string },
-    CreateOutletMutationContext
-  >({
+  return useMutation({
     mutationFn: createOutletInInstitution,
     onError: (error, variables) => {
       // An error happened!

@@ -64,6 +64,7 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         disabled
         type='text'
         className='w-1/2'
+        errorMessage={errors.institution_id?.message}
       />
       <SelectFormField
         {...register("outlet_id")}
@@ -74,6 +75,7 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         labelText='outlets'
         type='text'
         className='w-1/2'
+        errorMessage={errors.outlet_id?.message}
       />
       <SelectMultipleFormField
         {...register("subject_ids")}
@@ -85,6 +87,7 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
           })) ?? []
         }
         formFieldName={""}
+        errorMessage={errors.subject_ids?.message}
       />
       <SelectMultipleFormField
         {...register("level_ids")}
@@ -96,6 +99,7 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
           })) ?? []
         }
         formFieldName={""}
+        errorMessage={errors.level_ids?.message}
       />
 
       <SelectFormField
@@ -107,36 +111,42 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         labelText='Employment Type'
         type='text'
         className='w-1/2'
+        errorMessage={errors.employment_type?.message}
       />
       <FormField
         {...register("date_of_birth")}
         labelText='Date of Birth'
         type='date'
         className='w-1/2'
+        errorMessage={errors.date_of_birth?.message}
       />
       <FormField
         {...register("first_name")}
         labelText='First Name'
         type='text'
         className='w-1/2'
+        errorMessage={errors.first_name?.message}
       />
       <FormField
         {...register("last_name")}
         labelText='Last Name'
         type='text'
         className='w-1/2'
+        errorMessage={errors.last_name?.message}
       />
       <FormField
         {...register("contact")}
         labelText='Contact'
         type='tel'
         className='w-1/2'
+        errorMessage={errors.contact?.message}
       />
       <FormField
         {...register("email")}
         labelText='Email'
         type='email'
         className='w-1/2'
+        errorMessage={errors.email?.message}
       />
       <SubmitButton
         disabled={isSubmitting}

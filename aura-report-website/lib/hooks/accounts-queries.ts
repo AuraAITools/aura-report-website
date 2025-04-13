@@ -1,11 +1,15 @@
-import { BaseAccount } from "@/types/data/Account";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createInstitutionAdminAccount,
   createOutletAdminAccount,
+  getExpandedAccountsInInstitution,
 } from "../requests/accounts";
-import { createStudentClientAccount } from "../requests/students";
 import { parentKeys } from "./parents-queries";
+import { queryKeyFactory } from "@/utils/query-key-factory";
+import { createStudentClientAccount } from "../requests/students";
+
+export const accountQueryKeys = queryKeyFactory("accounts");
+
 function useCreateInstitutionAdminAccount() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -15,7 +19,7 @@ function useCreateInstitutionAdminAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: ["institution-admins"] });
+      queryClient.invalidateQueries({ queryKey: accountQueryKeys.lists() });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -33,7 +37,7 @@ function useCreateOutletAdminAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: ["outlet-admins"] });
+      queryClient.invalidateQueries({ queryKey: accountQueryKeys.lists() });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -45,9 +49,7 @@ function useCreateOutletAdminAccount() {
 function useCreateStudentClientAccount() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (
-      params: Omit<BaseAccount, "id"> & { institution_id: string },
-    ) => createStudentClientAccount(params.institution_id, params),
+    mutationFn: createStudentClientAccount,
     onError: (error, variables) => {
       console.log(`rolling back optimistic update with id`);
     },
@@ -62,8 +64,21 @@ function useCreateStudentClientAccount() {
   });
 }
 
+function useGetAllExpandedAccountsInInstitution(institutionId?: string) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId) {
+        return Promise.reject("no institution id or outlet id yet");
+      }
+      return getExpandedAccountsInInstitution(institutionId);
+    },
+    queryKey: accountQueryKeys.lists(),
+  });
+}
+
 export const AccountsApis = {
   useCreateInstitutionAdminAccount,
   useCreateOutletAdminAccount,
   useCreateStudentClientAccount,
+  useGetAllExpandedAccountsInInstitution,
 };

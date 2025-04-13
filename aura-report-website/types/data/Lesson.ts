@@ -3,22 +3,28 @@ import { BaseCourseSchema } from "./Course";
 import { BaseEducatorSchema } from "./Educator";
 import { BaseStudentSchema } from "./Student";
 export const LESSON_STATUS = [
+  "UPCOMING",
+  "ONGOING",
   "COMPLETED",
   "CANCELLED",
   "POSTPONED",
-  "MOST_RECENT_COMPLETED",
-  "UPCOMING",
-  "NEXT_UPCOMING",
-  "REVIEWED",
-  "NOT_REVIEWED",
-  "PLANNED",
-  "UNPLANNED",
 ] as const;
+export type LessonStatus = (typeof LESSON_STATUS)[number];
+
+export const LESSON_REVIEW_STATUS = ["REVIEWED", "NOT_REVIEWED"] as const;
+
+export type LessonReviewStatus = (typeof LESSON_REVIEW_STATUS)[number];
+
+export const LESSON_PLAN_STATUS = ["PLANNED", "NOT_PLANNED"] as const;
+
+export type LessonPlanStatus = (typeof LESSON_PLAN_STATUS)[number];
 
 export const BaseLessonSchema = z.object({
   id: z.string(),
   name: z.string(),
-  status: z.enum(LESSON_STATUS),
+  lesson_status: z.enum(LESSON_STATUS),
+  lesson_review_status: z.enum(LESSON_REVIEW_STATUS),
+  lesson_plan_status: z.enum(LESSON_PLAN_STATUS),
   date: z.coerce.date(),
   start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Please enter a valid time in 24-hour format (HH:MM)",

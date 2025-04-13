@@ -1,4 +1,4 @@
-import { BaseOutlet } from "@/types/data/Outlet";
+import { BaseOutlet, BaseOutletSchema } from "@/types/data/Outlet";
 import { apiClient } from "../api-client";
 import { ExpandedOutlet } from "../hooks/outlets-queries";
 import { z } from "zod";
@@ -31,8 +31,15 @@ export async function getAllExpandedOutletsInInstitution(
   return response.data;
 }
 
+export const CreateOutletParamsSchema = BaseOutletSchema.extend({
+  institution_id: z.string().uuid(),
+}).omit({
+  id: true,
+});
+
+export type CreateOutletParams = z.infer<typeof CreateOutletParamsSchema>;
 export async function createOutletInInstitution(
-  outlet: BaseOutlet & { institution_id: string },
+  outlet: CreateOutletParams,
 ): Promise<BaseOutlet> {
   const { institution_id, ...outletBody } = outlet;
   const response = await apiClient.post<BaseOutlet>(

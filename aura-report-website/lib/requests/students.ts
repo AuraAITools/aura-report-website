@@ -1,4 +1,4 @@
-import { BaseAccount } from "@/types/data/Account";
+import { BaseAccountSchema } from "@/types/data/Account";
 import { BaseCourse } from "@/types/data/Course";
 import { BaseLevel } from "@/types/data/Level";
 import { BaseOutlet } from "@/types/data/Outlet";
@@ -29,13 +29,25 @@ export async function getAllStudentsFromInstitution(institutionId: string) {
   return studentsPromise.data;
 }
 
+export const CreateStudentClientAccountParamsSchema = BaseAccountSchema.omit({
+  id: true,
+  pending_account_actions: true,
+  personas: true,
+}).extend({
+  institution_id: z.string().uuid(),
+});
+
+export type CreateStudentClientAccountParams = z.infer<
+  typeof CreateStudentClientAccountParamsSchema
+>;
+
 export async function createStudentClientAccount(
-  institutionId: string,
-  student_client_account: Omit<BaseAccount, "id">,
+  createStudentClientAccountParams: CreateStudentClientAccountParams,
 ) {
+  const { institution_id, ...requestBody } = createStudentClientAccountParams;
   let response = await apiClient.post<BaseStudent>(
-    `/api/institutions/${institutionId}/accounts/student-clients`,
-    JSON.stringify(student_client_account),
+    `/api/institutions/${institution_id}/accounts/student-clients`,
+    JSON.stringify(requestBody),
   );
   console.log(
     `created student_client_account ${JSON.stringify(response.data)}`,

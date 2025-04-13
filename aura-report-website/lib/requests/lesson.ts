@@ -19,6 +19,9 @@ export const CreateLessonParamsSchema = z
   .merge(BaseLessonSchema)
   .omit({
     id: true,
+    lesson_plan_status: true,
+    lesson_review_status: true,
+    lesson_status: true,
   });
 
 export async function createLessonInOutlet(params: CreateLessonParams) {

@@ -64,7 +64,6 @@ export default function EditLessonDetailsForm({
       date: lesson.date,
       start_time: lesson.start_time,
       end_time: lesson.end_time,
-      status: lesson.status,
       student_ids: lesson.students.map((student) => student.id),
       educator_ids: lesson.educators.map((edu) => edu.id),
       institution_id: currentInstitution?.id,
@@ -197,16 +196,6 @@ export default function EditLessonDetailsForm({
             placeholder={"i.e. lesson name"}
             type='text'
             defaultValue={lesson.name}
-          />
-          <SelectFormField
-            {...register("status")}
-            options={LESSON_STATUS.map((status) => ({
-              display: status,
-              value: status,
-            }))}
-            defaultValue={[lesson.status]}
-            labelText='Lesson Status'
-            type='text'
           />
           <FormField
             {...register("description")}

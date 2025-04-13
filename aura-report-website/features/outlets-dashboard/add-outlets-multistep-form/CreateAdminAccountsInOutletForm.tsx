@@ -2,12 +2,15 @@ import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
 import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import ProgressBar from "@/components/ui/progress-bar/ProgressBar";
 import { AccountsApis } from "@/lib/hooks/accounts-queries";
+import {
+  CreateInstitutionAdminParams,
+  CreateInstitutionAdminParamsSchema,
+} from "@/lib/requests/accounts";
 import { BaseAccount, BaseAccountSchema } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 
 type FormCallbacks = {
   onSuccess?: (createdOutletAdmins: BaseAccount) => void;
@@ -15,18 +18,9 @@ type FormCallbacks = {
   onError?: () => void;
 };
 
-const ACCOUNT_TYPE = ["INSTITUTION_ADMIN", "OUTLET_ADMIN"] as const;
 type CreateAdminAccountsInOutletFormProps = {
   targetOutlet?: BaseOutlet;
 } & FormCallbacks;
-
-const formFieldsSchema = BaseAccountSchema.extend({
-  outlet_id: z.string(),
-  institution_id: z.string(),
-  account_type: z.enum(ACCOUNT_TYPE),
-}).omit({ relationship: true });
-
-type FormFields = z.infer<typeof formFieldsSchema>;
 
 export default function CreateAdminAccountsInOutletForm(
   props: CreateAdminAccountsInOutletFormProps,
@@ -38,9 +32,8 @@ export default function CreateAdminAccountsInOutletForm(
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormFields>({
-    // TODO:
-    // resolver: zodResolver(formFieldsSchema),
+  } = useForm<CreateInstitutionAdminParams>({
+    resolver: zodResolver(CreateInstitutionAdminParamsSchema),
   });
 
   const {
@@ -64,64 +57,24 @@ export default function CreateAdminAccountsInOutletForm(
     outletOptions = currentOutlets;
   }
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
-    if (data.account_type === "INSTITUTION_ADMIN") {
-      mutateInstitutionAdmin(
-        {
-          email: data.email,
-          last_name: data.last_name,
-          first_name: data.first_name,
-          contact: data.contact,
-          institution_id: data.institution_id,
-        },
-        {
-          onSuccess: (data) => {
-            if (props.onSuccess) {
-              props.onSuccess({
-                id: "",
-                email: "",
-                first_name: "",
-                last_name: "",
-                contact: "",
-                relationship: "PARENT",
-              }); //TODO
-            }
-            console.log(
-              `successfully submitted ${JSON.stringify(data, null, 2)}`,
-            );
-          },
-        },
-      );
-      return;
-    }
-
-    mutateOutletAdmin(
-      {
-        email: data.email,
-        last_name: data.last_name,
-        first_name: data.first_name,
-        contact: data.contact,
-        institution_id: data.institution_id,
-        outlet_id: data.outlet_id,
+  const onSubmit: SubmitHandler<CreateInstitutionAdminParams> = (data) => {
+    mutateInstitutionAdmin(data, {
+      onSuccess: (data) => {
+        if (props.onSuccess) {
+          props.onSuccess({
+            email: "",
+            first_name: "",
+            last_name: "",
+            contact: "",
+            id: "",
+            pending_account_actions: [],
+            personas: [],
+          }); //TODO
+        }
+        console.log(`successfully submitted ${JSON.stringify(data, null, 2)}`);
       },
-      {
-        onSuccess: () => {
-          if (props.onSuccess) {
-            props.onSuccess({
-              id: "",
-              email: "",
-              first_name: "",
-              last_name: "",
-              contact: "",
-              relationship: "PARENT",
-            });
-          }
-          console.log(
-            `successfully submitted ${JSON.stringify(data, null, 2)}`,
-          );
-        },
-      },
-    );
+    });
+    return;
   };
 
   return (
@@ -143,7 +96,7 @@ export default function CreateAdminAccountsInOutletForm(
         errorMessage={errors.institution_id?.message}
         disabled
       />
-      <SelectFormField
+      {/* <SelectFormField
         {...register("outlet_id")}
         options={outletOptions.map((oo) => ({
           value: oo.id,
@@ -152,7 +105,7 @@ export default function CreateAdminAccountsInOutletForm(
         labelText='Outlet'
         errorMessage={errors.institution_id?.message}
         disabled
-      />
+      /> */}
       <FormField
         {...register("first_name")}
         labelText={"Admin First Name"}
@@ -175,7 +128,7 @@ export default function CreateAdminAccountsInOutletForm(
         type='tel'
         errorMessage={errors.contact?.message}
       />
-      <SelectFormField
+      {/* <SelectFormField
         {...register("account_type")}
         options={ACCOUNT_TYPE.map((e) => ({
           display: e.split("_").join(" ").toLowerCase(),
@@ -183,7 +136,7 @@ export default function CreateAdminAccountsInOutletForm(
         }))}
         labelText='Institution'
         errorMessage={errors.institution_id?.message}
-      />
+      /> */}
       <SubmitButton
         disabled={institutionAdminIsPending}
         buttonTitle={"Create Account"}

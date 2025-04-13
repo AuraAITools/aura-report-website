@@ -9,13 +9,45 @@ import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
-import { ExpandedLesson } from "@/types/data/Lesson";
-import { useMemo } from "react";
+import {
+  ExpandedLesson,
+  LessonPlanStatus,
+  LessonReviewStatus,
+  LessonStatus,
+} from "@/types/data/Lesson";
+import { ReactNode, useMemo } from "react";
 import CreateLessonForm from "../create-lesson-form/CreateLessonForm";
 import EditLessonDetailsForm from "../edit-lesson-form/EditLessonDetailsForm";
 import { Row } from "@tanstack/react-table";
 import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
-import { CircleIcon } from "@radix-ui/react-icons";
+import {
+  ArrowUpIcon,
+  CheckCircledIcon,
+  CircleIcon,
+  CrossCircledIcon,
+  LapTimerIcon,
+  MinusCircledIcon,
+  TrackNextIcon,
+} from "@radix-ui/react-icons";
+
+const LESSON_STATUS_ICON_MAPPING: Record<LessonStatus, ReactNode> = {
+  UPCOMING: <ArrowUpIcon className='text-yellow-400' />,
+  ONGOING: <LapTimerIcon className='text-blue-400' />,
+  COMPLETED: <CheckCircledIcon className='text-green-400' />,
+  CANCELLED: <MinusCircledIcon className='text-red-400' />,
+  POSTPONED: <TrackNextIcon className='text-gray-400' />,
+};
+
+const LESSON_PLAN_STATUS_ICON_MAPPING: Record<LessonPlanStatus, ReactNode> = {
+  PLANNED: <CheckCircledIcon className='text-green-400' />,
+  NOT_PLANNED: <CrossCircledIcon className='text-red-400' />,
+};
+
+const LESSON_REVIEW_STATUS_ICON_MAPPING: Record<LessonReviewStatus, ReactNode> =
+  {
+    NOT_REVIEWED: <CrossCircledIcon className='text-red-400' />,
+    REVIEWED: <CheckCircledIcon className='text-green-400' />,
+  };
 
 export default function LessonsTable() {
   const { currentInstitution, currentOutlet } =
@@ -45,16 +77,40 @@ export default function LessonsTable() {
       {
         accessorFn: (row) => (
           <div className='flex gap-2 items-center'>
-            <CircleIcon className='fill-yellow-400 text-yellow-400' />
-            {/* TODO: create a map of icons to each lesson status to dynamically generate the status row */}
-            <p>{row.status}</p>
+            {LESSON_STATUS_ICON_MAPPING[row.lesson_status]}
+            <p>{row.lesson_status}</p>
           </div>
         ),
-        id: "status",
-        header: ({ table }) => <span>STATUS</span>,
+        id: "lesson_status",
+        header: ({ table }) => <span>LESSON STATUS</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
+      {
+        accessorFn: (row) => (
+          <div className='flex gap-2 items-center'>
+            {LESSON_PLAN_STATUS_ICON_MAPPING[row.lesson_plan_status]}
+            <p>{row.lesson_plan_status}</p>
+          </div>
+        ),
+        id: "lesson_plan_status",
+        header: ({ table }) => <span>LESSON PLAN STATUS</span>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
+        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
+      },
+      {
+        accessorFn: (row) => (
+          <div className='flex gap-2 items-center'>
+            {LESSON_REVIEW_STATUS_ICON_MAPPING[row.lesson_review_status]}
+            <p>{row.lesson_review_status}</p>
+          </div>
+        ),
+        id: "lesson_review_status",
+        header: ({ table }) => <span>LESSON REVIEW STATUS</span>,
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
+        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
+      },
+
       {
         accessorFn: (row) => (
           <div>

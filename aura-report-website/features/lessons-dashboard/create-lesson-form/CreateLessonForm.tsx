@@ -11,7 +11,6 @@ import {
   CreateLessonParams,
   CreateLessonParamsSchema,
 } from "@/lib/requests/lesson";
-import { LESSON_STATUS } from "@/types/data/Lesson";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 type CreateLessonFormProps = {
@@ -138,17 +137,6 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         labelText='lesson end time'
         type='time'
         errorMessage={errors.end_time?.message}
-      />
-      <SelectFormField
-        {...register("status")}
-        options={LESSON_STATUS.map((status) => ({
-          value: status,
-          display: status,
-        }))}
-        defaultValue={LESSON_STATUS[4]}
-        labelText='Lesson Status'
-        type='text'
-        errorMessage={errors.status?.message}
       />
       <SubmitButton
         className='mt-2 w-full'
