@@ -37,12 +37,15 @@ export default function LevelsPage() {
       },
       {
         accessorFn: (row) => (
-          <ConcatenatedLinksList
-            links={row.subjects.map((sub) => {
-              console.log(JSON.stringify(sub));
-              return sub.name;
-            })}
-          />
+          <>
+            {row.subjects ? (
+              <ConcatenatedLinksList
+                links={row.subjects.map((sub) => sub.name)}
+              />
+            ) : (
+              <div>None</div>
+            )}
+          </>
         ),
         id: "subjects",
         header: ({ table }) => <span>SUBJECTS</span>,
@@ -50,7 +53,7 @@ export default function LevelsPage() {
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorFn: (row) => row.courses, //note: normal non-fuzzy filter column - case sensitive
+        accessorFn: (row) => row.courses ?? "no courses", //note: normal non-fuzzy filter column - case sensitive
         id: "courses",
         cell: ({ row, cell }) => {
           let items = (cell.getValue() as BaseCourse[]).map((course) => {
@@ -73,7 +76,7 @@ export default function LevelsPage() {
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },
       {
-        accessorFn: (row) => row.students, //note: normal non-fuzzy filter column - case sensitive
+        accessorFn: (row) => row.students ?? "no students", //note: normal non-fuzzy filter column - case sensitive
         id: "students",
         cell: ({ row, cell }) => {
           let items = (cell.getValue() as BaseStudent[]).map((student) => {
@@ -94,7 +97,7 @@ export default function LevelsPage() {
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },
       {
-        accessorFn: (row) => row.educators, //note: normal non-fuzzy filter column - case sensitive
+        accessorFn: (row) => row.educators ?? "no educators", //note: normal non-fuzzy filter column - case sensitive
         id: "educators",
         cell: ({ row, cell }) => {
           let items = (cell.getValue() as BaseEducator[]).map((educator) => {

@@ -1,7 +1,8 @@
-import { CheckIcon } from "@radix-ui/react-icons";
+import { CheckIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import React from "react";
 
 type MultiStepLayoutProps = {
+  title: string;
   currentStep: number;
   totalStep: number;
   titles: string[];
@@ -9,78 +10,27 @@ type MultiStepLayoutProps = {
 };
 export default function MultiStepLayout(props: MultiStepLayoutProps) {
   return (
-    <div className='py-2'>
-      <div className='flex w-full justify-between items-center'>
-        {props.completionStatuses.map((completionStatus, idx) => {
-          return (
-            <React.Fragment key={`multi_step_layout_${idx}`}>
-              <StepDisplay stepIndex={idx + 1} isCompleted={completionStatus} />
-              {idx !== props.titles.length - 1 && (
-                <ConnectedEdge isCompleted={completionStatus} />
-              )}
-            </React.Fragment>
-          );
-        })}
+    <div className='flex p-4 mb-4 mx-4 items-center border-b-2'>
+      <div className='text-3xl whitespace-nowrap'>{props.title}</div>
+      <div className='w-1/12' />
+      <div className='flex gap-4 items-center'>
+        {props.titles.map((stepTitle, idx) => (
+          <React.Fragment key={`multi_step_layout_${idx}`}>
+            <div
+              className={`${props.currentStep === idx + 1 ? "text-black" : "text-slate-400"}`}
+            >
+              {stepTitle}
+            </div>
+            {idx !== props.totalStep - 1 && <ChevronRightIcon />}
+          </React.Fragment>
+        ))}
       </div>
-      <TitleBar
-        titles={props.titles}
-        completionStatus={props.completionStatuses}
-      />
     </div>
   );
 }
 
-export type TitleBarProps = {
-  titles: string[];
-  completionStatus: boolean[];
-};
-export function TitleBar(props: TitleBarProps) {
-  return (
-    <div className='flex justify-between items-center'>
-      {props.titles.map((title, idx) => {
-        return (
-          <div
-            key={`title_step_bar_${idx}`}
-            className={`${props.completionStatus[idx] ? "text-green-500" : "text-slate-500"}`}
-          >
-            {title}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 export type StepDisplayProps = {
   stepIndex: number;
   isCompleted: boolean;
   navigate?: (stepIndex: number) => void;
 };
-
-export function StepDisplay(props: StepDisplayProps) {
-  function onClick() {
-    if (props.navigate) props.navigate(props.stepIndex - 1);
-  }
-  return (
-    <div onClick={onClick}>
-      <div
-        className={`flex rounded-full w-12 h-12 opacity-50 justify-center items-center m-2 ${props.isCompleted ? "bg-green-500" : "bg-slate-300"}`}
-      >
-        {props.isCompleted ? (
-          <CheckIcon className='size-6 text-white' />
-        ) : (
-          props.stepIndex
-        )}
-      </div>
-    </div>
-  );
-}
-type ConnectedEdgeProps = {
-  isCompleted: boolean;
-};
-export function ConnectedEdge(props: ConnectedEdgeProps) {
-  return (
-    <div
-      className={`h-[2px] w-full ${props.isCompleted ? "bg-green-500" : "bg-slate-300"}`}
-    />
-  );
-}

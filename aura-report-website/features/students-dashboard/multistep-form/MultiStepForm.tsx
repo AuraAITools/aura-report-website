@@ -76,6 +76,7 @@ export default function MultiStepForm() {
         totalStep={steps.length}
         titles={["Create Account", "Create Students", "Registration Complete"]}
         completionStatuses={stepIsCompleted} // to maintain with state
+        title={"Add Student Account"}
       />
       {step}
     </div>

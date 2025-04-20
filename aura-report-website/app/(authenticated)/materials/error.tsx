@@ -8,7 +8,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  // TODO: Log the error to an error reporting service
+  // Log the error to an error reporting service
 
   return (
     <ErrorDisplay

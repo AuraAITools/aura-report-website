@@ -29,6 +29,7 @@ import {
   MinusCircledIcon,
   TrackNextIcon,
 } from "@radix-ui/react-icons";
+import { convertTimestampToDateTime } from "@/utils/time-utils";
 
 const LESSON_STATUS_ICON_MAPPING: Record<LessonStatus, ReactNode> = {
   UPCOMING: <ArrowUpIcon className='text-yellow-400' />,
@@ -112,15 +113,26 @@ export default function LessonsTable() {
       },
 
       {
-        accessorFn: (row) => (
-          <div>
-            <p>{row.date.toString()}</p>
-            <p>
-              {row.start_time} - {row.end_time}
-            </p>
-          </div>
-        ),
-        id: "DATE_AND_TIME",
+        accessorFn: (row) => {
+          const { date: start_date, time: start_time } =
+            convertTimestampToDateTime(row.lesson_start_timestamptz);
+          const { date: end_date, time: end_time } = convertTimestampToDateTime(
+            row.lesson_end_timestamptz,
+          );
+
+          return (
+            <div>
+              <p>
+                {start_date} ~ {end_date}
+              </p>
+              <p>
+                {start_time} - {end_time}
+              </p>
+            </div>
+          );
+        },
+
+        id: "date_and_time",
         header: ({ table }) => <span>DATE & TIME</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
@@ -129,7 +141,7 @@ export default function LessonsTable() {
         accessorFn: (row) => (
           <ConcatenatedLinksList links={row.students.map((s) => s.name)} />
         ),
-        id: "STUDENTS",
+        id: "students",
         header: ({ table }) => <span>STUDENTS</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
@@ -142,7 +154,7 @@ export default function LessonsTable() {
             <div>N/A</div>
           );
         },
-        id: "EDUCATORS",
+        id: "educators",
         header: ({ table }) => <span>EDUCATORS</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
@@ -150,7 +162,7 @@ export default function LessonsTable() {
 
       {
         accessorFn: (row) => <span>{row.description || "N/A"}</span>,
-        id: "DESCRIPTION",
+        id: "description",
         header: ({ table }) => <span>DESCRIPTION</span>,
         cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column

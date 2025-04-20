@@ -15,6 +15,7 @@ export const CreateLessonParamsSchema = z
     course_id: z.string().uuid(),
     educator_ids: z.string().uuid().array(),
     student_ids: z.string().uuid().array(),
+    outlet_room_id: z.string().uuid().optional(),
   })
   .merge(BaseLessonSchema)
   .omit({

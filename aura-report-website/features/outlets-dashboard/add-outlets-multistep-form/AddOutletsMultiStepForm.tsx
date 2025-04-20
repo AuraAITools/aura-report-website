@@ -66,6 +66,7 @@ export default function AddOutletsMultiStepForm() {
         totalStep={steps.length}
         titles={["Outlet Location & Contact", "Add Admins", "Complete"]}
         completionStatuses={stepIsCompleted} // to maintain with state
+        title={"Add Outlets"}
       />
       {step}
     </div>

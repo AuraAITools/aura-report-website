@@ -3,7 +3,7 @@
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import DialogButton from "@/components/ui/buttons/dialogButton/DialogButton";
 import { ConcatenatedLinksList } from "@/components/ui/ConcatenatedLinksListProps";
-import CreateClassesForm from "@/features/classes-dashboard/create-courses-form/CreateCoursesForm";
+import CreateCourseMultistepForm from "@/features/classes-dashboard/create-courses-form/CreateCourseMultistepForm";
 import FilterTableCellPopOver from "@/features/filter-table/FilterTableCellPopover";
 import { FilterTableContentContainer } from "@/features/filter-table/FilterTableContainer";
 import { FilterTableContent } from "@/features/filter-table/FilterTableContent";
@@ -16,6 +16,7 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { ExpandedCourse } from "@/lib/requests/courses";
 import { BaseLesson } from "@/types/data/Lesson";
+import { convertTimestampToDateTime } from "@/utils/time-utils";
 import { ReactNode, useMemo } from "react";
 
 export default function ClassesPage() {
@@ -39,29 +40,63 @@ export default function ClassesPage() {
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "start_date",
+        accessorFn: (row) => {
+          const { date: start_date } = convertTimestampToDateTime(
+            row.course_start_timestamptz,
+          );
+          return <div>{start_date}</div>;
+        },
+        id: "start_date",
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         header: ({ table }) => <span>Start Date</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "end_date",
+        accessorFn: (row) => {
+          const { date: end_date } = convertTimestampToDateTime(
+            row.course_end_timestamptz,
+          );
+          return <div>{end_date}</div>;
+        },
+        id: "end_date",
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         header: ({ table }) => <span>End Date</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "start_time",
+        accessorFn: (row) => {
+          const { time: start_time } = convertTimestampToDateTime(
+            row.course_start_timestamptz,
+          );
+          return <div>{start_time}</div>;
+        },
+        id: "start_time",
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         header: ({ table }) => <span>Start Time</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "lesson_number_frequency",
+        accessorFn: (row) => {
+          const { time: end_time } = convertTimestampToDateTime(
+            row.course_end_timestamptz,
+          );
+          return <div>{end_time}</div>;
+        },
+        id: "end_time",
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
+        header: ({ table }) => <span>End Time</span>,
+        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
+      },
+      {
+        accessorKey: "lesson_frequency",
         header: ({ table }) => <span>Frequency</span>,
         cell: ({ cell, row }) => <div>{cell.getValue()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorKey: "lesson_weekly_frequency",
-        header: ({ table }) => <span>weekly Frequency</span>,
+        //TODO:
+        accessorKey: "outlet_room.name",
+        header: ({ table }) => <span>Outlet room</span>,
         cell: ({ cell, row }) => <div>{cell.getValue()}</div>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
@@ -128,8 +163,8 @@ export default function ClassesPage() {
           <PaginationBar />
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
-              dialogFn={(onSuccess) => (
-                <CreateClassesForm onSuccess={onSuccess} />
+              dialogFn={(closeDialogFn) => (
+                <CreateCourseMultistepForm onSuccess={closeDialogFn} />
               )}
               buttonTitle='Create Classes'
             />

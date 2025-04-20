@@ -3,6 +3,7 @@ import { SidebarShelfItemProps } from "@/components/sidebar/SidebarShelfItem";
 import { generateKey } from "@/utils/id";
 import {
   ActivityLogIcon,
+  ArchiveIcon,
   BellIcon,
   CalendarIcon,
   ClipboardCopyIcon,
@@ -22,6 +23,7 @@ import {
   RowSpacingIcon,
   RulerHorizontalIcon,
   SewingPinFilledIcon,
+  TriangleUpIcon,
 } from "@radix-ui/react-icons";
 
 const sidebarShelfItemConfigurations: SidebarShelfItemProps[] = [
@@ -56,6 +58,14 @@ const sidebarShelfItemConfigurations: SidebarShelfItemProps[] = [
   {
     icon: <FontStyleIcon />,
     href: "/subjects",
+  },
+  {
+    icon: <TriangleUpIcon />,
+    href: "/topics",
+  },
+  {
+    icon: <ArchiveIcon />,
+    href: "/materials",
   },
   {
     icon: <RulerHorizontalIcon />,
@@ -141,6 +151,16 @@ export function SidebarFeature() {
             title='Subjects'
             href='/subjects'
             leftIcon={<FileTextIcon className='size-6' />}
+          />
+          <Sidebar.Item
+            title='Topics'
+            href='/topics'
+            leftIcon={<TriangleUpIcon className='size-6' />}
+          />
+          <Sidebar.Item
+            title='Materials'
+            href='/materials'
+            leftIcon={<ArchiveIcon className='size-6' />}
           />
           <Sidebar.Item
             title='Classes'

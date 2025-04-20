@@ -6,13 +6,14 @@ import { useInstitutionAndOutletsContext } from "@/components/providers/Institut
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
-import { CreateLessonParams } from "@/lib/requests/lesson";
-import { ExpandedLesson, LESSON_STATUS } from "@/types/data/Lesson";
+import { ExpandedLesson } from "@/types/data/Lesson";
 import React from "react";
 import classNames from "classnames";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Accordion, Dialog } from "radix-ui";
 import { ChevronDownIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { CreateLessonFormParams } from "../create-lesson-form/CreateLessonForm";
+import { convertTimestampToDateTime } from "@/utils/time-utils";
 interface AccordionItemProps
   extends React.ComponentPropsWithoutRef<typeof Accordion.Item> {
   className?: string;
@@ -48,22 +49,29 @@ export default function EditLessonDetailsForm({
     currentInstitution?.id,
   );
   const { mutate: updateLesson } = LessonsApis.useUpdateLessonInOutlet();
-  const onSubmit: SubmitHandler<CreateLessonParams> = (params) => {
+  const onSubmit: SubmitHandler<CreateLessonFormParams> = (params) => {
     console.log(JSON.stringify(params));
     updateLesson({ lesson_id: lesson.id, ...params });
   };
 
+  const { date: start_date, time: start_time } = convertTimestampToDateTime(
+    lesson.lesson_start_timestamptz,
+  );
+  const { date: end_date, time: end_time } = convertTimestampToDateTime(
+    lesson.lesson_end_timestamptz,
+  );
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
-  } = useForm<CreateLessonParams>({
+  } = useForm<CreateLessonFormParams>({
     defaultValues: {
       name: lesson.name,
       description: lesson.description,
-      date: lesson.date,
-      start_time: lesson.start_time,
-      end_time: lesson.end_time,
+      start_date: new Date(start_date), // FIXME: the default start_date and end_date are not showing up in the edit page
+      start_time: start_time,
+      end_date: new Date(end_date),
+      end_time: end_time,
       student_ids: lesson.students.map((student) => student.id),
       educator_ids: lesson.educators.map((edu) => edu.id),
       institution_id: currentInstitution?.id,
@@ -229,22 +237,32 @@ export default function EditLessonDetailsForm({
               </AccordionTrigger>
               <AccordionContent>
                 <FormField
-                  {...register("date")}
-                  labelText='lesson date'
-                  defaultValue={lesson.date.toString()}
+                  {...register("start_date")}
+                  labelText='lesson start date'
+                  defaultValue={new Date(start_date).toString()}
                   type='date'
+                  errorMessage={errors.start_date?.message}
+                />
+                <FormField
+                  {...register("end_date")}
+                  labelText='lesson end date'
+                  defaultValue={end_date}
+                  type='date'
+                  errorMessage={errors.end_date?.message}
                 />
                 <FormField
                   {...register("start_time")}
                   labelText='lesson start time'
                   type='time'
-                  defaultValue={lesson.start_time}
+                  defaultValue={start_time}
+                  errorMessage={errors.start_time?.message}
                 />
                 <FormField
                   {...register("end_time")}
                   labelText='lesson end time'
                   type='time'
-                  defaultValue={lesson.end_time}
+                  defaultValue={end_time}
+                  errorMessage={errors.end_time?.message}
                 />
               </AccordionContent>
             </AccordionItem>

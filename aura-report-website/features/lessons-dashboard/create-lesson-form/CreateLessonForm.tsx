@@ -7,23 +7,59 @@ import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
-import {
-  CreateLessonParams,
-  CreateLessonParamsSchema,
-} from "@/lib/requests/lesson";
+import { CreateLessonParamsSchema } from "@/lib/requests/lesson";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 type CreateLessonFormProps = {
   onSuccess: () => void;
 };
+
+export const CreateLessonFormParamsSchema = z
+  .object({
+    start_date: z.coerce.date(),
+    end_date: z.coerce.date(),
+    start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+      message: "Please enter a valid time in 24-hour format (HH:MM)",
+    }),
+    end_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+      message: "Please enter a valid time in 24-hour format (HH:MM)",
+    }),
+  })
+  .merge(CreateLessonParamsSchema)
+  .omit({
+    lesson_start_timestamptz: true,
+    lesson_end_timestamptz: true,
+  })
+  .transform((data) => {
+    // Combine date and time for start
+    const startDateTime = new Date(
+      `${data.start_date.toISOString().split("T")[0]}T${data.start_time}:00`,
+    );
+
+    // Combine date and time for end
+    const endDateTime = new Date(
+      `${data.end_date.toISOString().split("T")[0]}T${data.end_time}:00`,
+    );
+
+    // Convert to timestamptz using browser's local timezone
+    return {
+      ...data,
+      lesson_start_timestamptz: startDateTime.toISOString(),
+      lesson_end_timestamptz: endDateTime.toISOString(),
+    };
+  });
+export type CreateLessonFormParams = z.infer<
+  typeof CreateLessonFormParamsSchema
+>;
 export default function CreateLessonForm(props: CreateLessonFormProps) {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<CreateLessonParams>({
-    resolver: zodResolver(CreateLessonParamsSchema),
+  } = useForm<CreateLessonFormParams>({
+    resolver: zodResolver(CreateLessonFormParamsSchema),
   });
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
@@ -42,7 +78,9 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
     currentInstitution?.id,
     currentOutlet?.id,
   );
-  const onSubmit: SubmitHandler<CreateLessonParams> = (params) => {
+
+  const onSubmit: SubmitHandler<CreateLessonFormParams> = (params) => {
+    // TODO: convert the form input into lesson_start_timestamptz and lesson_end_timestamptz
     console.log(JSON.stringify(params));
     createLesson(params, { onSuccess: props.onSuccess });
   };
@@ -78,10 +116,19 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
       <SelectFormField
         {...register("course_id")}
         labelText={"Course"}
-        options={courses.map((course) => ({
-          value: course.id,
-          display: course.name,
-        }))}
+        options={
+          courses.length === 0
+            ? [
+                {
+                  value: "No Courses",
+                  display: "No Courses",
+                },
+              ]
+            : courses.map((course) => ({
+                value: course.id,
+                display: course.name,
+              }))
+        }
         type='text'
         errorMessage={errors.course_id?.message}
       />
@@ -121,10 +168,16 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         errorMessage={errors.description?.message}
       />
       <FormField
-        {...register("date")}
-        labelText='lesson date'
+        {...register("start_date")}
+        labelText='lesson start date'
         type='date'
-        errorMessage={errors.date?.message}
+        errorMessage={errors.start_date?.message}
+      />
+      <FormField
+        {...register("end_date")}
+        labelText='lesson end date'
+        type='date'
+        errorMessage={errors.end_date?.message}
       />
       <FormField
         {...register("start_time")}

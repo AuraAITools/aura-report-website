@@ -5,6 +5,7 @@ import { BaseOutletSchema } from "@/types/data/Outlet";
 import { BaseSubjectSchema } from "@/types/data/Subject";
 import { z } from "zod";
 import { apiClient } from "../api-client";
+import { CreateLessonParamsSchema } from "./lesson";
 export async function getAllCoursesFromOutlet(
   institutionId: string,
   outletId: string,
@@ -32,18 +33,18 @@ export async function getAllExpandedCoursesFromOutlet(
   return coursesPromise.data;
 }
 
-export const CreateCourseRequestSchema = BaseCourseSchema.extend({
-  subject_ids: z.string().uuid().array(),
-  level_id: z.string().uuid(),
-}).omit({
-  id: true,
-});
-
-export type CreateCourseRequest = z.infer<typeof CreateCourseRequestSchema>;
-
-export const CreateCourseParamsSchema = CreateCourseRequestSchema.extend({
+export const CreateCourseParamsSchema = BaseCourseSchema.extend({
   institution_id: z.string().uuid(),
   outlet_id: z.string().uuid(),
+  subject_ids: z.string().uuid().array(),
+  level_id: z.string().uuid(),
+  lessons: CreateLessonParamsSchema.omit({
+    institution_id: true,
+    outlet_id: true,
+    course_id: true,
+  }).array(),
+}).omit({
+  id: true,
 });
 export type CreateCourseParams = z.infer<typeof CreateCourseParamsSchema>;
 export async function createCourseInOutlet(params: CreateCourseParams) {
