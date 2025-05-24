@@ -95,7 +95,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         ]}
         labelText='institution'
         disabled
-        type='text'
+        name='institution_id'
         errorMessage={errors.institution_id?.message}
       />
       <SelectFormField
@@ -108,27 +108,18 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         ]}
         labelText='outlets'
         disabled
-        type='text'
+        name='outlet_id'
         errorMessage={errors.outlet_id?.message}
       />
       {/* Course ids */}
       <SelectFormField
         {...register("course_id")}
         labelText={"Course"}
-        options={
-          courses.length === 0
-            ? [
-                {
-                  value: "No Courses",
-                  display: "No Courses",
-                },
-              ]
-            : courses.map((course) => ({
-                value: course.id,
-                display: course.name,
-              }))
-        }
-        type='text'
+        options={courses.map((course) => ({
+          value: course.id,
+          display: course.name,
+        }))}
+        name='course_id'
         errorMessage={errors.course_id?.message}
       />
       {/* educator */}
