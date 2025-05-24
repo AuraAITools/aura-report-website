@@ -73,7 +73,7 @@ export function NotificationToast({ notification }: NotificationProps) {
 
 {
   /* <button
-        className='inline-flex h-[35px] items-center justify-center rounded bg-white px-[15px] text-[15px] font-medium leading-[35px] text-violet11 shadow-[0_2px_10px] shadow-blackA4 outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black'
+        className='inline-flex items-center justify-center rounded bg-white px-[15px] text-[15px] font-medium leading-[35px] text-violet11 shadow-[0_2px_10px] shadow-blackA4 outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black'
         onClick={() => {
           setOpen(false);
           window.clearTimeout(timerRef.current);

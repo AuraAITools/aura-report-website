@@ -7,7 +7,7 @@ export function MultiStepFormDialog() {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className='group inline-flex h-[35px] gap-2 items-center justify-center rounded bg-white px-[15px] font-medium text-black shadow-xl hover:bg-orange-300'>
+        <button className='group inline-flex gap-2 items-center justify-center rounded bg-white px-[15px] font-medium text-black shadow-xl hover:bg-orange-300'>
           <PlusCircledIcon className='size-6 text-green-300 group-hover:text-white' />
           <p className='group-hover:text-white'>Add New Student</p>
         </button>

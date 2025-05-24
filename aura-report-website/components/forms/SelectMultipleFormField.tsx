@@ -173,7 +173,7 @@ export default function SelectMultipleFormField(
           <button
             ref={triggerRef}
             type='button'
-            className={`flex justify-between items-center text-left w-full h-[35px] rounded px-2.5 text-[15px] shadow-[0_0_0_1px] outline-none bg-white
+            className={`flex justify-between items-center text-left w-full rounded p-3 text-[15px] shadow-[0_0_0_1px] outline-none bg-white
               ${errorMessage ? "border-red-500 text-red-500" : ""}
               ${isOpen ? "ring-2 ring-orange-300" : ""}
             `}

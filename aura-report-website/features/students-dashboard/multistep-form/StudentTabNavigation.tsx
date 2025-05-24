@@ -39,7 +39,7 @@ function StudentTabNavigation(props: StudentTabNavigationProps) {
             Name
           </label>
           <input
-            className='h-[35px] shrink-0 grow rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
+            className='shrink-0 grow rounded p-3 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
             id='name'
             defaultValue='Pedro Duarte'
           />
@@ -52,13 +52,13 @@ function StudentTabNavigation(props: StudentTabNavigationProps) {
             Username
           </label>
           <input
-            className='h-[35px] shrink-0 grow rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
+            className='shrink-0 grow rounded p-3 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
             id='username'
             defaultValue='@peduarte'
           />
         </fieldset>
         <div className='mt-5 flex justify-end'>
-          <button className='inline-flex h-[35px] cursor-default items-center justify-center rounded bg-green4 px-[15px] text-[15px] font-medium leading-none text-green11 outline-none hover:bg-green5 focus:shadow-[0_0_0_2px] focus:shadow-green7'>
+          <button className='inline-flex cursor-default items-center justify-center rounded bg-green4 px-[15px] text-[15px] font-medium leading-none text-green11 outline-none hover:bg-green5 focus:shadow-[0_0_0_2px] focus:shadow-green7'>
             Save changes
           </button>
         </div>
@@ -78,7 +78,7 @@ function StudentTabNavigation(props: StudentTabNavigationProps) {
             Current password
           </label>
           <input
-            className='h-[35px] shrink-0 grow rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
+            className='shrink-0 grow rounded p-3 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
             id='currentPassword'
             type='password'
           />
@@ -91,7 +91,7 @@ function StudentTabNavigation(props: StudentTabNavigationProps) {
             New password
           </label>
           <input
-            className='h-[35px] shrink-0 grow rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
+            className='shrink-0 grow rounded p-3 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
             id='newPassword'
             type='password'
           />
@@ -104,13 +104,13 @@ function StudentTabNavigation(props: StudentTabNavigationProps) {
             Confirm password
           </label>
           <input
-            className='h-[35px] shrink-0 grow rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
+            className='shrink-0 grow rounded p-3 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8'
             id='confirmPassword'
             type='password'
           />
         </fieldset>
         <div className='mt-5 flex justify-end'>
-          <button className='inline-flex h-[35px] cursor-default items-center justify-center rounded bg-green4 px-[15px] text-[15px] font-medium leading-none text-green11 outline-none hover:bg-green5 focus:shadow-[0_0_0_2px] focus:shadow-green7'>
+          <button className='inline-flex cursor-default items-center justify-center rounded bg-green4 px-[15px] text-[15px] font-medium leading-none text-green11 outline-none hover:bg-green5 focus:shadow-[0_0_0_2px] focus:shadow-green7'>
             Change password
           </button>
         </div>
