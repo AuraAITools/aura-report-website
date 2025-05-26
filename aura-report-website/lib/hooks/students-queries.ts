@@ -1,8 +1,8 @@
 import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  createStudentInAccount,
-  CreateStudentRequestBody,
+  createStudentsInAccount,
+  getAllExpandedStudentsFromOutlet,
   getAllStudentsFromInstitution,
   getAllStudentsFromOutlet,
   updateStudentInInstitution,
@@ -25,6 +25,21 @@ function useGetAllStudentsFromOutlet(
   });
 }
 
+function useGetAllExpandedStudentsFromOutlet(
+  institutionId?: string,
+  outletId?: string,
+) {
+  return useQuery({
+    queryFn: async () => {
+      if (!institutionId || !outletId) {
+        return Promise.reject("no institutionId or outletId yet");
+      }
+      return getAllExpandedStudentsFromOutlet(institutionId, outletId);
+    },
+    queryKey: studentsQueryKeys.outletLists(institutionId, outletId),
+  });
+}
+
 function useGetAllStudentsFromInstitution(institutionId?: string) {
   return useQuery({
     queryFn: async () => {
@@ -37,16 +52,10 @@ function useGetAllStudentsFromInstitution(institutionId?: string) {
   });
 }
 
-function useCreateStudentInStudentClientAccount() {
+function useCreateStudentsInAccount() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (
-      params: CreateStudentRequestBody & {
-        institution_id: string;
-        account_id: string;
-      },
-    ) =>
-      createStudentInAccount(params.institution_id, params.account_id, params),
+    mutationFn: createStudentsInAccount,
     onError: (error, variables) => {
       console.log(`rolling back optimistic update with id`);
     },
@@ -83,7 +92,8 @@ function useUpdateStudentInInstitution() {
 
 export const StudentsApis = {
   useGetAllStudentsFromOutlet,
+  useGetAllExpandedStudentsFromOutlet,
   useGetAllStudentsFromInstitution,
-  useCreateStudentInStudentClientAccount,
+  useCreateStudentsInAccount,
   useUpdateStudentInInstitution,
 };

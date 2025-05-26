@@ -11,18 +11,18 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import CreateLessonForm from "@/features/lessons-dashboard/create-lesson-form/CreateLessonForm";
 import EditLessonDetailsForm from "@/features/lessons-dashboard/edit-lesson-form/EditLessonDetailsForm";
 import { AccountsApis } from "@/lib/hooks/accounts-queries";
-import { BaseAccount } from "@/types/data/Account";
+import { ExpandedAccount } from "@/types/data/Account";
 import { ExpandedLesson } from "@/types/data/Lesson";
 import { generateKey } from "@/utils/id";
 import { Row } from "@tanstack/react-table";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 export default function AccountsTable() {
   const { currentInstitution } = useInstitutionAndOutletsContext();
   const { data: expandedAccounts = [], refetch } =
     AccountsApis.useGetAllExpandedAccountsInInstitution(currentInstitution?.id);
 
-  const columns = useMemo<TableColumnDef<BaseAccount>[]>(
+  const columns = useMemo<TableColumnDef<ExpandedAccount>[]>(
     () => [
       {
         accessorFn: (row) => <div>{`${row.first_name} ${row.last_name}`}</div>,
@@ -38,10 +38,7 @@ export default function AccountsTable() {
       },
       {
         accessorFn: (row) => (
-          <TableTagItems
-            items={row.personas.flatMap((persona) => persona.display_roles)}
-            default='No Roles Added'
-          />
+          <TableTagItems items={row.display_roles} default='No Roles Added' />
         ),
         id: "roles",
         header: ({ table }) => <span>ROLES</span>,

@@ -5,10 +5,10 @@ import { useInstitutionAndOutletsContext } from "@/components/providers/Institut
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { CloseDialogButton } from "../create-client-account-form/CloseDialogButton";
-import { CreateClientAccountForm } from "../create-client-account-form/CreateClientAccountForm";
+import { CreateBlankAccountForm } from "../create-client-account-form/CreateBlankAccountForm";
 import { CreateMultipleStudentsForm } from "../create-student-form/CreateMultipleStudentsForm";
 
-export default function MultiStepForm() {
+export default function CreateAccountAndStudentsMultiStepForm() {
   const [stepIsCompleted, setFormIsCompleted] = useState<boolean[]>([
     false,
     false,
@@ -47,7 +47,7 @@ export default function MultiStepForm() {
   }
 
   const { step, next, currentIndex, steps } = useMultiStepLayout([
-    <CreateClientAccountForm
+    <CreateBlankAccountForm
       onSuccess={onFirstFormStepSuccess}
       disabled={stepIsCompleted[0]}
       outlets={currentOutlets}

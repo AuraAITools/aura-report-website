@@ -3,19 +3,30 @@ import SelectFormField from "@/components/forms/SelectFormField";
 import SelectMultipleFormField from "@/components/forms/SelectMultipleFormField";
 import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LevelsApis } from "@/lib/hooks/levels-queries";
 import { SubjectsApis } from "@/lib/hooks/subject-queries";
-import { CreateEducatorParams } from "@/lib/requests/educator";
+import { CreateAccountWithEducatorParams } from "@/lib/requests/educator";
+import { CreateBaseAccountParamsSchema } from "@/types/data/Account";
 import { EMPLOYMENT_TYPE } from "@/types/data/Educator";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 
-type CreateEducatorFormParams = CreateEducatorParams & {
-  first_name: string;
-  last_name: string;
-  contact: string;
-};
+const CreateEducatorAccountFormFieldsSchema =
+  CreateBaseAccountParamsSchema.extend({
+    date_of_birth: z.string().date(),
+    start_date: z.string().date(),
+    employment_type: z.enum(EMPLOYMENT_TYPE),
+    level_ids: z.string().uuid().array(),
+    subject_ids: z.string().uuid().array(),
+    outlet_ids: z.string().uuid().array(),
+    course_ids: z.string().uuid().array(),
+  });
 
+type CreateEducatorAccountFormFields = z.infer<
+  typeof CreateEducatorAccountFormFieldsSchema
+>;
 type CreateEducatorFormProps = {
   onSuccess: () => void;
 };
@@ -25,30 +36,40 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<CreateEducatorFormParams>({});
-  const { currentInstitution, outlets } = useInstitutionAndOutletsContext();
+  } = useForm<CreateEducatorAccountFormFields>({});
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const { mutate: createEducatorAccount } =
     EducatorsApis.useCreateEducatorAccountInInstitution();
-  const { mutate: createEducatorForAccountInOutlet } =
-    EducatorsApis.useCreateEducatorForAccountInOutlet();
   const { data: levels } = LevelsApis.useGetAllLevelsOfInstitution(
     currentInstitution?.id,
   );
   const { data: subjects } = SubjectsApis.useGetAllSubjectsOfInstitution(
     currentInstitution?.id,
   );
+  const { data: courses } = CoursesApis.useGetAllCoursesFromOutlet(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
 
-  const onSubmit: SubmitHandler<CreateEducatorFormParams> = (params) => {
+  const onSubmit: SubmitHandler<CreateEducatorAccountFormFields> = (params) => {
     console.log(JSON.stringify(params));
-    params.name = `${params.first_name} ${params.last_name}`;
-    createEducatorAccount(params, {
-      onSuccess: (account_response) => {
-        params.educator_account_id = account_response.data.id;
-        createEducatorForAccountInOutlet(params, {
-          onSuccess: props.onSuccess,
-        });
+
+    const createAccountWithEducatorParams: CreateAccountWithEducatorParams = {
+      ...params,
+      educator: {
+        name: `${params.first_name} ${params.last_name}`,
+        email: params.email,
+        date_of_birth: params.date_of_birth,
+        start_date: params.start_date,
+        employment_type: params.employment_type,
+        level_ids: params.level_ids,
+        subject_ids: params.subject_ids,
+        outlet_ids: params.outlet_ids,
+        courseIds: params.course_ids,
       },
-    });
+    };
+    createEducatorAccount(createAccountWithEducatorParams);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -66,16 +87,16 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         className='w-1/2'
         errorMessage={errors.institution_id?.message}
       />
-      <SelectFormField
-        {...register("outlet_id")}
-        options={outlets.map((o) => ({
-          value: o.id ?? "loading",
-          display: o.name ?? "loading",
-        }))}
-        labelText='outlets'
-        type='text'
-        className='w-1/2'
-        errorMessage={errors.outlet_id?.message}
+      <SelectMultipleFormField
+        {...register("outlet_ids")}
+        labelText={"outlets"}
+        options={
+          !!currentOutlet
+            ? [{ value: currentOutlet.id, display: currentOutlet.name }]
+            : []
+        }
+        formFieldName={""}
+        errorMessage={errors.outlet_ids?.message}
       />
       <SelectMultipleFormField
         {...register("subject_ids")}
@@ -101,12 +122,23 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         formFieldName={""}
         errorMessage={errors.level_ids?.message}
       />
-
+      <SelectMultipleFormField
+        {...register("course_ids")}
+        labelText={"courses"}
+        options={
+          courses?.map((level) => ({
+            value: level.id,
+            display: level.name,
+          })) ?? []
+        }
+        formFieldName={""}
+        errorMessage={errors.level_ids?.message}
+      />
       <SelectFormField
         {...register("employment_type")}
         options={EMPLOYMENT_TYPE.map((type) => ({
           value: type,
-          display: type,
+          display: type.replaceAll("_", " ").toLowerCase(),
         }))}
         labelText='Employment Type'
         type='text'
@@ -115,10 +147,17 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
       />
       <FormField
         {...register("date_of_birth")}
-        labelText='Date of Birth'
+        labelText='date of birth'
         type='date'
         className='w-1/2'
         errorMessage={errors.date_of_birth?.message}
+      />
+      <FormField
+        {...register("start_date")}
+        labelText='start date'
+        type='date'
+        className='w-1/2'
+        errorMessage={errors.start_date?.message}
       />
       <FormField
         {...register("first_name")}

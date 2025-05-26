@@ -5,14 +5,14 @@ import PriceFormField from "@/components/forms/PriceFormField";
 import SelectFormField from "@/components/forms/SelectFormField";
 import SelectMultipleFormField from "@/components/forms/SelectMultipleFormField";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LevelsApis } from "@/lib/hooks/levels-queries";
+import { OutletRoomsApis } from "@/lib/hooks/outlet-rooms-queries";
+import { StudentsApis } from "@/lib/hooks/students-queries";
 import { SubjectsApis } from "@/lib/hooks/subject-queries";
 import { PRICE_FREQUENCIES } from "@/types/data/Course";
-import { CreateCourseFormParams } from "./CreateCourseMultistepForm";
-import { StudentsApis } from "@/lib/hooks/students-queries";
-import { EducatorsApis } from "@/lib/hooks/educators-queries";
-import { OutletRoomsApis } from "@/lib/hooks/outlet-rooms-queries";
 import { useFormContext } from "react-hook-form";
+import { CreateCourseFormParams } from "./CreateCourseMultistepForm";
 type CreateClassesFormProps = {
   onSuccess: () => void;
 };
@@ -28,8 +28,10 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
     currentInstitution?.id,
   );
 
-  const { data: educators = [] } =
-    EducatorsApis.useGetAllEducatorsFromInstitution(currentInstitution?.id);
+  const { data: educators = [] } = EducatorsApis.useGetAllEducatorsFromOutlet(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
   const { data: outletRooms = [] } =
     OutletRoomsApis.useGetAllOutletsRoomsOfOutlet(
       currentInstitution?.id,

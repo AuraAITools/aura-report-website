@@ -1,12 +1,12 @@
+import { queryKeyFactory } from "@/utils/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  createBlankAccount,
   createInstitutionAdminAccount,
   createOutletAdminAccount,
+  createStudentClientAccount,
   getExpandedAccountsInInstitution,
 } from "../requests/accounts";
-import { parentKeys } from "./parents-queries";
-import { queryKeyFactory } from "@/utils/query-key-factory";
-import { createStudentClientAccount } from "../requests/students";
 
 export const accountQueryKeys = queryKeyFactory("accounts");
 
@@ -55,7 +55,29 @@ function useCreateStudentClientAccount() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success");
-      queryClient.invalidateQueries({ queryKey: parentKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: accountQueryKeys.institutionLists(variables.institution_id),
+      });
+    },
+    onSettled: (data, error, variables, context) => {
+      console.log("settled");
+    },
+    // refetchInterval: 1*1000
+  });
+}
+
+function useCreateBlankAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createBlankAccount,
+    onError: (error, variables) => {
+      console.log(`rolling back optimistic update with id`);
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("success");
+      queryClient.invalidateQueries({
+        queryKey: accountQueryKeys.institutionLists(variables.institution_id),
+      });
     },
     onSettled: (data, error, variables, context) => {
       console.log("settled");
@@ -77,6 +99,7 @@ function useGetAllExpandedAccountsInInstitution(institutionId?: string) {
 }
 
 export const AccountsApis = {
+  useCreateBlankAccount,
   useCreateInstitutionAdminAccount,
   useCreateOutletAdminAccount,
   useCreateStudentClientAccount,

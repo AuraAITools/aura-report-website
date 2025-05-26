@@ -7,13 +7,13 @@ import { EducatorsApis } from "@/lib/hooks/educators-queries";
 import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
 import { ExpandedLesson } from "@/types/data/Lesson";
-import React from "react";
-import classNames from "classnames";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { Accordion, Dialog } from "radix-ui";
-import { ChevronDownIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { CreateLessonFormParams } from "../create-lesson-form/CreateLessonForm";
 import { convertTimestampToDateTime } from "@/utils/time-utils";
+import { ChevronDownIcon, Cross1Icon } from "@radix-ui/react-icons";
+import classNames from "classnames";
+import { Accordion, Dialog } from "radix-ui";
+import React from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { CreateLessonFormParams } from "../create-lesson-form/CreateLessonForm";
 interface AccordionItemProps
   extends React.ComponentPropsWithoutRef<typeof Accordion.Item> {
   className?: string;
@@ -40,7 +40,7 @@ export default function EditLessonDetailsForm({
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
   // get all educators
-  const { data: educators } = EducatorsApis.useGetAllEducatorsFromInstitution(
+  const { data: educators } = EducatorsApis.useGetAllEducatorsFromOutlet(
     currentInstitution?.id,
     currentOutlet?.id,
   );

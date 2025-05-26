@@ -1,18 +1,17 @@
 import { FormField } from "@/components/forms/FormField";
 import SelectFormField from "@/components/forms/SelectFormField";
-import React from "react";
-import { StudentWithAssociations } from "@/types/data/Student";
-import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import { LevelsApis } from "@/lib/hooks/levels-queries";
-import { CoursesApis } from "@/lib/hooks/courses-queries";
-import { SubmitHandler, useForm } from "react-hook-form";
 import SelectMultipleFormField from "@/components/forms/SelectMultipleFormField";
 import SubmitButton from "@/components/forms/SubmitButton";
+import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
+import { CoursesApis } from "@/lib/hooks/courses-queries";
+import { LevelsApis } from "@/lib/hooks/levels-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
 import { UpdateStudentParams } from "@/lib/requests/students";
+import { ExpandedStudent } from "@/types/data/Student";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export type EditStudentFormProps = {
-  student: StudentWithAssociations;
+  student: ExpandedStudent;
 };
 export default function EditStudentForm({ student }: EditStudentFormProps) {
   const {
@@ -79,7 +78,7 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
         labelText='Current School'
         type='text'
         className='col-span-2 row-start-2'
-        defaultValue={student.current_school}
+        defaultValue={student.school}
       />
 
       <SelectFormField
@@ -87,7 +86,7 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
         labelText='Schooling Level'
         type='select'
         options={levels?.map((lvl) => ({ display: lvl.name, value: lvl.id }))}
-        defaultValue={student.current_level?.id ?? null}
+        defaultValue={student.level?.id ?? null}
         className='col-span-2 row-start-2'
         errorMessage={errors.student_id?.message}
       />

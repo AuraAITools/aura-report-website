@@ -15,9 +15,7 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import CreateLevelsForm from "@/features/levels-dashboard/create-levels-form/CreateLevelsForm";
 import EditLevelForm from "@/features/levels-dashboard/edit-level-form/EditLevelForm";
 import { ExpandedLevel, LevelsApis } from "@/lib/hooks/levels-queries";
-import { BaseCourse } from "@/types/data/Course";
 import { BaseEducator } from "@/types/data/Educator";
-import { BaseStudent } from "@/types/data/Student";
 import { Row } from "@tanstack/react-table";
 import { useMemo } from "react";
 
@@ -53,10 +51,11 @@ export default function LevelsPage() {
         filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column
       },
       {
-        accessorFn: (row) => row.courses ?? "no courses", //note: normal non-fuzzy filter column - case sensitive
-        id: "courses",
-        cell: ({ row, cell }) => {
-          let items = (cell.getValue() as BaseCourse[]).map((course) => {
+        accessorFn: (row) => {
+          if (!row.courses) {
+            return <div>no courses</div>;
+          }
+          let items = row.courses.map((course) => {
             return {
               ...course,
               url: `/courses/${course.id}`,
@@ -69,22 +68,23 @@ export default function LevelsPage() {
               footerNav={{ title: "Manage", url: "/courses" }}
             />
           );
-        },
+        }, //note: normal non-fuzzy filter column - case sensitive
+        id: "courses",
+        cell: ({ row, getValue }) => <div>{getValue<boolean>()}</div>,
         header: ({ table }) => {
           return <span>CLASSES</span>;
         },
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },
       {
-        accessorFn: (row) => row.students ?? "no students", //note: normal non-fuzzy filter column - case sensitive
-        id: "students",
-        cell: ({ row, cell }) => {
-          let items = (cell.getValue() as BaseStudent[]).map((student) => {
-            return {
-              ...student,
-              url: `/students/${student.id}`,
-            };
-          });
+        accessorFn: (row) => {
+          if (!row.students) {
+            return <div>"no students"</div>;
+          }
+          const items = row.students.map((student) => ({
+            ...student,
+            url: `/students/${student.id}`,
+          }));
           return (
             <FilterTableCellPopOver
               title='STUDENTS'
@@ -92,7 +92,9 @@ export default function LevelsPage() {
               footerNav={{ title: "Manage", url: "/students" }}
             />
           );
-        },
+        }, //note: normal non-fuzzy filter column - case sensitive
+        id: "students",
+        cell: ({ row, cell }) => cell.getValue(),
         header: () => <span>STUDENTS</span>,
         filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
       },

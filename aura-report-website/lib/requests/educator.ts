@@ -1,17 +1,29 @@
 import {
+  CreateBaseAccountParamsSchema,
+  ExpandedAccount,
+} from "@/types/data/Account";
+import {
   BaseEducator,
-  BaseEducatorClientSchema,
   BaseEducatorSchema,
+  ExpandedEducator,
 } from "@/types/data/Educator";
 import { z } from "zod";
 import { apiClient } from "../api-client";
 
-export async function getAllEducatorClientsFromInstitution(
+export async function getAllEducatorsFromInstitution(institutionId: string) {
+  return (
+    await apiClient.get<BaseEducator[]>(
+      `/api/institutions/${institutionId}/educators`,
+    )
+  ).data;
+}
+
+export async function getAllExpandedEducatorsFromInstitution(
   institutionId: string,
 ) {
   return (
-    await apiClient.get<BaseEducatorClientSchema[]>(
-      `/api/institutions/${institutionId}/accounts/educator-clients`,
+    await apiClient.get<ExpandedEducator[]>(
+      `/api/institutions/${institutionId}/educators/expand`,
     )
   ).data;
 }
@@ -27,41 +39,44 @@ export async function getAllEducatorsFromOutlet(
   ).data;
 }
 
-export type CreateEducatorAccountParams = Omit<
-  BaseEducatorClientSchema,
-  "educator" | "id"
-> & { institution_id: string };
-export async function createEducatorAccountInInstitution(
-  params: CreateEducatorAccountParams,
+export async function getAllExpandedEducatorsFromOutlet(
+  institutionId: string,
+  outletId: string,
 ) {
-  const { institution_id, ...requestBody } = params;
-  return await apiClient.post<BaseEducator>(
-    `/api/institutions/${institution_id}/accounts/educator-clients`,
-    JSON.stringify(requestBody),
-  );
+  return (
+    await apiClient.get<ExpandedEducator[]>(
+      `/api/institutions/${institutionId}/outlets/${outletId}/educators/expand`,
+    )
+  ).data;
 }
 
-export const CreateEducatorParamsSchema = BaseEducatorSchema.omit({
-  levels: true,
-  subjects: true,
-  outlets: true,
+export const CreateBaseEducatorParamsSchema = BaseEducatorSchema.omit({
+  id: true,
 }).extend({
   level_ids: z.string().uuid().array(),
   subject_ids: z.string().uuid().array(),
-  outlet_id: z.string().uuid(),
-  institution_id: z.string().uuid(),
-  educator_account_id: z.string().uuid(),
+  outlet_ids: z.string().uuid().array(),
+  courseIds: z.string().uuid().array(),
 });
 
-export type CreateEducatorParams = z.infer<typeof CreateEducatorParamsSchema>;
+export type CreateBaseEducatorParams = z.infer<
+  typeof CreateBaseEducatorParamsSchema
+>;
 
-export async function createEducatorForAccountInOutlet(
-  params: CreateEducatorParams,
+export const CreateAccountWithEducatorParamsSchema =
+  CreateBaseAccountParamsSchema.extend({
+    educator: CreateBaseEducatorParamsSchema,
+  });
+export type CreateAccountWithEducatorParams = z.infer<
+  typeof CreateAccountWithEducatorParamsSchema
+>;
+
+export async function createEducatorAccountInInstitution(
+  params: CreateAccountWithEducatorParams,
 ) {
-  const { outlet_id, institution_id, educator_account_id, ...requestBody } =
-    params;
-  return await apiClient.post<BaseEducator>(
-    `/api/institutions/${institution_id}/outlets/${outlet_id}/accounts/${educator_account_id}/educators`,
+  const { institution_id, ...requestBody } = params;
+  return await apiClient.post<ExpandedAccount>(
+    `/api/institutions/${institution_id}/accounts/educator-clients`,
     JSON.stringify(requestBody),
   );
 }

@@ -1,19 +1,18 @@
-import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
-import { useMultiStepLayout } from "@/hooks/useMultiStepLayout";
-import React, { useState } from "react";
-import CreateCoursesForm from "./CreateCoursesForm";
-import CreateCourseFrequencyForm from "./CreateCourseFrequencyForm";
-import { CloseDialogButton } from "@/features/students-dashboard/create-client-account-form/CloseDialogButton";
-import MultiStepLayout from "@/components/ui/multi-step-layout/MultiStepLayout";
 import SubmitButton from "@/components/forms/SubmitButton";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import { CreateCourseParamsSchema } from "@/lib/requests/courses";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import MultiStepLayout from "@/components/ui/multi-step-layout/MultiStepLayout";
+import { CloseDialogButton } from "@/features/students-dashboard/create-client-account-form/CloseDialogButton";
+import { useMultiStepLayout } from "@/hooks/useMultiStepLayout";
 import { useCreateCourseInOutlet } from "@/lib/hooks/courses-queries";
+import { CreateCourseParamsSchema } from "@/lib/requests/courses";
 import { CreateLessonParamsSchema } from "@/lib/requests/lesson";
 import { DAYS } from "@/types/data/Course";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronLeftIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import CreateCourseFrequencyForm from "./CreateCourseFrequencyForm";
+import CreateCoursesForm from "./CreateCoursesForm";
 export const CreateLessonParamsInFormSchema = CreateLessonParamsSchema.omit({
   course_id: true,
   institution_id: true,
@@ -89,7 +88,6 @@ export default function CreateCourseMultistepForm(
 
   const control = useForm<CreateCourseFormParams>({
     resolver: zodResolver(CreateCourseFormParamsSchema),
-    // TODO: turn on
   });
 
   const onSubmit: SubmitHandler<CreateCourseFormParams> = async (data) => {

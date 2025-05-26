@@ -64,11 +64,10 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
   const { currentInstitution, currentOutlet } =
     useInstitutionAndOutletsContext();
   // get all educators
-  const { data: educators = [] } =
-    EducatorsApis.useGetAllEducatorsFromInstitution(
-      currentInstitution?.id,
-      currentOutlet?.id,
-    );
+  const { data: educators = [] } = EducatorsApis.useGetAllEducatorsFromOutlet(
+    currentInstitution?.id,
+    currentOutlet?.id,
+  );
   // get all students
   const { data: students = [] } = StudentsApis.useGetAllStudentsFromInstitution(
     currentInstitution?.id,

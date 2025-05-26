@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
-import MultiStepForm from "./MultiStepForm";
+import MultiStepForm from "./CreateAccountAndStudentsMultiStepForm";
 
 export function MultiStepFormDialog() {
   return (

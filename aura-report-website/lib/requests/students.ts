@@ -1,14 +1,12 @@
-import { BaseAccountSchema } from "@/types/data/Account";
-import { BaseCourse } from "@/types/data/Course";
-import { BaseLevel } from "@/types/data/Level";
-import { BaseOutlet } from "@/types/data/Outlet";
+import { ExpandedAccount } from "@/types/data/Account";
 import {
   BaseStudent,
   BaseStudentSchema,
-  StudentWithAssociations,
+  ExpandedStudent,
 } from "@/types/data/Student";
 import { z } from "zod";
 import { apiClient } from "../api-client";
+import { ACCOUNT_RELATIONSHIP } from "./accounts";
 
 export async function getAllStudentsFromOutlet(
   institutionId: string,
@@ -21,71 +19,54 @@ export async function getAllStudentsFromOutlet(
   return studentsPromise.data;
 }
 
-export async function getAllStudentsFromInstitution(institutionId: string) {
-  const studentsPromise = await apiClient.get<StudentWithAssociations[]>(
-    `/api/institutions/${institutionId}/students`,
+export async function getAllExpandedStudentsFromOutlet(
+  institutionId: string,
+  outletId: string,
+) {
+  const studentsPromise = await apiClient.get<ExpandedStudent[]>(
+    `/api/institutions/${institutionId}/outlets/${outletId}/students/expand`,
   );
 
   return studentsPromise.data;
 }
 
-export const CreateStudentClientAccountParamsSchema = BaseAccountSchema.omit({
-  id: true,
-  pending_account_actions: true,
-  personas: true,
-}).extend({
-  institution_id: z.string().uuid(),
-});
-
-export type CreateStudentClientAccountParams = z.infer<
-  typeof CreateStudentClientAccountParamsSchema
->;
-
-export async function createStudentClientAccount(
-  createStudentClientAccountParams: CreateStudentClientAccountParams,
-) {
-  const { institution_id, ...requestBody } = createStudentClientAccountParams;
-  let response = await apiClient.post<BaseStudent>(
-    `/api/institutions/${institution_id}/accounts/student-clients`,
-    JSON.stringify(requestBody),
+export async function getAllStudentsFromInstitution(institutionId: string) {
+  const studentsPromise = await apiClient.get<ExpandedStudent[]>(
+    `/api/institutions/${institutionId}/students`,
   );
-  console.log(
-    `created student_client_account ${JSON.stringify(response.data)}`,
-  );
-  return response.data;
+  return studentsPromise.data;
 }
 
-export const CreateStudentRequestBodySchema = BaseStudentSchema.omit({
-  relationship: true,
+export const CreateStudentParamsSchema = BaseStudentSchema.omit({
   id: true,
-  contact: true,
+  school: true,
 }).extend({
+  school_id: z.string().uuid(),
   level_id: z.string().uuid(),
+  outlet_id: z.string().uuid().optional(),
   course_ids: z.string().uuid().array(),
 });
 
-export type CreateStudentRequestBody = z.infer<
-  typeof CreateStudentRequestBodySchema
+export type CreateStudentParams = z.infer<typeof CreateStudentParamsSchema>;
+
+export const CreateStudentsInAccountParamsSchema = z.object({
+  relationship: z.enum(ACCOUNT_RELATIONSHIP),
+  institution_id: z.string().uuid(),
+  account_id: z.string().uuid(),
+  students: CreateStudentParamsSchema.array(),
+});
+
+export type CreateStudentsInAccountParams = z.infer<
+  typeof CreateStudentsInAccountParamsSchema
 >;
 
-export async function createStudentInAccount(
-  institution_id: string,
-  account_id: string,
-  student: CreateStudentRequestBody,
+export async function createStudentsInAccount(
+  params: CreateStudentsInAccountParams,
 ) {
-  let response = await apiClient.post<
-    BaseStudent & {
-      current_level: string;
-      level: BaseLevel;
-      outlets: BaseOutlet[];
-      courses: BaseCourse[];
-    }
-  >(
+  const { institution_id, account_id, ...requestBody } = params;
+  let response = await apiClient.post<ExpandedAccount>(
     `/api/institutions/${institution_id}/accounts/${account_id}/students`,
-    JSON.stringify(student),
-  );
-  console.log(
-    `created student_client_account ${JSON.stringify(response.data)}`,
+    JSON.stringify(requestBody),
   );
   return response.data;
 }
@@ -106,7 +87,7 @@ export type UpdateStudentParams = z.infer<typeof UpdateStudentParamsSchema>;
 export async function updateStudentInInstitution(params: UpdateStudentParams) {
   const { institution_id, student_id, ...requestBody } = params;
   console.log("here:" + JSON.stringify(requestBody));
-  return await apiClient.patch<StudentWithAssociations>(
+  return await apiClient.patch<ExpandedStudent>(
     `/api/institutions/${institution_id}/students/${student_id}`,
     JSON.stringify(requestBody),
   );

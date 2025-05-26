@@ -1,7 +1,7 @@
 import SelectFormField from "@/components/forms/SelectFormField";
+import { CreateStudentsInAccountParams } from "@/lib/requests/students";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { MultipleStudentFormFields } from "./CreateMultipleStudentsForm";
 
 export function DynamicCoursesFormFields({
   studentIdx,
@@ -18,7 +18,7 @@ export function DynamicCoursesFormFields({
     register,
     control,
     formState: { errors },
-  } = useFormContext<MultipleStudentFormFields>();
+  } = useFormContext<CreateStudentsInAccountParams>();
   const {
     fields: courseFields,
     append,

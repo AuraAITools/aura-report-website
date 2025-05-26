@@ -1,9 +1,16 @@
+import SelectFormField from "@/components/forms/SelectFormField";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import MultiTabLayout from "@/components/ui/multi-tab-layout/MultiTabLayout";
 import { CoursesApis } from "@/lib/hooks/courses-queries";
 import { LevelsApis } from "@/lib/hooks/levels-queries";
+import { SchoolsApis } from "@/lib/hooks/schools-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
-import { CreateStudentRequestBodySchema } from "@/lib/requests/students";
+import {
+  CreateStudentsInAccountParams,
+  CreateStudentsInAccountParamsSchema,
+} from "@/lib/requests/students";
+import { ACCOUNT_RELATIONSHIP } from "@/types/data/Account";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FormProvider,
   SubmitHandler,
@@ -12,7 +19,6 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import { z } from "zod";
 import { CreateStudentForm } from "./CreateStudentForm";
 export type CreateMultipleStudentsFormProps = {
   onSuccess?: () => void;
@@ -22,17 +28,6 @@ export type CreateMultipleStudentsFormProps = {
   accountId: string;
 };
 
-export const MultipleStudentFormFieldsSchema = z.object({
-  students: CreateStudentRequestBodySchema.extend({
-    institution_id: z.string().uuid(),
-    account_id: z.string().uuid(),
-  }).array(),
-});
-
-export type MultipleStudentFormFields = z.infer<
-  typeof MultipleStudentFormFieldsSchema
->;
-
 export function CreateMultipleStudentsForm(
   props: CreateMultipleStudentsFormProps,
 ) {
@@ -41,46 +36,44 @@ export function CreateMultipleStudentsForm(
   const { data: levels = [] } = LevelsApis.useGetAllLevelsOfInstitution(
     currentInstitution?.id,
   );
+  const { data: schools = [] } = SchoolsApis.useGetAllSchoolsInInstitution(
+    currentInstitution?.id,
+  );
   const { data: availableCourses = [] } =
     CoursesApis.useGetAllCoursesFromOutlet(
       currentInstitution?.id,
       currentOutlet?.id,
     );
 
-  const { mutate: mutateStudent } =
-    StudentsApis.useCreateStudentInStudentClientAccount();
+  const { mutate: createStudentsInAccount } =
+    StudentsApis.useCreateStudentsInAccount();
 
-  const methods = useForm<MultipleStudentFormFields>({
+  const methods = useForm<CreateStudentsInAccountParams>({
     defaultValues: {
-      students: [
-        {
-          institution_id: currentInstitution?.id,
-          account_id: props.accountId,
-          course_ids: [],
-          level_id: "",
-        },
-      ],
+      students: [{}],
     },
-    // resolver: zodResolver(MultipleStudentFormFieldsSchema),
+    resolver: zodResolver(CreateStudentsInAccountParamsSchema),
   });
 
-  const { control, handleSubmit } = methods;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = methods;
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "students",
   });
 
-  const onSubmit: SubmitHandler<MultipleStudentFormFields> = (data) => {
+  const onSubmit: SubmitHandler<CreateStudentsInAccountParams> = (data) => {
     console.log(`submitted form ${JSON.stringify(data)}`);
-    data.students.map((student) => {
-      mutateStudent({
-        ...student,
-      });
-    });
-    if (props.onSuccess) {
-      props.onSuccess();
-    }
+    createStudentsInAccount(
+      { ...data },
+      {
+        onSuccess: () => props.onSuccess && props.onSuccess(),
+      },
+    );
   };
 
   return (
@@ -89,6 +82,47 @@ export function CreateMultipleStudentsForm(
         className='flex flex-col gap-2 md:min-h-[700px]'
         onSubmit={handleSubmit(onSubmit)}
       >
+        <div className='flex gap-4'>
+          <SelectFormField
+            options={ACCOUNT_RELATIONSHIP.map((relationship) => ({
+              value: relationship,
+              display: relationship.toLocaleLowerCase(),
+            }))}
+            labelText='Relationship'
+            className='w-1/3'
+            errorMessage={errors.relationship?.message}
+            {...control.register("relationship")}
+          />
+          <SelectFormField
+            {...methods.register("institution_id")}
+            options={[
+              {
+                value: currentInstitution?.id ?? "none",
+                display: currentInstitution?.name ?? "no institution",
+              },
+            ]}
+            labelText='Institution'
+            className='w-1/3 text-gray-300 pointer-events-none'
+            disabled
+            type='text'
+            errorMessage={errors.institution_id?.message}
+          />
+          <SelectFormField
+            {...methods.register("account_id")}
+            options={[
+              {
+                value: props.accountId,
+                display: props.accountEmail,
+              },
+            ]}
+            labelText='Account Email'
+            className='w-1/3 text-gray-300 pointer-events-none'
+            disabled
+            type='text'
+            errorMessage={errors.account_id?.message}
+          />
+        </div>
+
         <MultiTabLayout
           tabData={fields.map((field, idx) => {
             return {
@@ -111,6 +145,15 @@ export function CreateMultipleStudentsForm(
                     id: c.id,
                     value: c.name,
                   }))}
+                  schoolOptions={schools.map((s) => ({
+                    id: s.id,
+                    value: s.name.replaceAll("_", " ").toLowerCase(),
+                  }))}
+                  outletOptions={
+                    !!currentOutlet
+                      ? [{ id: currentOutlet.id, value: currentOutlet.name }]
+                      : []
+                  }
                 />
               ),
               key: field.id,
@@ -128,9 +171,7 @@ export function CreateMultipleStudentsForm(
               course_ids: [],
               name: "",
               date_of_birth: new Date(),
-              current_school: "",
-              institution_id: currentInstitution?.id || "",
-              account_id: props.accountId,
+              school_id: "",
             })
           }
         />

@@ -1,57 +1,43 @@
 import SelectFormField from "@/components/forms/SelectFormField";
-import { ACCOUNT_RELATIONSHIP, BaseAccountSchema } from "@/types/data/Account";
+import {
+  CreateBaseAccountParams,
+  CreateBaseAccountParamsSchema,
+} from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useInstitutionAndOutletsContext } from "@/components/providers/InstitutionsAndOutletsProvider";
 import { AccountsApis } from "@/lib/hooks/accounts-queries";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 import { FormField } from "../../../components/forms/FormField";
-import SubmitButton from "@/components/forms/SubmitButton";
-
-const CreateStudentClientAccountParamsSchema = BaseAccountSchema.omit({
-  id: true,
-})
-  .extend({
-    institution_id: z.string(),
-    relationship: z.enum(ACCOUNT_RELATIONSHIP),
-  })
-  .omit({
-    personas: true,
-    pending_account_actions: true,
-  });
-
-type CreateStudentClientAccountParams = z.infer<
-  typeof CreateStudentClientAccountParamsSchema
->;
 
 type FormCallbacks = {
   onSuccess?: (accountEmail: string, accountId: string) => void;
   onFailure?: () => void;
   onError?: () => void;
 };
-type CreateClientAccountFormProps = {
+type CreateBlankAccountFormProps = {
   disabled: boolean;
   outlets: BaseOutlet[];
 } & FormCallbacks;
 
-export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
+export function CreateBlankAccountForm(props: CreateBlankAccountFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateStudentClientAccountParams>({
-    resolver: zodResolver(CreateStudentClientAccountParamsSchema),
+  } = useForm<CreateBaseAccountParams>({
+    resolver: zodResolver(CreateBaseAccountParamsSchema),
   });
-  const { mutate: createStudentClientAccount, isPending } =
-    AccountsApis.useCreateStudentClientAccount(); // TODO: create a create client account hook
+  const { mutate: createBlankAccount, isPending } =
+    AccountsApis.useCreateBlankAccount(); // TODO: create a create client account hook
 
   const { currentInstitution: institution, outlets } =
     useInstitutionAndOutletsContext();
 
-  const onSubmit: SubmitHandler<CreateStudentClientAccountParams> = (data) => {
-    createStudentClientAccount(data, {
+  const onSubmit: SubmitHandler<CreateBaseAccountParams> = (data) => {
+    createBlankAccount(data, {
       // TODO: fix
       onSuccess: (createdAccount) => {
         if (props.onSuccess)
@@ -103,15 +89,6 @@ export function CreateClientAccountForm(props: CreateClientAccountFormProps) {
         labelText={"Last Name"}
         errorMessage={errors.last_name?.message}
         {...register("last_name")}
-      />
-      <SelectFormField
-        options={ACCOUNT_RELATIONSHIP.map((relationship) => ({
-          value: relationship,
-          display: relationship.toLocaleLowerCase(),
-        }))}
-        labelText='Relationship'
-        errorMessage={errors.relationship?.message}
-        {...register("relationship")}
       />
       <SubmitButton
         disabled={isPending}

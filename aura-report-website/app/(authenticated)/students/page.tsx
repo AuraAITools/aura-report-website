@@ -10,7 +10,7 @@ export default function StudentsPage() {
     error,
     data: students = [],
     refetch,
-  } = StudentsApis.useGetAllStudentsFromOutlet(
+  } = StudentsApis.useGetAllExpandedStudentsFromOutlet(
     currentInstitution?.id,
     currentOutlet?.id,
   );

@@ -7,13 +7,13 @@ import {
   CreateInstitutionAdminParams,
   CreateInstitutionAdminParamsSchema,
 } from "@/lib/requests/accounts";
-import { BaseAccount, BaseAccountSchema } from "@/types/data/Account";
+import { ExpandedAccount } from "@/types/data/Account";
 import { BaseOutlet } from "@/types/data/Outlet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type FormCallbacks = {
-  onSuccess?: (createdOutletAdmins: BaseAccount) => void;
+  onSuccess?: (createdOutletAdmins: ExpandedAccount) => void;
   onFailure?: () => void;
   onError?: () => void;
 };
@@ -37,12 +37,12 @@ export default function CreateAdminAccountsInOutletForm(
   });
 
   const {
-    mutate: mutateInstitutionAdmin,
+    mutate: createInstitutionAdmin,
     isPending: institutionAdminIsPending,
   } = AccountsApis.useCreateInstitutionAdminAccount();
 
   const { mutate: mutateOutletAdmin, isPending: isPendingOutletAdmin } =
-    AccountsApis.useCreateOutletAdminAccount();
+    AccountsApis.useCreateOutletAdminAccount(); // TODO:
 
   let outletOptions;
   if (props.targetOutlet) {
@@ -58,18 +58,10 @@ export default function CreateAdminAccountsInOutletForm(
   }
 
   const onSubmit: SubmitHandler<CreateInstitutionAdminParams> = (data) => {
-    mutateInstitutionAdmin(data, {
+    createInstitutionAdmin(data, {
       onSuccess: (data) => {
         if (props.onSuccess) {
-          props.onSuccess({
-            email: "",
-            first_name: "",
-            last_name: "",
-            contact: "",
-            id: "",
-            pending_account_actions: [],
-            personas: [],
-          }); //TODO
+          props.onSuccess(data); //TODO : deliver output to callback
         }
         console.log(`successfully submitted ${JSON.stringify(data, null, 2)}`);
       },

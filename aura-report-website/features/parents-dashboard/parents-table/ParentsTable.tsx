@@ -8,30 +8,35 @@ import GlobalFilterInput from "@/features/filter-table/GlobalFilterInput";
 import { PaginationBar } from "@/features/filter-table/PaginationBar";
 import RefreshDataButton from "@/features/filter-table/RefreshDataButton";
 import { TableColumnDef } from "@/features/filter-table/types";
-import { useGetAllParents } from "@/lib/hooks/parents-queries";
-import { BaseParentClientAccount } from "@/types/data/Parents";
+import { AccountsApis } from "@/lib/hooks/accounts-queries";
+import { ExpandedAccount } from "@/types/data/Account";
 import { BaseStudent } from "@/types/data/Student";
 import { useMemo } from "react";
 
 export default function ParentsTable() {
   const { currentInstitution } = useInstitutionAndOutletsContext();
 
-  const { data: parents = [], refetch } = useGetAllParents(
-    currentInstitution?.id,
+  const { data: expandedAccounts = [], refetch } =
+    AccountsApis.useGetAllExpandedAccountsInInstitution(currentInstitution?.id);
+
+  const parents = expandedAccounts.filter(
+    (acc) => !!acc.student_client_subaccount,
   );
 
   /**
    * column definitions
    */
-  const columns = useMemo<TableColumnDef<BaseParentClientAccount>[]>(
+  const columns = useMemo<TableColumnDef<ExpandedAccount>[]>(
     () => [
       {
         accessorKey: "first_name",
+        id: "NAME",
         header: ({ table }) => <span>NAME</span>,
         filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
       },
       {
-        accessorFn: (row) => row.students, //note: normal non-fuzzy filter column - case sensitive
+        accessorFn: (row) =>
+          row.student_client_subaccount?.students ?? "no student subaccount", //note: normal non-fuzzy filter column - case sensitive
         id: "STUDENTS",
         cell: ({ row, cell }) => {
           let items = (cell.getValue() as BaseStudent[]).map((student) => {
