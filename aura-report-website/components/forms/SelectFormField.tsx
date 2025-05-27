@@ -39,7 +39,7 @@ export default function SelectFormField({
             "w-full flex items-center justify-between py-2 px-4 text-gray-600 " +
             "border rounded border-gray-400 " +
             "data-[placeholder]:text-gray-400 data-[disabled]:bg-gray-100 data-[disabled]:text-gray-400 " +
-            `${errorMessage && "border-red-500 text-red-500"}`
+            `${errorMessage ? "border-red-500 text-red-500" : ""}`
           }
         >
           <Select.Value
