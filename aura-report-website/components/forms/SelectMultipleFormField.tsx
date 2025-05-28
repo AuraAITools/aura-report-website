@@ -6,10 +6,12 @@ import {
   ChevronDownIcon,
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
+  Cross1Icon,
 } from "@radix-ui/react-icons";
 import { Label, Popover, Select } from "radix-ui";
 import React, {
   ComponentPropsWithRef,
+  MouseEvent,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -118,27 +120,6 @@ export default function SelectMultipleFormField({
     }
   };
 
-  // Get display names of selected values for the button text
-  const getSelectedDisplayText = () => {
-    if (value.length === 0) return "Select options...";
-
-    const selectedOptions = options.filter((opt) =>
-      selectedValues.includes(opt.value),
-    );
-    return (
-      <ul className='flex gap-2'>
-        {selectedOptions.map((so, idx) => (
-          <li
-            className='flex min-w-[100px] justify-center items-center gap-2 bg-orange-400 text-white rounded-md py-1 px-2'
-            key={generateKey("_li", so.value, idx.toString())}
-          >
-            <div>{so.display}</div>
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   return (
     <>
       <Label.Root htmlFor={name} className='block font-semibold mb-1'>
@@ -157,7 +138,21 @@ export default function SelectMultipleFormField({
             }
             aria-label={labelText}
           >
-            <span className='truncate'>{getSelectedDisplayText()}</span>
+            {value.length === 0 && (
+              <span className='text-gray-400'>Select options...</span>
+            )}
+            {value.length > 0 && (
+              <span className='truncate'>
+                <DisplayTokens
+                  selectedOptions={options.filter((opt) =>
+                    selectedValues.includes(opt.value),
+                  )}
+                  onTokenRemove={(optionValue) =>
+                    handleCheckboxChange(optionValue, false)
+                  }
+                />
+              </span>
+            )}
             <ChevronDownIcon />
           </button>
         </Popover.Trigger>
@@ -169,17 +164,17 @@ export default function SelectMultipleFormField({
             <div>
               {options.map((option, idx) => (
                 <div
+                  key={generateKey(
+                    "_dropdown_opt",
+                    option.value,
+                    idx.toString(),
+                  )}
                   className={
                     "flex items-center text-gray-600 hover:bg-gray-100 hover:cursor-pointer " +
                     `${value.includes(option.value) ? "bg-gray-200" : ""}`
                   }
                 >
                   <Checkbox.Root
-                    key={generateKey(
-                      "_dropdown_opt",
-                      option.value,
-                      idx.toString(),
-                    )}
                     id={generateKey("checkbox", option.value, idx.toString())}
                     checked={value.includes(option.value)}
                     onCheckedChange={(checked) =>
@@ -344,3 +339,36 @@ export default function SelectMultipleFormField({
     // </div>
   );
 }
+
+const DisplayTokens = ({
+  selectedOptions,
+  onTokenRemove,
+}: {
+  selectedOptions: SelectMultipleFormFieldProps["options"];
+  onTokenRemove: (optionValue: string) => void;
+}) => {
+  const handleRemoveClick = (
+    e: MouseEvent<SVGElement>,
+    optionValue: string,
+  ) => {
+    e.stopPropagation();
+    onTokenRemove(optionValue);
+  };
+
+  return (
+    <ul className='flex gap-2'>
+      {selectedOptions.map((option, idx) => (
+        <li
+          key={generateKey("_li", option.value, idx.toString())}
+          className={
+            "flex min-w-[100px] justify-center items-center gap-2 border border-orange-400 rounded-md py-1 px-2 " +
+            "hover:bg-orange-100"
+          }
+        >
+          <span>{option.display}</span>
+          <Cross1Icon onClick={(e) => handleRemoveClick(e, option.value)} />
+        </li>
+      ))}
+    </ul>
+  );
+};
