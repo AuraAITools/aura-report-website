@@ -189,7 +189,8 @@ export default function LessonsTable() {
               dialogFn={(onSuccess) => (
                 <CreateLessonForm onSuccess={onSuccess} />
               )}
-              buttonTitle={"Create Lesson"}
+              buttonTitle='Create Lesson'
+              dialogTitle='Create Lesson'
             />
             <RefreshDataButton />
           </div>
