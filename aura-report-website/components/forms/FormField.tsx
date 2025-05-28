@@ -1,4 +1,6 @@
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { Label } from "radix-ui";
+import FormLabel from "./FormLabel";
 
 export type FormFieldProps = {
   labelText: string;
@@ -12,9 +14,7 @@ export function FormField(props: FormFieldProps) {
 
   return (
     <div className={className}>
-      <label htmlFor={formProps.name} className='block font-semibold mb-1'>
-        {labelText}
-      </label>
+      <FormLabel htmlFor={formProps.name} label={labelText} />
       <input
         {...formProps}
         className={

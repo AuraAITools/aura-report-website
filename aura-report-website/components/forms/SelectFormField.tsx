@@ -6,6 +6,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Label, Select } from "radix-ui";
 import { ComponentPropsWithRef } from "react";
+import FormLabel from "./FormLabel";
 
 export type SelectFormFieldProps = {
   labelText: string;
@@ -23,12 +24,7 @@ export default function SelectFormField({
 }: SelectFormFieldProps) {
   return (
     <>
-      <Label.Root
-        htmlFor={selectProps.name}
-        className='block font-semibold mb-1'
-      >
-        {labelText}
-      </Label.Root>
+      <FormLabel htmlFor={selectProps.name} label={labelText} />
       <Select.Root
         defaultValue={options[0]?.value}
         disabled={options.length === 0}

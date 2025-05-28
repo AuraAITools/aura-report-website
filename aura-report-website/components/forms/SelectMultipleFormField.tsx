@@ -17,6 +17,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import FormLabel from "./FormLabel";
 
 export type SelectMultipleFormFieldProps = {
   labelText: string;
@@ -122,9 +123,7 @@ export default function SelectMultipleFormField({
 
   return (
     <>
-      <Label.Root htmlFor={name} className='block font-semibold mb-1'>
-        {labelText}
-      </Label.Root>
+      <FormLabel htmlFor={name} label={labelText} />
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
