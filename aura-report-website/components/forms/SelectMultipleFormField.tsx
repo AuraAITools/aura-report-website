@@ -48,18 +48,12 @@ export default function SelectMultipleFormField({
   );
   const [isOpen, setIsOpen] = useState(false);
 
-  const [dropdownWidth, setDropdownWidth] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   // for search
   const [searchTerm, setSearchTerm] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  useLayoutEffect(() => {
-    if (triggerRef.current) {
-      setDropdownWidth(triggerRef.current.offsetWidth);
-    }
-  }, [isOpen]);
   // Focus the search input when dropdown opens
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
@@ -122,7 +116,7 @@ export default function SelectMultipleFormField({
   };
 
   return (
-    <>
+    <div className={className}>
       <FormLabel htmlFor={name} label={labelText} />
       <Popover.Root>
         <Popover.Trigger asChild>
@@ -260,7 +254,7 @@ export default function SelectMultipleFormField({
           <span>{errorMessage}</span>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

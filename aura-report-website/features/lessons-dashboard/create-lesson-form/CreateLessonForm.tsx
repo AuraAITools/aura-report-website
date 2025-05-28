@@ -84,7 +84,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
     createLesson(params, { onSuccess: props.onSuccess });
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-3 gap-8'>
       <SelectFormField
         {...register("institution_id")}
         options={[
@@ -93,7 +93,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
             display: currentInstitution?.name ?? "loading",
           },
         ]}
-        labelText='institution'
+        labelText='Institution'
         disabled
         name='institution_id'
         errorMessage={errors.institution_id?.message}
@@ -106,7 +106,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
             display: currentOutlet?.name ?? "loading",
           },
         ]}
-        labelText='outlets'
+        labelText='Outlets'
         disabled
         name='outlet_id'
         errorMessage={errors.outlet_id?.message}
@@ -121,6 +121,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         }))}
         name='course_id'
         errorMessage={errors.course_id?.message}
+        className='col-start-1'
       />
       {/* educator */}
       <SelectMultipleFormField
@@ -136,7 +137,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
       <FormField
         {...register("name")}
         labelText='Lesson Name (Optional)'
-        placeholder={"i.e. lesson name"}
+        placeholder={"E.g. Mathematics Makeup Lesson"}
         type='text'
         errorMessage={errors.name?.message}
       />
@@ -149,40 +150,43 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         }))}
         formFieldName={""}
         errorMessage={errors.student_ids?.message}
+        className='col-span-2'
       />
       <FormField
         {...register("description")}
-        labelText='description'
-        placeholder={"i.e. description"}
+        labelText='Description'
+        placeholder={"E.g. Makeup lesson due to public holiday"}
         type='text'
         errorMessage={errors.description?.message}
       />
       <FormField
         {...register("start_date")}
-        labelText='lesson start date'
+        labelText='Lesson Start Date'
         type='date'
         errorMessage={errors.start_date?.message}
       />
       <FormField
-        {...register("end_date")}
-        labelText='lesson end date'
-        type='date'
-        errorMessage={errors.end_date?.message}
-      />
-      <FormField
         {...register("start_time")}
-        labelText='lesson start time'
+        labelText='Lesson Start Time'
         type='time'
         errorMessage={errors.start_time?.message}
       />
       <FormField
+        {...register("end_date")}
+        labelText='Lesson End Date'
+        type='date'
+        errorMessage={errors.end_date?.message}
+        className='col-start-1'
+      />
+      <FormField
         {...register("end_time")}
-        labelText='lesson end time'
+        labelText='Lesson End Time'
         type='time'
         errorMessage={errors.end_time?.message}
       />
+      <div className='col-start-1 col-span-2' />
       <SubmitButton
-        className='mt-2 w-full'
+        className='mt-8 w-full'
         disabled={isSubmitting}
         buttonTitle={"Create Lesson"}
         isSubmitting={isSubmitting}

@@ -23,7 +23,7 @@ export default function SelectFormField({
   ...selectProps
 }: SelectFormFieldProps) {
   return (
-    <>
+    <div className={className}>
       <FormLabel htmlFor={selectProps.name} label={labelText} />
       <Select.Root
         defaultValue={options[0]?.value}
@@ -78,6 +78,6 @@ export default function SelectFormField({
           <span>{errorMessage}</span>
         </div>
       )}
-    </>
+    </div>
   );
 }
