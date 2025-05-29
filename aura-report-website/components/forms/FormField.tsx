@@ -1,5 +1,4 @@
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { Label } from "radix-ui";
 import FormLabel from "./FormLabel";
 
 export type FormFieldProps = {
@@ -20,6 +19,8 @@ export function FormField(props: FormFieldProps) {
         className={
           "w-full flex items-center justify-between py-2 px-4 text-gray-600 " +
           "border rounded border-gray-400 " +
+          // Manually override focus behaviour as Firefox applies its default regardless
+          "focus:outline-none focus-visible:-outline-offset-2 focus-visible:outline-orange-400 " +
           "data-[placeholder]:text-gray-400 data-[disabled]:bg-gray-100 data-[disabled]:text-gray-400 " +
           `${errorMessage ? "border-red-500 text-red-500" : ""}`
         }

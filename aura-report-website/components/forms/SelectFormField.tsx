@@ -4,7 +4,7 @@ import {
   ChevronUpIcon,
   ExclamationTriangleIcon,
 } from "@radix-ui/react-icons";
-import { Label, Select } from "radix-ui";
+import { Select } from "radix-ui";
 import { ComponentPropsWithRef } from "react";
 import FormLabel from "./FormLabel";
 
@@ -34,6 +34,7 @@ export default function SelectFormField({
           className={
             "w-full flex items-center justify-between py-2 px-4 text-gray-600 " +
             "border rounded border-gray-400 " +
+            "data-[state=open]:border-0 data-[state=open]:outline data-[state=open]:outline-2 data-[state=open]:outline-orange-400 " +
             "data-[placeholder]:text-gray-400 data-[disabled]:bg-gray-100 data-[disabled]:text-gray-400 " +
             `${errorMessage ? "border-red-500 text-red-500" : ""}`
           }
@@ -48,7 +49,7 @@ export default function SelectFormField({
         <Select.Portal>
           <Select.Content
             position='popper'
-            className='bg-white border rounded-lg shadow-md overflow-hidden'
+            className='bg-white border rounded shadow-md overflow-hidden mt-1'
             style={{ width: "var(--radix-select-trigger-width)" }}
           >
             <Select.ScrollUpButton>

@@ -126,6 +126,7 @@ export default function SelectMultipleFormField({
             className={
               "w-full flex items-center justify-between py-2 px-4 text-gray-600 " +
               "border rounded border-gray-400 " +
+              "data-[state=open]:border-0 data-[state=open]:outline data-[state=open]:outline-2 data-[state=open]:outline-orange-400 " +
               `${errorMessage ? "border-red-500 text-red-500" : ""} ` +
               `${isOpen ? "ring-2 ring-orange-300" : ""}`
             }
@@ -151,7 +152,7 @@ export default function SelectMultipleFormField({
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className='bg-white border rounded-lg shadow-md overflow-hidden'
+            className='bg-white border rounded shadow-md overflow-hidden mt-1'
             style={{ width: "var(--radix-popover-trigger-width)" }}
           >
             {/* Search input */}
