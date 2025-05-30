@@ -13,7 +13,11 @@ export function FormField(props: FormFieldProps) {
 
   return (
     <div className={className}>
-      <FormLabel htmlFor={formProps.name} label={labelText} />
+      <FormLabel
+        htmlFor={formProps.name}
+        label={labelText}
+        required={formProps.required}
+      />
       <input
         {...formProps}
         className={

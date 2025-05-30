@@ -24,7 +24,11 @@ export default function SelectFormField({
 }: SelectFormFieldProps) {
   return (
     <div className={className}>
-      <FormLabel htmlFor={selectProps.name} label={labelText} />
+      <FormLabel
+        htmlFor={selectProps.name}
+        label={labelText}
+        required={selectProps.required}
+      />
       <Select.Root
         defaultValue={options[0]?.value}
         disabled={options.length === 0}

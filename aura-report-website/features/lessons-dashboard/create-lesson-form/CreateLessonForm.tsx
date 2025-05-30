@@ -94,8 +94,9 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
           },
         ]}
         labelText='Institution'
-        disabled
         name='institution_id'
+        disabled
+        required
         errorMessage={errors.institution_id?.message}
       />
       <SelectFormField
@@ -107,8 +108,9 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
           },
         ]}
         labelText='Outlets'
-        disabled
         name='outlet_id'
+        disabled
+        required
         errorMessage={errors.outlet_id?.message}
       />
       {/* Course ids */}
@@ -121,6 +123,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         }))}
         name='course_id'
         errorMessage={errors.course_id?.message}
+        required
         className='col-start-1'
       />
       {/* educator */}
@@ -136,7 +139,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
       />
       <FormField
         {...register("name")}
-        labelText='Lesson Name (Optional)'
+        labelText='Lesson Name'
         placeholder={"E.g. Mathematics Makeup Lesson"}
         type='text'
         errorMessage={errors.name?.message}
@@ -164,18 +167,21 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         labelText='Lesson Start Date'
         type='date'
         errorMessage={errors.start_date?.message}
+        required
       />
       <FormField
         {...register("start_time")}
         labelText='Lesson Start Time'
         type='time'
         errorMessage={errors.start_time?.message}
+        required
       />
       <FormField
         {...register("end_date")}
         labelText='Lesson End Date'
         type='date'
         errorMessage={errors.end_date?.message}
+        required
         className='col-start-1'
       />
       <FormField
@@ -183,6 +189,7 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         labelText='Lesson End Time'
         type='time'
         errorMessage={errors.end_time?.message}
+        required
       />
       <div className='col-start-1 col-span-2' />
       <SubmitButton

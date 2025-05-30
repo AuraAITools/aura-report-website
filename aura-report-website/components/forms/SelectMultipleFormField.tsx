@@ -117,7 +117,11 @@ export default function SelectMultipleFormField({
 
   return (
     <div className={className}>
-      <FormLabel htmlFor={name} label={labelText} />
+      <FormLabel
+        htmlFor={name}
+        label={labelText}
+        required={restProps.required}
+      />
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
