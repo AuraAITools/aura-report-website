@@ -11,6 +11,8 @@ import FormLabel from "./FormLabel";
 export type SelectFormFieldProps = {
   labelText: string;
   options: { value: string; display: string }[];
+  value: string;
+  onChange: (value: string) => void;
   className?: string;
   errorMessage?: string;
 } & ComponentPropsWithRef<typeof Select.Root>;
@@ -18,6 +20,8 @@ export type SelectFormFieldProps = {
 export default function SelectFormField({
   labelText,
   options,
+  value,
+  onChange,
   className,
   errorMessage,
   ...selectProps
@@ -30,7 +34,8 @@ export default function SelectFormField({
         required={selectProps.required}
       />
       <Select.Root
-        defaultValue={options[0]?.value}
+        value={value}
+        onValueChange={onChange}
         disabled={options.length === 0}
         {...selectProps}
       >

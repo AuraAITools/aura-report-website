@@ -9,7 +9,7 @@ import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
 import { CreateLessonParamsSchema } from "@/lib/requests/lesson";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 type CreateLessonFormProps = {
   onSuccess: () => void;
@@ -53,16 +53,21 @@ export type CreateLessonFormParams = z.infer<
   typeof CreateLessonFormParamsSchema
 >;
 export default function CreateLessonForm(props: CreateLessonFormProps) {
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const {
     register,
     handleSubmit,
-    setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CreateLessonFormParams>({
+    defaultValues: {
+      institution_id: currentInstitution?.id ?? "Loading...",
+      outlet_id: currentOutlet?.id ?? "Loading...",
+    },
     resolver: zodResolver(CreateLessonFormParamsSchema),
   });
-  const { currentInstitution, currentOutlet } =
-    useInstitutionAndOutletsContext();
+
   // get all educators
   const { data: educators = [] } = EducatorsApis.useGetAllEducatorsFromOutlet(
     currentInstitution?.id,
@@ -85,47 +90,70 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-3 gap-8'>
-      <SelectFormField
-        {...register("institution_id")}
-        options={[
-          {
-            value: currentInstitution?.id ?? "loading",
-            display: currentInstitution?.name ?? "loading",
-          },
-        ]}
-        labelText='Institution'
+      <Controller
+        control={control}
         name='institution_id'
-        disabled
-        required
-        errorMessage={errors.institution_id?.message}
+        render={({ field }) => (
+          <SelectFormField
+            value={field.value}
+            onChange={field.onChange}
+            options={[
+              {
+                value: currentInstitution?.id ?? "loading",
+                display: currentInstitution?.name ?? "loading",
+              },
+            ]}
+            labelText='Institution'
+            name='institution_id'
+            disabled
+            required
+            errorMessage={errors.institution_id?.message}
+          />
+        )}
       />
-      <SelectFormField
-        {...register("outlet_id")}
-        options={[
-          {
-            value: currentOutlet?.id ?? "loading",
-            display: currentOutlet?.name ?? "loading",
-          },
-        ]}
-        labelText='Outlets'
+      <Controller
+        control={control}
         name='outlet_id'
-        disabled
-        required
-        errorMessage={errors.outlet_id?.message}
+        render={({ field }) => (
+          <SelectFormField
+            value={field.value}
+            onChange={field.onChange}
+            options={[
+              {
+                value: currentOutlet?.id ?? "loading",
+                display: currentOutlet?.name ?? "loading",
+              },
+            ]}
+            labelText='Outlets'
+            name='outlet_id'
+            disabled
+            required
+            errorMessage={errors.outlet_id?.message}
+          />
+        )}
       />
+
       {/* Course ids */}
-      <SelectFormField
-        {...register("course_id")}
-        labelText={"Course"}
-        options={courses.map((course) => ({
-          value: course.id,
-          display: course.name,
-        }))}
+      <Controller
+        control={control}
         name='course_id'
-        errorMessage={errors.course_id?.message}
-        required
-        className='col-start-1'
+        render={({ field }) => (
+          <SelectFormField
+            value={field.value}
+            onChange={field.onChange}
+            labelText={"Course"}
+            options={courses.map((course) => ({
+              value: course.id,
+              display: course.name,
+            }))}
+            name='course_id'
+            errorMessage={errors.course_id?.message}
+            required
+            className='col-start-1'
+          />
+        )}
       />
+
       {/* educator */}
       <SelectMultipleFormField
         {...register("educator_ids")}
