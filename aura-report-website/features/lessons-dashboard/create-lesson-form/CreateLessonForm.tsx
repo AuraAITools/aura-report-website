@@ -9,7 +9,7 @@ import { LessonsApis } from "@/lib/hooks/lessons-queries";
 import { StudentsApis } from "@/lib/hooks/students-queries";
 import { CreateLessonParamsSchema } from "@/lib/requests/lesson";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 type CreateLessonFormProps = {
   onSuccess: () => void;
@@ -90,68 +90,47 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-3 gap-8'>
-      <Controller
+      <SelectFormField
         control={control}
+        options={[
+          {
+            value: currentInstitution?.id ?? "loading",
+            display: currentInstitution?.name ?? "loading",
+          },
+        ]}
+        labelText='Institution'
         name='institution_id'
-        render={({ field }) => (
-          <SelectFormField
-            value={field.value}
-            onChange={field.onChange}
-            options={[
-              {
-                value: currentInstitution?.id ?? "loading",
-                display: currentInstitution?.name ?? "loading",
-              },
-            ]}
-            labelText='Institution'
-            name='institution_id'
-            disabled
-            required
-            errorMessage={errors.institution_id?.message}
-          />
-        )}
+        disabled
+        required
+        errorMessage={errors.institution_id?.message}
       />
-      <Controller
+      <SelectFormField
         control={control}
+        options={[
+          {
+            value: currentOutlet?.id ?? "loading",
+            display: currentOutlet?.name ?? "loading",
+          },
+        ]}
+        labelText='Outlets'
         name='outlet_id'
-        render={({ field }) => (
-          <SelectFormField
-            value={field.value}
-            onChange={field.onChange}
-            options={[
-              {
-                value: currentOutlet?.id ?? "loading",
-                display: currentOutlet?.name ?? "loading",
-              },
-            ]}
-            labelText='Outlets'
-            name='outlet_id'
-            disabled
-            required
-            errorMessage={errors.outlet_id?.message}
-          />
-        )}
+        disabled
+        required
+        errorMessage={errors.outlet_id?.message}
       />
 
       {/* Course ids */}
-      <Controller
+      <SelectFormField
         control={control}
+        labelText={"Course"}
+        options={courses.map((course) => ({
+          value: course.id,
+          display: course.name,
+        }))}
         name='course_id'
-        render={({ field }) => (
-          <SelectFormField
-            value={field.value}
-            onChange={field.onChange}
-            labelText={"Course"}
-            options={courses.map((course) => ({
-              value: course.id,
-              display: course.name,
-            }))}
-            name='course_id'
-            errorMessage={errors.course_id?.message}
-            required
-            className='col-start-1'
-          />
-        )}
+        errorMessage={errors.course_id?.message}
+        required
+        className='col-start-1'
       />
 
       {/* educator */}
