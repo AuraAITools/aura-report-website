@@ -33,11 +33,11 @@ export default function PriceFormField(props: PriceFormFieldProps) {
       >
         <input
           {...formProps}
-          className={`inline-flex h-[35px] w-3/5 rounded-l items-center justify-center px-2.5 text-[15px] leading-none shadow-[0_0_0_1px] outline-none`}
+          className={`inline-flex w-3/5 rounded-l items-center justify-center p-3 text-[15px] leading-none shadow-[0_0_0_1px] outline-none`}
         />
         <select
           {...selectProps}
-          className={`text-center h-[35px] w-2/5 rounded-r px-2.5 text-[15px] shadow-[0_0_0_1px] outline-none`}
+          className={`text-center w-2/5 rounded-r p-3 text-[15px] shadow-[0_0_0_1px] outline-none`}
         >
           {options &&
             options.map((opt, idx) => (

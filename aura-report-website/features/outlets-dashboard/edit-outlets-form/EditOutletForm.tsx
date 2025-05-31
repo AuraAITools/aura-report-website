@@ -18,6 +18,7 @@ type EditOutletFormProps = {
 export default function EditOutletForm({ outlet }: EditOutletFormProps) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<UpdateOutletParams>();
@@ -36,7 +37,8 @@ export default function EditOutletForm({ outlet }: EditOutletFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         options={[
           {
             value: currentInstitution?.id ?? "loading",
@@ -45,7 +47,6 @@ export default function EditOutletForm({ outlet }: EditOutletFormProps) {
         ]}
         labelText='institution'
         disabled
-        type='text'
         className='w-1/2'
       />
       <FormField

@@ -13,6 +13,7 @@ import { SubjectsApis } from "@/lib/hooks/subject-queries";
 import { PRICE_FREQUENCIES } from "@/types/data/Course";
 import { useFormContext } from "react-hook-form";
 import { CreateCourseFormParams } from "./CreateCourseMultistepForm";
+import { useEffect } from "react";
 type CreateClassesFormProps = {
   onSuccess: () => void;
 };
@@ -40,8 +41,13 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
 
   const {
     register,
+    setValue,
+    control,
     formState: { errors },
   } = useFormContext<CreateCourseFormParams>();
+  useEffect(() => {
+    setValue("institution_id", currentInstitution?.id ?? "");
+  }, [currentInstitution]);
 
   const unfocusedOutlets = currentOutlets.filter(
     (outlet) => outlet.id !== currentOutlet!.id,
@@ -51,7 +57,8 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
     <div className='flex flex-col max-h-[70vh] gap-4'>
       <div className='flex px-4 gap-4'>
         <SelectFormField
-          {...register("institution_id")}
+          control={control}
+          name='institution_id'
           options={[
             {
               value: currentInstitution?.id ?? "loading",
@@ -60,18 +67,17 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
           ]}
           labelText='institution'
           disabled
-          type='text'
           className='w-1/3'
           errorMessage={errors.institution_id?.message}
         />
         <SelectFormField
+          control={control}
+          name='outlet_id'
           options={outletOptions.map((o) => ({
             value: o.id,
             display: o.name,
           }))}
-          {...register("outlet_id")}
           labelText='Location/Outlet'
-          type='text'
           className='w-1/3'
           errorMessage={errors.outlet_id?.message}
         />
@@ -79,10 +85,10 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
       </div>
       <div className='flex px-4 gap-4'>
         <SelectFormField
+          control={control}
+          name='level_id'
           options={levels.map((lvl) => ({ display: lvl.name, value: lvl.id }))}
-          {...register("level_id")}
           labelText='Level'
-          type='text'
           className='w-1/3'
           errorMessage={errors.level_id?.message}
         />
@@ -94,7 +100,6 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
           }))}
           {...register("subject_ids")}
           labelText='Subject'
-          type='text'
           className='w-1/3'
           errorMessage={errors.subject_ids?.message}
         />
@@ -146,7 +151,6 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
           }))}
           {...register("student_ids")}
           labelText='Student(s)'
-          type='text'
           className='w-1/3'
           errorMessage={errors.student_ids?.message}
         />
@@ -158,18 +162,17 @@ export default function CreateClassesForm(props: CreateClassesFormProps) {
           }))}
           {...register("educator_ids")}
           labelText='Educator(s)'
-          type='text'
           className='w-1/3'
           errorMessage={errors.educator_ids?.message}
         />
         <SelectFormField
+          control={control}
+          name='outlet_room_id'
           options={outletRooms.map((outletRoom) => ({
             value: outletRoom.id,
             display: outletRoom.name,
           }))}
-          {...register("outlet_room_id")}
           labelText='Room(s)'
-          type='text'
           className='w-1/3'
           errorMessage={errors.outlet_room_id?.message}
         />

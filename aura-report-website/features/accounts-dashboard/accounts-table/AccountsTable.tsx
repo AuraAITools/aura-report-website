@@ -82,6 +82,7 @@ export default function AccountsTable() {
               dialogFn={(onSuccess) => (
                 <CreateLessonForm onSuccess={onSuccess} />
               )}
+              dialogTitle={"Create Account"}
               buttonTitle={"Create Account"}
             />
             <RefreshDataButton />

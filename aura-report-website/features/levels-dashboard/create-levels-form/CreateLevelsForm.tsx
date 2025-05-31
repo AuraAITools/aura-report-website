@@ -36,6 +36,7 @@ export default function CreateLevelsForm({ onSuccess }: CreateLevelsFormProps) {
   });
 
   const {
+    control,
     formState: { errors },
   } = methods;
   const { mutate: createLevel, isPending } =
@@ -61,7 +62,8 @@ export default function CreateLevelsForm({ onSuccess }: CreateLevelsFormProps) {
         className='flex flex-col gap-4'
       >
         <SelectFormField
-          {...methods.register("institution_id")}
+          control={control}
+          name='institution_id'
           options={[
             {
               value: currentInstitution?.id ?? "loading",
@@ -70,7 +72,6 @@ export default function CreateLevelsForm({ onSuccess }: CreateLevelsFormProps) {
           ]}
           labelText='institution'
           disabled
-          type='text'
           errorMessage={errors.institution_id?.message}
         />
         <FormField

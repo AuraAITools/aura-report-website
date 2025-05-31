@@ -130,6 +130,7 @@ export default function SubjectsPage() {
               dialogFn={(onSuccess) => (
                 <CreateSubjectForm onSuccess={onSuccess} />
               )}
+              dialogTitle='Create Subject'
               buttonTitle='Create Subject'
             />
             <RefreshDataButton />

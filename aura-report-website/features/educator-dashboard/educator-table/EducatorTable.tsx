@@ -92,6 +92,7 @@ export default function EducatorTable() {
               dialogFn={(onSuccess) => (
                 <CreateEducatorForm onSuccess={onSuccess} />
               )}
+              dialogTitle={"Create Educator"}
               buttonTitle={"Create Educator"}
             />
             <RefreshDataButton />

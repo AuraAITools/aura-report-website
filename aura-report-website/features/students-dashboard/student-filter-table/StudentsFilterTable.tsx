@@ -84,6 +84,7 @@ export default function StudentsFilterTable({
           <div className='flex justify-center items-center p-2 gap-2'>
             <DialogButton
               dialogFn={() => <CreateAccountAndStudentsMultiStepForm />}
+              dialogTitle={"Create Students"}
               buttonTitle={"Create Students"}
             />
 

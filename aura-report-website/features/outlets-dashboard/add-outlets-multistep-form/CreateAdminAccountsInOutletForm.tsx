@@ -30,6 +30,7 @@ export default function CreateAdminAccountsInOutletForm(
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CreateInstitutionAdminParams>({
@@ -75,7 +76,8 @@ export default function CreateAdminAccountsInOutletForm(
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         options={[
           {
             display: currentInstitution

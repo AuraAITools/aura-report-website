@@ -31,14 +31,18 @@ type CreateEducatorFormProps = {
   onSuccess: () => void;
 };
 export default function CreateEducatorForm(props: CreateEducatorFormProps) {
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const {
     register,
     handleSubmit,
-    setError,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<CreateEducatorAccountFormFields>({});
-  const { currentInstitution, currentOutlet } =
-    useInstitutionAndOutletsContext();
+  } = useForm<CreateEducatorAccountFormFields>({
+    defaultValues: {
+      institution_id: currentInstitution?.id ?? "Loading...",
+    },
+  });
   const { mutate: createEducatorAccount } =
     EducatorsApis.useCreateEducatorAccountInInstitution();
   const { data: levels } = LevelsApis.useGetAllLevelsOfInstitution(
@@ -74,7 +78,8 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         options={[
           {
             value: currentInstitution?.id ?? "loading",
@@ -83,7 +88,6 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         ]}
         labelText='institution'
         disabled
-        type='text'
         className='w-1/2'
         errorMessage={errors.institution_id?.message}
       />
@@ -135,13 +139,13 @@ export default function CreateEducatorForm(props: CreateEducatorFormProps) {
         errorMessage={errors.level_ids?.message}
       />
       <SelectFormField
-        {...register("employment_type")}
+        control={control}
+        name='employment_type'
         options={EMPLOYMENT_TYPE.map((type) => ({
           value: type,
           display: type.replaceAll("_", " ").toLowerCase(),
         }))}
         labelText='Employment Type'
-        type='text'
         className='w-1/2'
         errorMessage={errors.employment_type?.message}
       />

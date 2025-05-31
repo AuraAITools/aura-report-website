@@ -138,6 +138,7 @@ export default function LevelsPage() {
               dialogFn={(onSuccess) => (
                 <CreateLevelsForm onSuccess={onSuccess} />
               )}
+              dialogTitle='Create Level'
               buttonTitle='Create Level'
             />
             <RefreshDataButton />

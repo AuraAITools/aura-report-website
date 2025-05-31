@@ -166,6 +166,7 @@ export default function ClassesPage() {
               dialogFn={(closeDialogFn) => (
                 <CreateCourseMultistepForm onSuccess={closeDialogFn} />
               )}
+              dialogTitle='Create Classes'
               buttonTitle='Create Classes'
             />
             <RefreshDataButton />

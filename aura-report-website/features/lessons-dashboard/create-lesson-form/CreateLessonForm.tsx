@@ -53,16 +53,21 @@ export type CreateLessonFormParams = z.infer<
   typeof CreateLessonFormParamsSchema
 >;
 export default function CreateLessonForm(props: CreateLessonFormProps) {
+  const { currentInstitution, currentOutlet } =
+    useInstitutionAndOutletsContext();
   const {
     register,
     handleSubmit,
-    setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CreateLessonFormParams>({
+    defaultValues: {
+      institution_id: currentInstitution?.id ?? "Loading...",
+      outlet_id: currentOutlet?.id ?? "Loading...",
+    },
     resolver: zodResolver(CreateLessonFormParamsSchema),
   });
-  const { currentInstitution, currentOutlet } =
-    useInstitutionAndOutletsContext();
+
   // get all educators
   const { data: educators = [] } = EducatorsApis.useGetAllEducatorsFromOutlet(
     currentInstitution?.id,
@@ -84,53 +89,50 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
     createLesson(params, { onSuccess: props.onSuccess });
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-3 gap-8'>
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
         options={[
           {
             value: currentInstitution?.id ?? "loading",
             display: currentInstitution?.name ?? "loading",
           },
         ]}
-        labelText='institution'
+        labelText='Institution'
+        name='institution_id'
         disabled
-        type='text'
+        required
         errorMessage={errors.institution_id?.message}
       />
       <SelectFormField
-        {...register("outlet_id")}
+        control={control}
         options={[
           {
             value: currentOutlet?.id ?? "loading",
             display: currentOutlet?.name ?? "loading",
           },
         ]}
-        labelText='outlets'
+        labelText='Outlets'
+        name='outlet_id'
         disabled
-        type='text'
+        required
         errorMessage={errors.outlet_id?.message}
       />
+
       {/* Course ids */}
       <SelectFormField
-        {...register("course_id")}
+        control={control}
         labelText={"Course"}
-        options={
-          courses.length === 0
-            ? [
-                {
-                  value: "No Courses",
-                  display: "No Courses",
-                },
-              ]
-            : courses.map((course) => ({
-                value: course.id,
-                display: course.name,
-              }))
-        }
-        type='text'
+        options={courses.map((course) => ({
+          value: course.id,
+          display: course.name,
+        }))}
+        name='course_id'
         errorMessage={errors.course_id?.message}
+        required
+        className='col-start-1'
       />
+
       {/* educator */}
       <SelectMultipleFormField
         {...register("educator_ids")}
@@ -144,8 +146,8 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
       />
       <FormField
         {...register("name")}
-        labelText='Lesson Name (Optional)'
-        placeholder={"i.e. lesson name"}
+        labelText='Lesson Name'
+        placeholder={"E.g. Mathematics Makeup Lesson"}
         type='text'
         errorMessage={errors.name?.message}
       />
@@ -158,40 +160,47 @@ export default function CreateLessonForm(props: CreateLessonFormProps) {
         }))}
         formFieldName={""}
         errorMessage={errors.student_ids?.message}
+        className='col-span-2'
       />
       <FormField
         {...register("description")}
-        labelText='description'
-        placeholder={"i.e. description"}
+        labelText='Description'
+        placeholder={"E.g. Makeup lesson due to public holiday"}
         type='text'
         errorMessage={errors.description?.message}
       />
       <FormField
         {...register("start_date")}
-        labelText='lesson start date'
+        labelText='Lesson Start Date'
         type='date'
         errorMessage={errors.start_date?.message}
-      />
-      <FormField
-        {...register("end_date")}
-        labelText='lesson end date'
-        type='date'
-        errorMessage={errors.end_date?.message}
+        required
       />
       <FormField
         {...register("start_time")}
-        labelText='lesson start time'
+        labelText='Lesson Start Time'
         type='time'
         errorMessage={errors.start_time?.message}
+        required
+      />
+      <FormField
+        {...register("end_date")}
+        labelText='Lesson End Date'
+        type='date'
+        errorMessage={errors.end_date?.message}
+        required
+        className='col-start-1'
       />
       <FormField
         {...register("end_time")}
-        labelText='lesson end time'
+        labelText='Lesson End Time'
         type='time'
         errorMessage={errors.end_time?.message}
+        required
       />
+      <div className='col-start-1 col-span-2' />
       <SubmitButton
-        className='mt-2 w-full'
+        className='mt-8 w-full'
         disabled={isSubmitting}
         buttonTitle={"Create Lesson"}
         isSubmitting={isSubmitting}
