@@ -69,6 +69,7 @@ export default function RoomsPage() {
               dialogFn={(onSuccess) => (
                 <CreateLevelsForm onSuccess={onSuccess} /> // TODO: create rooms form
               )}
+              dialogTitle='Create Rooms'
               buttonTitle='Create Rooms'
             />
             <RefreshDataButton />

@@ -131,6 +131,7 @@ export default function OutletsTable() {
                 dialogFn={(onSuccess) => (
                   <CreateOutletForm onSuccess={onSuccess} />
                 )}
+                dialogTitle={"Create Outlet"}
                 buttonTitle={"Create Outlet"}
               />
             </Authorization>
