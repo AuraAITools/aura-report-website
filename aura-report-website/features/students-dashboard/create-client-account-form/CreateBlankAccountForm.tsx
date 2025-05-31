@@ -25,6 +25,7 @@ type CreateBlankAccountFormProps = {
 export function CreateBlankAccountForm(props: CreateBlankAccountFormProps) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateBaseAccountParams>({
@@ -52,6 +53,8 @@ export function CreateBlankAccountForm(props: CreateBlankAccountFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
+        control={control}
+        name='institution_id'
         options={[
           {
             display: institution?.name ?? "loading",
@@ -61,7 +64,6 @@ export function CreateBlankAccountForm(props: CreateBlankAccountFormProps) {
         labelText='Institution'
         errorMessage={errors.institution_id?.message}
         disabled
-        {...register("institution_id")}
       />
       {/* <SelectFormField
         options={outlets.map((o) => ({ value: o.id, display: o.name }))}

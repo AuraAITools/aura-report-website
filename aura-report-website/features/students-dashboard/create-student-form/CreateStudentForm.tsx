@@ -22,6 +22,7 @@ export function CreateStudentForm({
 }: CreateStudentFormProps) {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<CreateStudentsInAccountParams>();
 
@@ -49,26 +50,26 @@ export function CreateStudentForm({
         errorMessage={errors.students?.[index]?.email?.message}
       />
       <SelectFormField
-        {...register(`students.${index}.level_id`)}
+        control={control}
+        name={`students.${index}.level_id`}
         labelText='Schooling Level'
-        type='select'
         options={levelOptions.map((i) => ({ display: i.value, value: i.id }))}
         className='col-span-2 row-start-2'
         errorMessage={errors.students?.[index]?.level_id?.message}
       />
       <SelectFormField
-        {...register(`students.${index}.school_id`)}
+        control={control}
+        name={`students.${index}.school_id`}
         labelText='Current School'
-        type='select'
         options={schoolOptions.map((i) => ({ display: i.value, value: i.id }))}
         className='row-start-2 col-span-2'
-        defaultChecked
+        // defaultChecked
         errorMessage={errors.students?.[index]?.school_id?.message}
       />
       <SelectFormField
-        {...register(`students.${index}.outlet_id`)}
+        control={control}
+        name={`students.${index}.outlet_id`}
         labelText='outlet'
-        type='select'
         disabled
         options={outletOptions.map((i) => ({ display: i.value, value: i.id }))}
         defaultValue={outletOptions ? outletOptions.at(0)?.value : "no outlets"}

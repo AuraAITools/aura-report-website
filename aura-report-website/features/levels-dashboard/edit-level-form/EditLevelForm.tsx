@@ -36,7 +36,8 @@ export default function EditLevelForm({ level }: EditLevelFormProps) {
         className='flex flex-col gap-4'
       >
         <SelectFormField
-          {...methods.register("institution_id")}
+          control={methods.control}
+          name='institution_id'
           options={[
             {
               value: currentInstitution?.id ?? "loading",
@@ -45,7 +46,6 @@ export default function EditLevelForm({ level }: EditLevelFormProps) {
           ]}
           labelText='institution'
           disabled
-          type='text'
           className='w-1/2'
         />
         <FormField
@@ -63,7 +63,6 @@ export default function EditLevelForm({ level }: EditLevelFormProps) {
             display: lvl.name,
             value: lvl.id,
           }))}
-          defaultValue={level.subjects.map((lvl) => lvl.id)}
           formFieldName={""}
         />
         <SubmitButton

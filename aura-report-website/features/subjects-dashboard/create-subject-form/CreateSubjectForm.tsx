@@ -16,6 +16,7 @@ export function CreateSubjectForm(props: CreateSubjectFormProps) {
   const { currentInstitution } = useInstitutionAndOutletsContext();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateSubjectParams>({
@@ -30,7 +31,8 @@ export function CreateSubjectForm(props: CreateSubjectFormProps) {
   return (
     <form className='flex flex-col gap-2' onSubmit={handleSubmit(onSubmit)}>
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         labelText='institution'
         disabled
         options={[

@@ -111,6 +111,7 @@ export default function CreateCourseFrequencyForm() {
   const {
     register,
     watch,
+    control,
     formState: { errors, isSubmitting },
   } = useFormContext<CreateCourseFormParams>();
 
@@ -196,13 +197,13 @@ export default function CreateCourseFrequencyForm() {
               {...register("lesson_repeat_days")}
             />
             <SelectFormField
+              control={control}
+              name='lesson_frequency'
               options={LESSON_FREQUENCY.map((freq) => ({
                 display: freq.toLowerCase(),
                 value: freq,
               }))}
-              {...register("lesson_frequency")}
               labelText='lesson frequency'
-              type='text'
               defaultValue={LESSON_FREQUENCY[0]}
               className='row-start-5 col-span-1 px-4'
               errorMessage={errors.lesson_frequency?.message}

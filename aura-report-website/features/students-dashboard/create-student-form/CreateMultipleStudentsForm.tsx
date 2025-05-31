@@ -84,6 +84,8 @@ export function CreateMultipleStudentsForm(
       >
         <div className='flex gap-4'>
           <SelectFormField
+            control={control}
+            name='relationship'
             options={ACCOUNT_RELATIONSHIP.map((relationship) => ({
               value: relationship,
               display: relationship.toLocaleLowerCase(),
@@ -91,10 +93,10 @@ export function CreateMultipleStudentsForm(
             labelText='Relationship'
             className='w-1/3'
             errorMessage={errors.relationship?.message}
-            {...control.register("relationship")}
           />
           <SelectFormField
-            {...methods.register("institution_id")}
+            control={control}
+            name='institution_id'
             options={[
               {
                 value: currentInstitution?.id ?? "none",
@@ -104,11 +106,11 @@ export function CreateMultipleStudentsForm(
             labelText='Institution'
             className='w-1/3 text-gray-300 pointer-events-none'
             disabled
-            type='text'
             errorMessage={errors.institution_id?.message}
           />
           <SelectFormField
-            {...methods.register("account_id")}
+            control={control}
+            name='account_id'
             options={[
               {
                 value: props.accountId,
@@ -118,7 +120,6 @@ export function CreateMultipleStudentsForm(
             labelText='Account Email'
             className='w-1/3 text-gray-300 pointer-events-none'
             disabled
-            type='text'
             errorMessage={errors.account_id?.message}
           />
         </div>

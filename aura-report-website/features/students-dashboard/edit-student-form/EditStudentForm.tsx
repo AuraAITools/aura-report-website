@@ -16,6 +16,7 @@ export type EditStudentFormProps = {
 export default function EditStudentForm({ student }: EditStudentFormProps) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<UpdateStudentParams>();
@@ -42,7 +43,8 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         options={[
           {
             value: currentInstitution?.id ?? "loading",
@@ -51,7 +53,6 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
         ]}
         labelText='institution'
         disabled
-        type='text'
         className='w-1/2'
       />
       <FormField
@@ -82,9 +83,9 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
       />
 
       <SelectFormField
-        {...register(`level_id`)}
+        control={control}
+        name='level_id'
         labelText='Schooling Level'
-        type='select'
         options={levels?.map((lvl) => ({ display: lvl.name, value: lvl.id }))}
         defaultValue={student.level?.id ?? null}
         className='col-span-2 row-start-2'
@@ -100,7 +101,6 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
             display: outlet.name,
           })) ?? []
         }
-        defaultValue={student.outlets.map((outlet) => outlet.id)}
         formFieldName={""}
       />
 
@@ -111,7 +111,6 @@ export default function EditStudentForm({ student }: EditStudentFormProps) {
           display: course.name,
           value: course.id,
         }))}
-        defaultValue={student.courses.map((course) => course.id)}
         className='row-start-2 col-span-2'
         errorMessage={errors.course_ids?.message}
         formFieldName={""}

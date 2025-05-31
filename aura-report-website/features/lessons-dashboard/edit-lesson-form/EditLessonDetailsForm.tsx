@@ -62,6 +62,7 @@ export default function EditLessonDetailsForm({
   );
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm<CreateLessonFormParams>({
@@ -162,7 +163,8 @@ export default function EditLessonDetailsForm({
         {/* Part of form without accordion */}
         <div className='flex flex-col p-4 gap-4 flex-grow'>
           <SelectFormField
-            {...register("institution_id")}
+            control={control}
+            name='institution_id'
             options={[
               {
                 value: currentInstitution?.id ?? "loading",
@@ -171,10 +173,10 @@ export default function EditLessonDetailsForm({
             ]}
             labelText='Institution'
             disabled
-            type='text'
           />
           <SelectFormField
-            {...register("outlet_id")}
+            control={control}
+            name='outlet_id'
             options={[
               {
                 value: currentOutlet?.id ?? "loading",
@@ -183,10 +185,10 @@ export default function EditLessonDetailsForm({
             ]}
             labelText='Outlet'
             disabled
-            type='text'
           />
           <SelectFormField
-            {...register("course_id")}
+            control={control}
+            name='course_id'
             options={[
               {
                 value: lesson.course.id,
@@ -195,7 +197,6 @@ export default function EditLessonDetailsForm({
             ]}
             labelText='Class'
             disabled
-            type='text'
           />
 
           <FormField
@@ -283,7 +284,6 @@ export default function EditLessonDetailsForm({
                       display: student.name,
                     })) ?? []
                   }
-                  defaultValue={lesson.students.map((student) => student.id)}
                   formFieldName={""}
                 />
               </AccordionContent>
@@ -305,7 +305,6 @@ export default function EditLessonDetailsForm({
                       display: edu.name,
                     })) ?? []
                   }
-                  defaultValue={lesson.educators.map((edu) => edu.id)}
                   formFieldName={""}
                 />
               </AccordionContent>

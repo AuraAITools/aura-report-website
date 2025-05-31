@@ -34,14 +34,15 @@ export function DynamicCoursesFormFields({
       {courseFields.map((cf, idx) => (
         <div className='grid grid-cols-6 gap-6' key={cf.id}>
           <SelectFormField
+            control={control}
+            name={`students.${studentIdx}.course_ids.${idx}`}
             options={courseOptions.map((c) => ({
               value: c.id,
               display: c.value,
             }))}
             labelText={`Enrolled Class #${idx + 1}`}
-            id={cf.id}
+            // id={cf.id}
             className='col-span-2'
-            {...register(`students.${studentIdx}.course_ids.${idx}`)}
             errorMessage={
               errors.students?.[studentIdx]?.course_ids?.[idx]?.message
             }

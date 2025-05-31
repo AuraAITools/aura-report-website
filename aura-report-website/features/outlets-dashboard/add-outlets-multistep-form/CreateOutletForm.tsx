@@ -22,6 +22,7 @@ export default function CreateOutletForm(props: FormCallbacks) {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateOutletParams>({
@@ -47,7 +48,8 @@ export default function CreateOutletForm(props: FormCallbacks) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SelectFormField
-        {...register("institution_id")}
+        control={control}
+        name='institution_id'
         options={
           currentInstitution
             ? [
