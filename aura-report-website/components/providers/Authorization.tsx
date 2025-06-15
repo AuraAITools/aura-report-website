@@ -3,7 +3,7 @@ import { ExclamationTriangleIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { signIn, useSession } from "next-auth/react";
 import { PropsWithChildren } from "react";
 import LoadingComponent from "../ui/loading/LoadingComponent";
-
+import AuraLogo from "@/app/assets/logo.png";
 export type AuthorizationProps = {
   allowedRoles?: string[];
   hideContent?: boolean;
@@ -27,7 +27,7 @@ export default function Authorization({
     return (
       <LoadingComponent
         image={{
-          src: "/Logo.png",
+          src: AuraLogo.src,
           alt: "Aura logo",
           className: "animate-spin-slow",
           width: 40,

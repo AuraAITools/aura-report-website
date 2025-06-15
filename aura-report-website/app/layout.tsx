@@ -2,10 +2,10 @@ import { Notifications } from "@/components/notifications/notifications";
 import AuthProvider from "@/components/providers/AuthProvider";
 import ReactQueryClientProvider from "@/components/providers/ReactQueryClientProvider";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { twMerge } from "tailwind-merge";
+const dmSans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Aura",
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
+      <body className={twMerge(dmSans.className, "antialiased bg-[#EAEEFE]")}>
         <ReactQueryClientProvider>
           <AuthProvider>{children}</AuthProvider>
           <Notifications duration={4} />

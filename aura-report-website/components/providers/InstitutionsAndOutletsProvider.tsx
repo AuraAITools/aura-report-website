@@ -14,7 +14,6 @@ import {
 import { UnauthenticatedScreen } from "./Authorization";
 type BaseOutletContext = BaseOutlet & { institution_id: string };
 
-type StatusType = "pending" | "success" | "error";
 type InstitutionAndOutletContext = {
   institutions: BaseInstitution[];
   outlets: BaseOutletContext[];

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { useSidebarContext } from "./Sidebar.hooks";
 import { SidebarCollapseButton } from "./SidebarCollapseButton";
+import AuraLogo from "@/app/assets/logo.png";
+import AuraWordMark from "@/app/assets/wordmark.png";
 
 export function SidebarExpandedContent({ children }: PropsWithChildren) {
   const { isExpanded } = useSidebarContext();
@@ -31,14 +33,14 @@ export function SidebarExpandedContent({ children }: PropsWithChildren) {
           <NavigationMenu.Root>
             <div className='flex p-4 items-center'>
               <Image
-                src='/logo.png'
+                src={AuraLogo}
                 alt='Aura Logo'
                 className='animate-spin-slow'
                 width={50}
                 height={50}
               />
               <Image
-                src='/wordmark.png'
+                src={AuraWordMark}
                 alt='Aura wordmark'
                 width={80}
                 height={50}

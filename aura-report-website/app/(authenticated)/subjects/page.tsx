@@ -12,7 +12,6 @@ import { TableColumnDef } from "@/features/filter-table/types";
 import { CreateSubjectForm } from "@/features/subjects-dashboard/create-subject-form/CreateSubjectForm";
 import { SubjectsApis } from "@/lib/hooks/subject-queries";
 import { BaseSubject } from "@/types/data/Subject";
-import { Row } from "@tanstack/react-table";
 import { ReactNode, useMemo } from "react";
 
 export default function SubjectsPage() {
